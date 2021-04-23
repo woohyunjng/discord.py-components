@@ -7,8 +7,16 @@ from .buttonchannel import ButtonChannel
 
 
 class DiscordButton:
-    def __init__(self, bot: Union[Client, Bot]):
+    def __init__(self, bot: Union[Client, Bot], keyword_only: bool = False):
         self.bot = bot
+
+        async def _send_button_textchannel(
+            child_self, content: str = "", *, buttons: List["Button"] = [], options: dict = {}
+        ):
+            await self.ButtonChannel(child_self).send(content, buttons=buttons, options=options)
+
+        if keyword_only:
+            TextChannel.send = _send_button_textchannel
 
     def ButtonChannel(self, channel: TextChannel):
         return ButtonChannel(self, channel)

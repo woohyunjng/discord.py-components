@@ -28,24 +28,28 @@ class ButtonChannel(TextChannel):
             },
         )
 
-    async def send(self, content: str = "", *, buttons: List[Button], options: dict = {}):
+    async def send(self, content: str = "", *, buttons: List[Button] = [], options: dict = {}):
         data = {
             "content": content,
-            "components": [
-                {
-                    "type": 1,
-                    "components": [
-                        {
-                            "type": 2,
-                            "style": button.style,
-                            "label": button.label,
-                            "custom_id": button.id,
-                            "url": button.url,
-                        }
-                        for button in buttons
-                    ],
-                }
-            ],
+            "components": (
+                [
+                    {
+                        "type": 1,
+                        "components": [
+                            {
+                                "type": 2,
+                                "style": button.style,
+                                "label": button.label,
+                                "custom_id": button.id,
+                                "url": button.url,
+                            }
+                            for button in buttons
+                        ],
+                    }
+                ]
+                if buttons
+                else []
+            ),
             "options": options,
         }
         await self._client.bot.http.request(
