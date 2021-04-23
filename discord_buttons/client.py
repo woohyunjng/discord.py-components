@@ -1,4 +1,4 @@
-from discord import Client, TextChannel, Message
+from discord import Client, TextChannel, Message, Embed, AllowedMentions, InvalidArgument
 from discord.ext.commands import Bot
 from discord.http import Route
 
@@ -28,12 +28,34 @@ class DiscordButton:
         Message.await_button_click = await_button_click_prop
 
     async def send_button_msg(
-        self, channel: TextChannel, content: str = "", *, buttons: List[Button] = None, **options
+        self,
+        channel: TextChannel,
+        content: str = "",
+        *,
+        tts: bool = False,
+        embed: Embed = None,
+        allowed_mentions: AllowedMentions = None,
+        buttons: List[Button] = None,
+        **options,
     ) -> Message:
+        state = self.bot._get_state()
+        if embed:
+            embed = embed.to_dict()
+
+        if allowed_mentions:
+            if state.allowed_mentions:
+                allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
+            else:
+                allowed_mentions = allowed_mentions.to_dict()
+        else:
+            allowed_mentions = state.allowed_mentions and state.allowed_mentions.to_dict()
+
         data = {
             "content": content,
             **self._get_buttons_json(buttons),
             **options,
+            "embed": embed,
+            "allowed_mentions": allowed_mentions,
         }
         data = await self.bot.http.request(
             Route("POST", f"/channels/{channel.id}/messages"), json=data
