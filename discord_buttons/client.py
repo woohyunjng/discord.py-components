@@ -2,9 +2,11 @@ from discord import Client, TextChannel, Message
 from discord.ext.commands import Bot
 from discord.http import Route
 
+from asyncio import TimeoutError
 from typing import Union, List
 
 from .button import Button
+from .context import Context
 
 
 class DiscordButton:
@@ -21,8 +23,14 @@ class DiscordButton:
         ):
             return await self.edit_button_msg(message, content, buttons=buttons, **options)
 
+        async def await_button_click_prop(
+            message: Message, func, check=None, timeout: float = None
+        ):
+            return await self.await_button_click(message, func, check, timeout)
+
         TextChannel.send = send_button_msg_prop
         Message.edit = edit_button_msg_prop
+        Message.await_button_click = await_button_click_prop
 
     async def send_button_msg(
         self, channel: TextChannel, content: str = "", *, buttons: List[Button] = None, **options
@@ -57,7 +65,6 @@ class DiscordButton:
             buttons = [buttons]
 
         lines = buttons
-        print(lines)
         return {
             "components": (
                 [
@@ -80,3 +87,37 @@ class DiscordButton:
                 else []
             ),
         }
+
+    async def await_button_click(self, message: Message, func, check=None, timeout: float = None):
+        while True:
+            try:
+                res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
+            except TimeoutError:
+                break
+
+            if res["t"] != "INTERACTION_CREATE":
+                return None
+
+            button_id = res["d"]["data"]["custom_id"]
+            resbutton = None
+
+            for buttons in res["d"]["message"]["components"]:
+                for button in buttons["components"]:
+                    if button["style"] == 5:
+                        continue
+
+                    if button["custom_id"] == button_id:
+                        resbutton = button
+
+            ctx = Context(
+                message=message,
+                user=self.bot.get_user(int(res["d"]["member"]["user"]["id"])),
+                button=Button(
+                    style=resbutton["style"],
+                    label=resbutton["label"],
+                    id=resbutton["custom_id"],
+                ),
+                interaction_id=res["d"]["id"],
+                raw_data=res,
+            )
+            await func(ctx)
