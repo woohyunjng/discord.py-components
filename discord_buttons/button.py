@@ -11,11 +11,15 @@ class Button:
         id: Optional[str] = None,
         url: Optional[str] = None
     ):
-        self.style = (
-            {"blue": 1, "gray": 2, "green": 3, "red": 4, "url": 5}[style]
-            if isinstance(style, str)
-            else style
-        )
+        if style:
+            self.style = (
+                {"blue": 1, "gray": 2, "green": 3, "red": 4, "url": 5}[style]
+                if isinstance(style, str)
+                else style
+            )
+        else:
+            self.style = 1
+
         self.label = label
         if url:
             self.id = None

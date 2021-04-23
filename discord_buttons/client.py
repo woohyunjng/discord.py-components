@@ -1,6 +1,7 @@
 from discord import Client, TextChannel, Message, Embed, AllowedMentions, InvalidArgument
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, Context as DContext
 from discord.http import Route
+from discord.abc import Messageable
 
 from functools import wraps
 from asyncio import TimeoutError
@@ -14,8 +15,11 @@ class DiscordButton:
     def __init__(self, bot: Union[Client, Bot]):
         self.bot = bot
 
-        async def send_button_msg_prop(*args, **kwargs) -> Message:
-            return await self.send_button_msg(*args, **kwargs)
+        async def send_button_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
+            if isinstance(ctxorchannel, DContext):
+                return await self.send_button_msg(ctxorchannel.channel, *args, **kwargs)
+            else:
+                return await self.send_button_msg(ctxorchannel, *args, **kwargs)
 
         async def edit_button_msg_prop(*args, **kwargs):
             return await self.edit_button_msg(*args, **kwargs)
@@ -23,7 +27,7 @@ class DiscordButton:
         async def await_button_click_prop(*args, **kwargs):
             return await self.await_button_click(*args, **kwargs)
 
-        TextChannel.send = send_button_msg_prop
+        Messageable.send = send_button_msg_prop
         Message.edit = edit_button_msg_prop
         Message.await_button_click = await_button_click_prop
 
