@@ -56,19 +56,43 @@ class DiscordButton:
             **options,
             "embed": embed,
             "allowed_mentions": allowed_mentions,
+            "tts": tts,
         }
         data = await self.bot.http.request(
             Route("POST", f"/channels/{channel.id}/messages"), json=data
         )
-        return Message(state=self.bot._get_state(), channel=channel, data=data)
+        return Message(state=state, channel=channel, data=data)
 
     async def edit_button_msg(
-        self, message: Message, content: str = "", *, buttons: List[Button] = None, **options
+        self,
+        message: Message,
+        content: str = "",
+        *,
+        tts: bool = False,
+        embed: Embed = None,
+        allowed_mentions: AllowedMentions = None,
+        buttons: List[Button] = None,
+        **options,
     ):
+        state = self.bot._get_state()
+        if embed:
+            embed = embed.to_dict()
+
+        if allowed_mentions:
+            if state.allowed_mentions:
+                allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
+            else:
+                allowed_mentions = allowed_mentions.to_dict()
+        else:
+            allowed_mentions = state.allowed_mentions and state.allowed_mentions.to_dict()
+
         data = {
             "content": content,
             **self._get_buttons_json(buttons),
             **options,
+            "embed": embed,
+            "allowed_mentions": allowed_mentions,
+            "tts": tts,
         }
         await self.bot.http.request(
             Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
