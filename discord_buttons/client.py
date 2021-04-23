@@ -2,6 +2,7 @@ from discord import Client, TextChannel, Message
 from discord.ext.commands import Bot
 from discord.http import Route
 
+from functools import wraps
 from asyncio import TimeoutError
 from typing import Union, List
 
@@ -13,20 +14,14 @@ class DiscordButton:
     def __init__(self, bot: Union[Client, Bot]):
         self.bot = bot
 
-        async def send_button_msg_prop(
-            chan: TextChannel, content: str = "", *, buttons: List[Button] = None, **options
-        ) -> Message:
-            return await self.send_button_msg(chan, content, buttons=buttons, **options)
+        async def send_button_msg_prop(*args, **kwargs) -> Message:
+            return await self.send_button_msg(*args, **kwargs)
 
-        async def edit_button_msg_prop(
-            message: Message, content: str = "", *, buttons: List[Button] = None, **options
-        ):
-            return await self.edit_button_msg(message, content, buttons=buttons, **options)
+        async def edit_button_msg_prop(*args, **kwargs):
+            return await self.edit_button_msg(*args, **kwargs)
 
-        async def await_button_click_prop(
-            message: Message, func, check=None, timeout: float = None
-        ):
-            return await self.await_button_click(message, func, check, timeout)
+        async def await_button_click_prop(*args, **kwargs):
+            return await self.await_button_click(*args, **kwargs)
 
         TextChannel.send = send_button_msg_prop
         Message.edit = edit_button_msg_prop
