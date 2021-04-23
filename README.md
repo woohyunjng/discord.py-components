@@ -32,5 +32,9 @@ async def on_message(msg):
 bot.run("token")
 ```
 
-# Helps
+## Features
++ Send, Edit button messages
++ Get button click event!
+
+## Helps
 + [Minibox](https://github.com/minibox24) - Button API explanation
