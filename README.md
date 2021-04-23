@@ -15,11 +15,11 @@ from discord import Client
 from discord_buttons import DiscordButton, Button
 
 bot = Client()
-DiscordButton(bot)
+ddb = DiscordButton(bot)
 
 @bot.event
 async def on_message(msg):
-    await msg.channel.send(
+    m = await msg.channel.send(
         "Content",
         buttons=[
             Button(style="blue", label="Blue"),
@@ -27,6 +27,8 @@ async def on_message(msg):
             Button(style="url", label="url", url="https://example.org"),
         ],
     )
+    res = await ddb.wait_for_button_click(m)
+    await msg.channel.send(f'{res.button.label} clicked')
 
 
 bot.run("token")
