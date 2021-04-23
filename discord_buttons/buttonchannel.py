@@ -28,7 +28,7 @@ class ButtonChannel(TextChannel):
             },
         )
 
-    async def send(self, content: str = "", *, buttons: List[Button] = [], options: dict = {}):
+    async def send(self, content: str = "", *, buttons: List[Button] = None, **options):
         data = {
             "content": content,
             "components": (
@@ -50,7 +50,7 @@ class ButtonChannel(TextChannel):
                 if buttons
                 else []
             ),
-            "options": options,
+            **options,
         }
         await self._client.bot.http.request(
             Route("POST", f"/channels/{self._channel.id}/messages"), json=data

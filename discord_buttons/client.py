@@ -11,15 +11,11 @@ class DiscordButton:
         self.bot = bot
 
         async def _send_button_textchannel(
-            child_self, content: str = "", *, buttons: List["Button"] = [], options: dict = {}
+            child_self, content: str = "", *, buttons: List["Button"] = None, **options
         ):
-            if buttons:
-                await self.ButtonChannel(child_self).send(content, buttons=buttons, options=options)
-            else:
-                await child_self.send(content, **options)
+            await self.ButtonChannel(child_self).send(content, buttons=buttons, **options)
 
-        if keyword_only:
-            TextChannel.send = _send_button_textchannel
+        TextChannel.send = _send_button_textchannel
 
     def ButtonChannel(self, channel: TextChannel):
         return ButtonChannel(self, channel)
