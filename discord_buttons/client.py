@@ -1,4 +1,4 @@
-from discord import Client, TextChannel, Message, Embed, AllowedMentions, InvalidArgument
+from discord import Client, TextChannel, Message, Embed, AllowedMentions, InvalidArgument, User
 from discord.ext.commands import Bot, Context as DContext
 from discord.http import Route
 from discord.abc import Messageable
@@ -24,12 +24,12 @@ class DiscordButton:
         async def edit_button_msg_prop(*args, **kwargs):
             return await self.edit_button_msg(*args, **kwargs)
 
-        async def await_button_click_prop(*args, **kwargs):
-            return await self.await_button_click(*args, **kwargs)
+        async def wait_for_button_click_ctx(_s, *args, **kwargs):
+            return await self.wait_for_button_click(*args, **kwargs)
 
         Messageable.send = send_button_msg_prop
         Message.edit = edit_button_msg_prop
-        Message.await_button_click = await_button_click_prop
+        DContext.wait_for_button_click = wait_for_button_click_ctx
 
     async def send_button_msg(
         self,
@@ -133,36 +133,32 @@ class DiscordButton:
             ),
         }
 
-    async def await_button_click(self, message: Message, func, check=None, timeout: float = None):
-        while True:
-            try:
-                res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
-            except TimeoutError:
-                break
+    async def wait_for_button_click(self, message: Message, check=None, timeout: float = None):
+        res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
 
-            if res["t"] != "INTERACTION_CREATE":
-                return None
+        if res["t"] != "INTERACTION_CREATE":
+            return None
 
-            button_id = res["d"]["data"]["custom_id"]
-            resbutton = None
+        button_id = res["d"]["data"]["custom_id"]
+        resbutton = None
 
-            for buttons in res["d"]["message"]["components"]:
-                for button in buttons["components"]:
-                    if button["style"] == 5:
-                        continue
+        for buttons in res["d"]["message"]["components"]:
+            for button in buttons["components"]:
+                if button["style"] == 5:
+                    continue
 
-                    if button["custom_id"] == button_id:
-                        resbutton = button
+                if button["custom_id"] == button_id:
+                    resbutton = button
 
-            ctx = Context(
-                message=message,
-                user=self.bot.get_user(int(res["d"]["member"]["user"]["id"])),
-                button=Button(
-                    style=resbutton["style"],
-                    label=resbutton["label"],
-                    id=resbutton["custom_id"],
-                ),
-                interaction_id=res["d"]["id"],
-                raw_data=res,
-            )
-            await func(ctx)
+        ctx = Context(
+            message=message,
+            user=User(state=self.bot._get_state(), data=res["d"]["member"]["user"]),
+            button=Button(
+                style=resbutton["style"],
+                label=resbutton["label"],
+                id=resbutton["custom_id"],
+            ),
+            interaction_id=res["d"]["id"],
+            raw_data=res,
+        )
+        return ctx
