@@ -1,26 +1,48 @@
-from discord import Client, TextChannel
+from discord import Client, TextChannel, Message
 from discord.ext.commands import Bot
+from discord.http import Route
 
 from typing import Union, List
-
-from .buttonchannel import ButtonChannel
 
 
 class DiscordButton:
     def __init__(self, bot: Union[Client, Bot]):
         self.bot = bot
 
-        async def _send_button_textchannel(
-            child_self, content: str = "", *, buttons: List["Button"] = None, **options
+        async def send_button_prop(
+            chan, content: str = "", *, buttons: List["Button"] = None, **options
         ):
-            await self.ButtonChannel(child_self).send(content, buttons=buttons, **options)
+            return await self.send_button(chan, content, buttons=buttons, **options)
 
-        TextChannel.send = _send_button_textchannel
-
-    def ButtonChannel(self, channel: TextChannel):
-        return ButtonChannel(self, channel)
+        TextChannel.send = send_button_prop
 
     async def send_button(
-        self, channel, content: str = "", *, buttons: List["Button"], options: dict = {}
+        self, channel, content: str = "", *, buttons: List["Button"] = None, **options
     ):
-        await self.ButtonChannel(channel).send(content, buttons=buttons, options=options)
+        data = {
+            "content": content,
+            "components": (
+                [
+                    {
+                        "type": 1,
+                        "components": [
+                            {
+                                "type": 2,
+                                "style": button.style,
+                                "label": button.label,
+                                "custom_id": button.id,
+                                "url": button.url,
+                            }
+                            for button in buttons
+                        ],
+                    }
+                ]
+                if buttons
+                else []
+            ),
+            **options,
+        }
+        data = await self.bot.http.request(
+            Route("POST", f"/channels/{channel.id}/messages"), json=data
+        )
+        return Message(state=self.bot._get_state(), channel=channel, data=data)
