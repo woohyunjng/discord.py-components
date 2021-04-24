@@ -25,7 +25,7 @@ class DiscordButton:
             return await self.edit_button_msg(*args, **kwargs)
 
         async def wait_for_button_click_ctx(_s, *args, **kwargs):
-            return await self.wait_for_button_click(*args, **kwargs)
+            return await self.wait_for_button_click(_s.message, *args, **kwargs)
 
         Messageable.send = send_button_msg_prop
         Message.edit = edit_button_msg_prop
