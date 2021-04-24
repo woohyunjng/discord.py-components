@@ -77,3 +77,5 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
 source_parser = {".md": CommonMarkParser}
+
+autodoc_member_order = "bysource"

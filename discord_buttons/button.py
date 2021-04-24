@@ -9,6 +9,8 @@ __all__ = ("ButtonStyle", "Button")
 
 
 class ButtonStyle:
+    """A class containing button styles"""
+
     blue = 1
     gray = 2
     grey = 2
@@ -18,10 +20,20 @@ class ButtonStyle:
 
     @classmethod
     def randomColor(cls) -> int:
+        """Returns a random number between 1, 5
+
+        :returns: :class:`int`
+        """
+
         return randint(1, cls.red)
 
     @classmethod
     def to_dict(cls) -> dict:
+        """Returns a dict containing style information
+
+        :returns: :class:`dict`
+        """
+
         return {
             "blue": cls.blue,
             "gray": cls.gray,
@@ -32,6 +44,22 @@ class ButtonStyle:
 
 
 class Button:
+    """The button class
+
+    Parameters
+    ----------
+    label: :class:`str`
+        The bot's label
+    style: :class:`style`
+        The bot's style (1 or more and 5 or less)
+    id: :class:`str`
+        The button's id.
+
+        If this was not passed as an argument when initailized, this value is random
+    url: :class:`str`
+        Optional[:class:`str`]: The button's hyperlink.
+    """
+
     __slots__ = ("_style", "_label", "_id", "_url")
 
     def __init__(
@@ -62,6 +90,12 @@ class Button:
             self._id = None
 
     def to_dict(self) -> dict:
+        """
+        Converts the button information required for API request to dict and returns
+
+        :returns: :class:`dict`
+        """
+
         return {
             "type": 2,
             "style": self.style,
@@ -72,18 +106,25 @@ class Button:
 
     @property
     def style(self) -> int:
+        """:class:`int`: The button's style (1 or more and 5 or less)"""
         return self._style
 
     @property
     def label(self) -> str:
+        """:class:`str`: The button's label"""
         return self._label
 
     @property
     def id(self) -> str:
+        """:class:`str`: The button's id."""
         return self._id
 
     @property
-    def url(self) -> str:
+    def url(self) -> Optional[str]:
+        """Optional[:class:`str`]: The button's hyperlink.
+
+        If the button's style is not `5`(URL), this value is `None`
+        """
         return self._url
 
     @label.setter
