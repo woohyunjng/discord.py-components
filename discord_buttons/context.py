@@ -32,7 +32,7 @@ class Context:
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
         The bot
-    client: :class:`DiscordButton`
+    client: :class:`~discord_buttons.DiscordButton`
         The client for discord_buttons
     user: :class:`discord.User`
         The user who clicked the button

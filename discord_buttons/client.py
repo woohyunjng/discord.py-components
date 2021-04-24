@@ -14,7 +14,7 @@ from discord.abc import Messageable
 
 from functools import wraps
 from asyncio import TimeoutError
-from typing import Union, List
+from typing import Union, List, Callable, Awaitable
 from json import dumps
 
 from .button import Button
@@ -25,6 +25,19 @@ __all__ = ("DiscordButton",)
 
 
 class DiscordButton:
+    """discord_buttons client
+
+    Parameters
+    ----------
+    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+        The bot
+
+    Attributes
+    ----------
+    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+        The bot
+    """
+
     def __init__(self, bot: Union[Client, Bot]):
         self.bot = bot
 
@@ -56,6 +69,33 @@ class DiscordButton:
         buttons: List[Button] = None,
         **options,
     ) -> Message:
+        """A function that sends a message with buttons
+
+        :returns: :class:`discord.Message`
+
+        Parameters
+        ----------
+        channel: :class:`discord.Messageable`
+            The channel to send the message
+        content: str
+            The message's content
+        tts: :class:`bool`
+            Indicates if the message should be sent using text-to-speech.
+        embed: :class:`discord.Embed`
+            The rich embed for the content.
+        file: :class:`discord.File`
+            The file to upload.
+        allowed_mentions: :class:`discord.AllowedMentions`
+            Controls the mentions being processed in this message. If this is
+            passed, then the object is merged with :attr:`discord.Client.allowed_mentions`.
+            The merging behaviour only overrides attributes that have been explicitly passed
+            to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
+            If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
+            are used instead.
+        buttons: List[Union[:class:`~discord_buttons.Button`, List[:class:`~discord_buttons.Button`]]]
+            The buttons to send.
+            If this is 2-dimensional array, a array is a line
+        """
         state = self.bot._get_state()
 
         if embed:
@@ -115,6 +155,34 @@ class DiscordButton:
         buttons: List[Button] = None,
         **options,
     ):
+
+        """A function that edits a message with buttons
+
+        :returns: :class:`discord.Message`
+
+        Parameters
+        ----------
+        channel: :class:`discord.Messageable`
+            The channel to send the message
+        content: str
+            The message's content
+        tts: :class:`bool`
+            Indicates if the message should be sent using text-to-speech.
+        embed: :class:`discord.Embed`
+            The rich embed for the content.
+        file: :class:`discord.File`
+            The file to upload.
+        allowed_mentions: :class:`discord.AllowedMentions`
+            Controls the mentions being processed in this message. If this is
+            passed, then the object is merged with :attr:`discord.Client.allowed_mentions`.
+            The merging behaviour only overrides attributes that have been explicitly passed
+            to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
+            If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
+            are used instead.
+        buttons: List[Union[:class:`~discord_buttons.Button`, List[:class:`~discord_buttons.Button`]]]
+            The buttons to send.
+            If this is 2-dimensional array, a array is a line
+        """
         state = self.bot._get_state()
 
         if embed:
@@ -183,7 +251,25 @@ class DiscordButton:
             ),
         }
 
-    async def wait_for_button_click(self, message: Message, check=None, timeout: float = None):
+    async def wait_for_button_click(
+        self,
+        message: Message,
+        check: Callable[[Context], Awaitable[bool]] = None,
+        timeout: float = None,
+    ) -> Context:
+        """A function that waits until a user clicks a button on the message
+
+        :returns: :class:`~discord_buttons.Context`
+
+        Parameters
+        ----------
+        message: :class:`discord.Message`
+            The message
+        check: Optional[Callable[[:class:`Context`], Coroutine[:class:`bool`]]]
+            The wait_for check function
+        timeout: Optional[:class:`float`]
+            The wait_for timeout
+        """
         while True:
             res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
 
