@@ -57,8 +57,9 @@ class DiscordButton:
         **options,
     ) -> Message:
         state = self.bot._get_state()
+
         if embed:
-            embed = [embed.to_dict()]
+            embed = embed.to_dict()
 
         if allowed_mentions:
             if state.allowed_mentions:
@@ -115,6 +116,7 @@ class DiscordButton:
         **options,
     ):
         state = self.bot._get_state()
+
         if embed:
             embed = embed.to_dict()
 

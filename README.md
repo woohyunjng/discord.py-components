@@ -12,7 +12,7 @@ pip install --upgrade discord_buttons
 ## Example
 ```python
 from discord import Client
-from discord_buttons import DiscordButton, Button, ButtonStyle
+from discord_buttons import DiscordButton, Button, ButtonStyle, InteractionType
 
 bot = Client()
 ddb = DiscordButton(bot)
@@ -27,8 +27,12 @@ async def on_message(msg):
             Button(style=ButtonStyle.URL, label="url", url="https://example.org"),
         ],
     )
+
     res = await ddb.wait_for_button_click(m)
-    await msg.channel.send(f'{res.button.label} clicked')
+    await res.respond(
+        type=InteractionType.ChannelMessageWithSource,
+        content=f'{res.button.label} clicked'
+    )
 
 
 bot.run("token")

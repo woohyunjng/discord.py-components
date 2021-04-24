@@ -18,7 +18,7 @@ class ButtonStyle:
 
     @classmethod
     def randomColor(cls) -> int:
-        return randint(1, 4)
+        return randint(1, cls.red)
 
     @classmethod
     def to_dict(cls) -> dict:

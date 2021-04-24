@@ -4,7 +4,7 @@ from discord.http import Route
 
 from .button import Button
 
-from typing import Union
+from typing import Union, List
 
 
 __all__ = ("Context",)
@@ -52,16 +52,22 @@ class Context:
         self,
         *,
         type: int,
-        content: str,
+        content: str = None,
         embed: Embed = None,
+        embeds: List[Embed] = [],
         allowed_mentions: AllowedMentions = None,
         tts: bool = False,
         flags: int = 64,
     ):
         state = self.bot._get_state()
 
-        if embed:
-            embed = [embed.to_dict()]
+        if embed and embeds:
+            embeds.append(embed)
+        elif embed:
+            embeds = embed
+
+        if embeds:
+            embeds = list(map(lambda x: x.to_dict(), embeds))
 
         if allowed_mentions:
             if state.allowed_mentions:
@@ -73,7 +79,7 @@ class Context:
 
         data = {
             "content": content,
-            "embeds": embed,
+            "embeds": embeds,
             "allowed_mentions": allowed_mentions,
             "tts": tts,
             "flags": flags,
