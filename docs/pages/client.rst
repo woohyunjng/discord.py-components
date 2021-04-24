@@ -1,6 +1,6 @@
-Button
+DiscordButton
 ======================================
 
-.. automodule:: discord_buttons.button
+.. automodule:: discord_buttons.client
     :members:
     :undoc-members:

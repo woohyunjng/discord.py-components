@@ -123,7 +123,8 @@ class Button:
     def url(self) -> Optional[str]:
         """Optional[:class:`str`]: The button's hyperlink.
 
-        If the button's style is not `5`(URL), this value is `None`
+        .. note::
+            If the button's style is not `5`(URL), this value is `None`
         """
         return self._url
 

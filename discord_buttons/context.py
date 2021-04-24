@@ -11,18 +11,46 @@ __all__ = ("Context",)
 
 
 class Context:
-    __slots__ = (
-        "bot",
-        "client",
-        "user",
-        "button",
-        "raw_data",
-        "message",
-        "channel",
-        "guild",
-        "interaction_id",
-        "interaction_token",
-    )
+    """A class which contains a lot of information about button click event
+
+    Parameters
+    ----------
+    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+        The bot
+    client: :class:`DiscordButton`
+        The client for discord_buttons
+    user: :class:`discord.User`
+        The user who clicked the button
+    button: :class:`discord_buttons.Button`
+        The button which was clicked
+    raw_data: :class:`dict`
+        JSON which was sent by discord api
+    message: :class:`discord.Message`
+        The button's message
+
+    Attributes
+    ----------
+    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+        The bot
+    client: :class:`DiscordButton`
+        The client for discord_buttons
+    user: :class:`discord.User`
+        The user who clicked the button
+    button: :class:`discord_buttons.Button`
+        The button which was clicked
+    raw_data: :class:`dict`
+        JSON which was sent by discord api
+    message: :class:`discord.Message`
+        The button's message
+    channel: :class:`discord.abc.Messageable`
+        The button's message's channel
+    guild: :class:`discord.Guild`
+        The button's message's guild
+    interaction_id: :class:`str`
+        The interaction's id
+    interaction_token: :class:`str`
+        The interaction's token
+    """
 
     def __init__(
         self,
@@ -58,7 +86,31 @@ class Context:
         allowed_mentions: AllowedMentions = None,
         tts: bool = False,
         flags: int = 64,
-    ):
+    ) -> None:
+        """Function to send response to discord
+
+        .. note::
+            If you don't use this function after using `wait_for_button_click`, a interaction error will be raised
+
+        :returns: :class:`None`
+
+        Parameters
+        ----------
+        type: :class:`int`
+            The interaction's type. (4 or more and 6 or less)
+        content: Optional[:class:`str`]
+            The response message's content
+        embed: Optional[:class:`discord.Embed`]
+            The response message's embed
+        embeds: Optional[List[:class:`discord.Embed`]]
+            The response message's embeds
+        allowed_mentions: Optional[:class:`discord.AllowedMentions`]
+            The response message's allowed mentions
+        tts: Optional[:class:`bool`]
+            The response message's tts (default False)
+        flags: Optional[:class:`int`]
+            The response message's flags (default 64)
+        """
         state = self.bot._get_state()
 
         if embed and embeds:
