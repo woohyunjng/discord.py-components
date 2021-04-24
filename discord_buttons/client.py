@@ -11,7 +11,7 @@ from .button import Button
 from .context import Context
 
 
-__all__ = "DiscordButton"
+__all__ = ("DiscordButton",)
 
 
 class DiscordButton:
