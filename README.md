@@ -1,5 +1,5 @@
 # discord.py-buttons
-[![Build Status](https://travis-ci.com/kiki7000/discord.py-buttons.svg?branch=main)](https://travis-ci.com/kiki7000/discord.py-buttons)
+[![Build Status](https://travis-ci.com/kiki7000/discord.py-buttons.svg?branch=master)](https://travis-ci.com/kiki7000/discord.py-buttons)
 [![PyPI version](https://badge.fury.io/py/discord-buttons.svg)](https://badge.fury.io/py/discord-buttons)
 
 unofficial library for discord buttons(on development)
