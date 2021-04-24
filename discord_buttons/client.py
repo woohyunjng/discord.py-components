@@ -1,4 +1,13 @@
-from discord import Client, TextChannel, Message, Embed, AllowedMentions, InvalidArgument, User
+from discord import (
+    Client,
+    TextChannel,
+    Message,
+    Embed,
+    AllowedMentions,
+    InvalidArgument,
+    User,
+    File,
+)
 from discord.ext.commands import Bot, Context as DContext
 from discord.http import Route
 from discord.abc import Messageable
@@ -6,6 +15,7 @@ from discord.abc import Messageable
 from functools import wraps
 from asyncio import TimeoutError
 from typing import Union, List
+from json import dumps
 
 from .button import Button
 from .context import Context
@@ -41,13 +51,14 @@ class DiscordButton:
         *,
         tts: bool = False,
         embed: Embed = None,
+        file: File = None,
         allowed_mentions: AllowedMentions = None,
         buttons: List[Button] = None,
         **options,
     ) -> Message:
         state = self.bot._get_state()
         if embed:
-            embed = embed.to_dict()
+            embed = [embed.to_dict()]
 
         if allowed_mentions:
             if state.allowed_mentions:
@@ -65,9 +76,30 @@ class DiscordButton:
             "allowed_mentions": allowed_mentions,
             "tts": tts,
         }
-        data = await self.bot.http.request(
-            Route("POST", f"/channels/{channel.id}/messages"), json=data
-        )
+        if file:
+            try:
+                await self.bot.http.request(
+                    Route("POST", f"/channels/{channel.id}/messages"),
+                    form=[
+                        {
+                            "name": "payload_json",
+                            "value": dumps(data, separators=(",", ":"), ensure_ascii=True),
+                        },
+                        {
+                            "name": "file",
+                            "value": file.fp,
+                            "filename": file.filename,
+                            "content_type": "application/octet-stream",
+                        },
+                    ],
+                    files=[file],
+                )
+            finally:
+                file.close()
+        else:
+            data = await self.bot.http.request(
+                Route("POST", f"/channels/{channel.id}/messages"), json=data
+            )
         return Message(state=state, channel=channel, data=data)
 
     async def edit_button_msg(
@@ -77,6 +109,7 @@ class DiscordButton:
         *,
         tts: bool = False,
         embed: Embed = None,
+        file: File = None,
         allowed_mentions: AllowedMentions = None,
         buttons: List[Button] = None,
         **options,
@@ -101,9 +134,30 @@ class DiscordButton:
             "allowed_mentions": allowed_mentions,
             "tts": tts,
         }
-        await self.bot.http.request(
-            Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
-        )
+        if file:
+            try:
+                await self.bot.http.request(
+                    Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"),
+                    form=[
+                        {
+                            "name": "payload_json",
+                            "value": dumps(data, separators=(",", ":"), ensure_ascii=True),
+                        },
+                        {
+                            "name": "file",
+                            "value": file.fp,
+                            "filename": file.filename,
+                            "content_type": "application/octet-stream",
+                        },
+                    ],
+                    files=[file],
+                )
+            finally:
+                file.close()
+        else:
+            await self.bot.http.request(
+                Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
+            )
 
     def _get_buttons_json(self, buttons: List[Union[Button, List[Button]]] = None) -> dict:
         if not buttons:
