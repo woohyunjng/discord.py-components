@@ -134,10 +134,15 @@ class DiscordButton:
         }
 
     async def wait_for_button_click(self, message: Message, check=None, timeout: float = None):
-        res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
+        while True:
+            res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
 
-        if res["t"] != "INTERACTION_CREATE":
-            return None
+            if res["t"] != "INTERACTION_CREATE":
+                continue
+
+            if message.id != int(res["d"]["message"]["id"]):
+                continue
+            break
 
         button_id = res["d"]["data"]["custom_id"]
         resbutton = None
@@ -149,7 +154,6 @@ class DiscordButton:
 
                 if button["custom_id"] == button_id:
                     resbutton = button
-
         ctx = Context(
             bot=self.bot,
             client=self,
