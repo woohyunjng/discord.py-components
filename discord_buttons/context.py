@@ -1,4 +1,4 @@
-from discord import User, Message, Client, Embed, AllowedMentions
+from discord import User, Message, Client, Embed, AllowedMentions, InvalidArgument
 from discord.ext.commands import Bot
 from discord.http import Route
 
@@ -66,6 +66,8 @@ class Context:
         elif embed:
             embeds = embed
 
+        if len(embeds) > 0:
+            raise InvalidArgument("Do not provide more than 10 embeds")
         if embeds:
             embeds = list(map(lambda x: x.to_dict(), embeds))
 
