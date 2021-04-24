@@ -7,6 +7,8 @@ __all__ = ("ButtonStyle", "Button")
 
 
 class ButtonStyle:
+    __slots__ = ("blue", "gray", "grey", "green", "red", "URL")
+
     blue = 1
     gray = 2
     grey = 2
@@ -30,6 +32,8 @@ class ButtonStyle:
 
 
 class Button:
+    __slots__ = ("style", "label", "id", "url")
+
     def __init__(
         self, *, label: str, style: int = 1, id: Optional[str] = None, url: Optional[str] = None
     ):

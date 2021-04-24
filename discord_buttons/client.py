@@ -160,15 +160,13 @@ class DiscordButton:
         ctx = Context(
             bot=self.bot,
             client=self,
-            message=message,
             user=User(state=self.bot._get_state(), data=res["d"]["member"]["user"]),
             button=Button(
                 style=resbutton["style"],
                 label=resbutton["label"],
                 id=resbutton["custom_id"],
             ),
-            interaction_id=res["d"]["id"],
             raw_data=res,
-            interaction_token=res["d"]["token"],
+            message=message,
         )
         return ctx

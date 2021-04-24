@@ -11,27 +11,42 @@ __all__ = "Context"
 
 
 class Context:
+    __slots__ = (
+        "bot",
+        "client",
+        "user",
+        "button",
+        "raw_data",
+        "message",
+        "channel",
+        "guild",
+        "interaction_id",
+        "interaction_token",
+    )
+
     def __init__(
         self,
         *,
         bot: Union[Client, Bot],
         client: "DiscordButton",
-        message: Message,
         user: User,
         button: Button,
-        interaction_id: str,
         raw_data: dict,
-        interaction_token: str,
+        message: Message,
     ):
         self.bot = bot
-        self.message = message
+        self.client = client
         self.user = user
+
         self.button = button
-        self.interaction_id = interaction_id
         self.raw_data = raw_data
+
+        self.message = message
         self.channel = message.channel
         self.guild = message.guild
-        self.interaction_token = interaction_token
+
+        self.interaction_id = raw_data["d"]["id"]
+        self.interaction_token = raw_data["d"]["token"]
 
     async def respond(self, *, type: int, data: dict = {}):
         await self.bot.http.request(
