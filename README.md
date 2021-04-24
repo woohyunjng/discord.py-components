@@ -41,3 +41,4 @@ bot.run("token")
 
 ## Helps
 + [Minibox](https://github.com/minibox24) - Button API explanation
++ [Lapis](https://github.com/Lapis0875) - Told me how to replace a property
