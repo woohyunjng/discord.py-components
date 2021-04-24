@@ -1,25 +1,36 @@
 from typing import Union, Optional
 from uuid import uuid1
+from random import randint
+
+
+class ButtonStyle:
+    blue = 1
+    gray = 2
+    grey = 2
+    green = 3
+    red = 4
+    URL = 5
+
+    @classmethod
+    def randomColor(cls) -> int:
+        return randint(1, 4)
+
+    @classmethod
+    def to_dict(cls) -> dict:
+        return {
+            "blue": cls.blue,
+            "gray": cls.gray,
+            "green": cls.green,
+            "red": cls.red,
+            "URL": cls.URL,
+        }
 
 
 class Button:
     def __init__(
-        self,
-        *,
-        style: Union["blue", "gray", "green", "red", "url", int],
-        label: str,
-        id: Optional[str] = None,
-        url: Optional[str] = None
+        self, *, label: str, style: int = 1, id: Optional[str] = None, url: Optional[str] = None
     ):
-        if style:
-            self.style = (
-                {"blue": 1, "gray": 2, "green": 3, "red": 4, "url": 5}[style]
-                if isinstance(style, str)
-                else style
-            )
-        else:
-            self.style = 1
-
+        self.style = style
         self.label = label
         if url:
             self.id = None
