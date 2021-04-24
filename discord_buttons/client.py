@@ -107,7 +107,7 @@ class DiscordButton:
 
     def _get_buttons_json(self, buttons: List[Union[Button, List[Button]]] = None) -> dict:
         if not buttons:
-            return {"components": []}
+            return {}
 
         if isinstance(buttons[0], Button):
             buttons = [buttons]
@@ -118,16 +118,7 @@ class DiscordButton:
                 [
                     {
                         "type": 1,
-                        "components": [
-                            {
-                                "type": 2,
-                                "style": button.style,
-                                "label": button.label,
-                                "custom_id": button.id,
-                                "url": button.url,
-                            }
-                            for button in buttons
-                        ],
+                        "components": [button.to_dict() for button in buttons],
                     }
                     for buttons in lines
                 ]
