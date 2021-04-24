@@ -3,6 +3,9 @@ from uuid import uuid1
 from random import randint
 
 
+__all__ = ("ButtonStyle", "Button")
+
+
 class ButtonStyle:
     blue = 1
     gray = 2

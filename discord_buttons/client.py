@@ -11,6 +11,9 @@ from .button import Button
 from .context import Context
 
 
+__all__ = "DiscordButton"
+
+
 class DiscordButton:
     def __init__(self, bot: Union[Client, Bot]):
         self.bot = bot

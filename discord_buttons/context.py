@@ -7,6 +7,9 @@ from .button import Button
 from typing import Union
 
 
+__all__ = "Context"
+
+
 class Context:
     def __init__(
         self,
