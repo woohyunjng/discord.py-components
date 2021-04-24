@@ -31,6 +31,9 @@ class DiscordButton:
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
         The bot
+    change_discord_methods: :class:`bool`:
+        Whether to change the methods of the discord module
+        If this is enabled, you can just use `await <Messageable>.send`, `await <Context>.send` as `await <DiscordButton>.send_button_msg`
 
     Attributes
     ----------
@@ -38,8 +41,13 @@ class DiscordButton:
         The bot
     """
 
-    def __init__(self, bot: Union[Client, Bot]):
+    def __init__(self, bot: Union[Client, Bot], change_discord_methods: bool = True):
         self.bot = bot
+        if change_discord_methods:
+            self.change_discord_methods()
+
+    def change_discord_methods(self):
+        """A function that change the methods of the discord module"""
 
         async def send_button_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
             if isinstance(ctxorchannel, DContext):
