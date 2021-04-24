@@ -7,8 +7,6 @@ __all__ = ("ButtonStyle", "Button")
 
 
 class ButtonStyle:
-    __slots__ = ("blue", "gray", "grey", "green", "red", "URL")
-
     blue = 1
     gray = 2
     grey = 2
