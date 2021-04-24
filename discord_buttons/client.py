@@ -24,8 +24,8 @@ class DiscordButton:
         async def edit_button_msg_prop(*args, **kwargs):
             return await self.edit_button_msg(*args, **kwargs)
 
-        async def wait_for_button_click_ctx(_s, *args, **kwargs):
-            return await self.wait_for_button_click(_s.message, *args, **kwargs)
+        async def wait_for_button_click_ctx(ctx, *args, **kwargs):
+            return await self.wait_for_button_click(*args, **kwargs)
 
         Messageable.send = send_button_msg_prop
         Message.edit = edit_button_msg_prop
@@ -151,6 +151,8 @@ class DiscordButton:
                     resbutton = button
 
         ctx = Context(
+            bot=self.bot,
+            client=self,
             message=message,
             user=User(state=self.bot._get_state(), data=res["d"]["member"]["user"]),
             button=Button(
@@ -160,5 +162,6 @@ class DiscordButton:
             ),
             interaction_id=res["d"]["id"],
             raw_data=res,
+            interaction_token=res["d"]["token"],
         )
         return ctx
