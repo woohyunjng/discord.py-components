@@ -37,6 +37,7 @@ bot.run("token")
 ## Features
 + Send, Edit button messages
 + Get button click event!
++ Supports discord.ext.commands
 
 ## Helps
 + [Minibox](https://github.com/minibox24) - Button API explanation
