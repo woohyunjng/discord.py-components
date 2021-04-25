@@ -3,7 +3,7 @@ from discord.ext.commands import Bot
 from discord.http import Route
 
 from .button import Button
-from .interaction import InteractionType
+from .interaction import InteractionType, FlagsType
 
 from typing import Union, List
 
@@ -86,7 +86,7 @@ class Context:
         embeds: List[Embed] = [],
         allowed_mentions: AllowedMentions = None,
         tts: bool = False,
-        flags: int = 64,
+        flags: int = FlagsType.Ephemeral,
     ) -> None:
         """Function to send response to discord
 
