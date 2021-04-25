@@ -272,7 +272,7 @@ class DiscordButton:
 
         Parameters
         ----------
-        message: :class:`discord_buttons.ButtonMessage`
+        message: :class:`~discord_buttons.ButtonMessage`
             The message
         check: Optional[Callable[[:class:`Context`], Coroutine[:class:`bool`]]]
             The wait_for check function
@@ -313,3 +313,44 @@ class DiscordButton:
             message=message,
         )
         return ctx
+
+    async def fetch_button_message(self, message: Message) -> ButtonMessage:
+        """Converts a message class to a ButtonMessage class
+
+        :returns: :class:`~discord_butotns.ButtonMessage`
+
+        Parameters
+        ----------
+        message: :class:`discord.Message`
+            The message to convert
+        """
+
+        res = await self.bot.http.request(
+            Route("GET", f"/channels/{message.channel.id}/messages/{message.id}")
+        )
+        buttons = []
+
+        for i in res["components"]:
+            if i["type"] == 2:
+                r = {}
+                if "custom_id" in i.keys():
+                    r["id"] = i["custom_id"]
+                if "url" in i.keys():
+                    r["url"] = i["url"]
+                buttons.append(Button(style=i["style"], label=i["label"], **r))
+                continue
+
+            for j in i["components"]:
+                if j["type"] != 2:
+                    continue
+
+                r = {}
+                if "custom_id" in j.keys():
+                    r["id"] = j["custom_id"]
+                if "url" in j.keys():
+                    r["url"] = j["url"]
+                buttons.append(Button(style=j["style"], label=j["label"], **r))
+
+        return ButtonMessage(
+            channel=message.channel, state=self.bot._get_state(), data=res, buttons=buttons
+        )
