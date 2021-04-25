@@ -121,7 +121,6 @@ class Button:
                 if self.emoji.animated:
                     emojidata["animated"] = True
             data["emoji"] = emojidata
-        print(data)
 
         return data
 
