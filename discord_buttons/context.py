@@ -3,6 +3,7 @@ from discord.ext.commands import Bot
 from discord.http import Route
 
 from .button import Button
+from .interaction import InteractionType
 
 from typing import Union, List
 
@@ -79,7 +80,7 @@ class Context:
     async def respond(
         self,
         *,
-        type: int,
+        type: int = InteractionType.IgnoredChannelMessageWithSource,
         content: str = None,
         embed: Embed = None,
         embeds: List[Embed] = [],
@@ -98,6 +99,7 @@ class Context:
         ----------
         type: :class:`int`
             The interaction's type. (4 or more and 6 or less)
+            Default 6 (InteractionType.IgnoredChannelMessageWithSource)
         content: Optional[:class:`str`]
             The response message's content
         embed: Optional[:class:`discord.Embed`]
