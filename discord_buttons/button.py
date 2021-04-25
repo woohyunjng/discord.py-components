@@ -57,10 +57,12 @@ class Button:
 
         If this was not passed as an argument when initailized, this value is random
     url: :class:`str`
-        Optional[:class:`str`]: The button's hyperlink.
+        The button's hyperlink.
+    disabled: :class:`bool`
+        bool: If the buttons is disabled
     """
 
-    __slots__ = ("_style", "_label", "_id", "_url")
+    __slots__ = ("_style", "_label", "_id", "_url", "_disabled")
 
     def __init__(
         self,
@@ -69,6 +71,7 @@ class Button:
         style: int = ButtonStyle.gray,
         id: Optional[str] = None,
         url: Optional[str] = None,
+        disabled: bool = False,
     ):
         if style == ButtonStyle.URL and not url:
             raise InvalidArgument("You must provide a URL when the style is URL")
@@ -83,6 +86,7 @@ class Button:
         self._style = style
         self._label = label
         self._url = url
+        self._disabled = disabled
 
         if not self.style == ButtonStyle.URL:
             self._id = id or str(uuid1())
@@ -102,6 +106,7 @@ class Button:
             "label": self.label,
             "custom_id": self.id,
             "url": self.url if self.style == ButtonStyle.URL else None,
+            "disabled": self.disabled,
         }
 
     @property
@@ -128,6 +133,11 @@ class Button:
         """
         return self._url
 
+    @property
+    def disabled(self) -> bool:
+        """Optional[:class:`str`]: If the buttons is disabled"""
+        return self._disabled
+
     @label.setter
     def label(self, value: str):
         if not len(value):
@@ -148,6 +158,10 @@ class Button:
             raise InvalidArgument("button style is URL")
 
         self._id = id
+
+    @disabled.setter
+    def disabled(self, value: bool):
+        self._disabled = value
 
     def __repr__(self) -> str:
         id_st = f"id='{self.id}'" if self.id else ""
