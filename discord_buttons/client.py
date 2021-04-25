@@ -19,6 +19,7 @@ from json import dumps
 
 from .button import Button
 from .context import Context
+from .message import ButtonMessage
 
 
 __all__ = ("DiscordButton",)
@@ -149,11 +150,11 @@ class DiscordButton:
             data = await self.bot.http.request(
                 Route("POST", f"/channels/{channel.id}/messages"), json=data
             )
-        return Message(state=state, channel=channel, data=data)
+        return ButtonMessage(buttons=buttons, state=state, channel=channel, data=data)
 
     async def edit_button_msg(
         self,
-        message: Message,
+        message: ButtonMessage,
         content: str = "",
         *,
         tts: bool = False,
@@ -166,7 +167,7 @@ class DiscordButton:
 
         """A function that edits a message with buttons
 
-        :returns: :class:`discord.Message`
+        :returns: :class:`discord_buttons.ButtonMessage`
 
         Parameters
         ----------
@@ -261,7 +262,7 @@ class DiscordButton:
 
     async def wait_for_button_click(
         self,
-        message: Message,
+        message: ButtonMessage,
         check: Callable[[Context], Awaitable[bool]] = None,
         timeout: float = None,
     ) -> Context:
@@ -271,7 +272,7 @@ class DiscordButton:
 
         Parameters
         ----------
-        message: :class:`discord.Message`
+        message: :class:`discord_buttons.ButtonMessage`
             The message
         check: Optional[Callable[[:class:`Context`], Coroutine[:class:`bool`]]]
             The wait_for check function
@@ -298,6 +299,7 @@ class DiscordButton:
 
                 if button["custom_id"] == button_id:
                     resbutton = button
+
         ctx = Context(
             bot=self.bot,
             client=self,

@@ -3,6 +3,7 @@ from discord.ext.commands import Bot
 from discord.http import Route
 
 from .button import Button
+from .message import ButtonMessage
 from .interaction import InteractionType, FlagsType
 
 from typing import Union, List
@@ -22,7 +23,7 @@ class Context:
         The client for discord_buttons
     user: :class:`discord.User`
         The user who clicked the button
-    button: :class:`discord_buttons.Button`
+    button: :class:`discord_buttons.ButtonMessage`
         The button which was clicked
     raw_data: :class:`dict`
         JSON which was sent by discord api
@@ -41,7 +42,7 @@ class Context:
         The button which was clicked
     raw_data: :class:`dict`
         JSON which was sent by discord api
-    message: :class:`discord.Message`
+    message: :class:`discord_buttons.ButtonMessage`
         The button's message
     channel: :class:`discord.abc.Messageable`
         The button's message's channel
@@ -59,7 +60,7 @@ class Context:
         bot: Union[Client, Bot],
         client: "DiscordButton",
         user: User,
-        button: Button,
+        button: ButtonMessage,
         raw_data: dict,
         message: Message,
     ):
