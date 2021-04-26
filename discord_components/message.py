@@ -1,21 +1,20 @@
 from discord import Message
-
 from typing import List
 
 from .button import Button
 
 
-class ButtonMessage(Message):
-    """A message with buttons
+class ComponentMessage(Message):
+    """A message with components
 
     Parameters
     ----------
-    buttons: List[:class:`discord_buttons.Button`]
+    buttons: List[:class:`~discord_components.Button`]
         The message's buttons
 
     Attributes
     ----------
-    buttons: List[:class:`discord_buttons.Button`]
+    buttons: List[:class:`~discord_components.Button`]
         The message's buttons
     """
 

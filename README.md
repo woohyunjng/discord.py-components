@@ -1,22 +1,22 @@
-# discord.py-buttons
-[![Build Status](https://travis-ci.com/kiki7000/discord.py-buttons.svg?branch=master)](https://travis-ci.com/kiki7000/discord.py-buttons)
-[![PyPI version](https://badge.fury.io/py/discord-buttons.svg)](https://badge.fury.io/py/discord-buttons)
-[![Documentation Status](https://readthedocs.org/projects/discord-buttons)](https://discord-buttons.readthedocs.io/)
+# discord.py-components
+[![Build Status](https://travis-ci.com/kiki7000/discord.py-components.svg?branch=master)](https://travis-ci.com/kiki7000/discord.py-components)
+[![PyPI version](https://badge.fury.io/py/discord-components.svg)](https://badge.fury.io/py/discord-components)
+[![Documentation Status](https://readthedocs.org/projects/discord-components)](https://discord-components.readthedocs.io/)
 
-unofficial library for discord buttons(on development)
+unofficial library for discord components(on development)
 
 ## Install
 ```sh
-pip install --upgrade discord_buttons
+pip install --upgrade discord_components
 ```
 
 ## Example
 ```python
 from discord import Client
-from discord_buttons import DiscordButton, Button, ButtonStyle, InteractionType
+from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 bot = Client()
-ddb = DiscordButton(bot)
+ddb = DiscordComponents(bot)
 
 @bot.event
 async def on_message(msg):
@@ -40,11 +40,11 @@ bot.run("token")
 ```
 
 ## Docs
-[The docs](https://discord-buttons.readthedocs.io/) can contain lot of spelling mistakes, grammar errors so if there is a problem please create an issue!
+[The docs](https://discord-components.readthedocs.io/) can contain lot of spelling mistakes, grammar errors so if there is a problem please create an issue!
 
 ## Features
-+ Send, Edit button messages
-+ Get button click event!
++ Send, Edit discord components
++ Get components interact event!
 + Supports discord.ext.commands
 
 ## Helps

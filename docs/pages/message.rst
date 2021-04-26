@@ -1,7 +1,7 @@
-ButtonMessage
+ComponentMessage
 ======================================
 
-.. automodule:: discord_buttons.message
+.. automodule:: discord_components.message
     :members:
     :undoc-members:
     :show-inheritance:

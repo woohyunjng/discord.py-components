@@ -1,6 +1,6 @@
 Context
 ======================================
 
-.. automodule:: discord_buttons.context
+.. automodule:: discord_components.context
     :members:
     :undoc-members:

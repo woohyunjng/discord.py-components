@@ -1,20 +1,20 @@
-discord_buttons
+discord_components
 ==================================
 
-unofficial library for discord buttons(on development)
-`This <https://github.com/kiki7000/discord.py-buttons>`_ is the github repository
+unofficial library for discord components(on development)
+`This <https://github.com/kiki7000/discord.py-components>`_ is the github repository
 
 
 Install
 --------
 
-`pip install --upgrade discord_buttons`
+`pip install --upgrade discord_components`
 
 Features
 --------
 
-- Send, Edit button messages
-- Get button click event!
+- Send, Edit discord components
+- Get components interact event!
 - Supports discord.ext.commands
 
 Examples
@@ -23,10 +23,10 @@ Examples
 .. code:: python
 
     from discord import Client
-    from discord_buttons import DiscordButton, Button, ButtonStyle, InteractionType
+    from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
     bot = Client()
-    ddb = DiscordButton(bot)
+    ddb = DiscordComponents(bot)
 
     @bot.event
     async def on_message(msg):

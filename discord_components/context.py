@@ -3,7 +3,7 @@ from discord.ext.commands import Bot
 from discord.http import Route
 
 from .button import Button
-from .message import ButtonMessage
+from .message import ComponentMessage
 from .interaction import InteractionType, FlagsType
 
 from typing import Union, List
@@ -13,41 +13,41 @@ __all__ = ("Context",)
 
 
 class Context:
-    """A class which contains a lot of information about button click event
+    """A class which contains a lot of information about components interact event
 
     Parameters
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
         The bot
-    client: :class:`DiscordButton`
-        The client for discord_buttons
+    client: :class:`~discord_components.DiscordComponents`
+        The client for discord_components
     user: :class:`discord.User`
-        The user who clicked the button
-    button: :class:`discord_buttons.ButtonMessage`
-        The button which was clicked
+        The user which interacted with the component
+    component: :class:`~discord_components.Component`
+        The component which was interacted
     raw_data: :class:`dict`
         JSON which was sent by discord api
-    message: :class:`discord.Message`
-        The button's message
+    message: :class:`~discord_components.ComponentMessage`
+        The component's message
 
     Attributes
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
         The bot
-    client: :class:`~discord_buttons.DiscordButton`
-        The client for discord_buttons
+    client: :class:`~discord_components.DiscordComponent`
+        The client for discord_components
     user: :class:`discord.User`
-        The user who clicked the button
-    button: :class:`discord_buttons.Button`
-        The button which was clicked
+        The user which interacted with the component
+    component: :class:`~discord_components.Component`
+        The component which was interacted
     raw_data: :class:`dict`
         JSON which was sent by discord api
-    message: :class:`discord_buttons.ButtonMessage`
-        The button's message
+    message: :class:`discord_components.ComponentMessage`
+        The component's message
     channel: :class:`discord.abc.Messageable`
-        The button's message's channel
+        The component's message's channel
     guild: :class:`discord.Guild`
-        The button's message's guild
+        The component's message's guild
     interaction_id: :class:`str`
         The interaction's id
     interaction_token: :class:`str`
@@ -58,9 +58,9 @@ class Context:
         self,
         *,
         bot: Union[Client, Bot],
-        client: "DiscordButton",
+        client: "DiscordComponents",
         user: User,
-        button: ButtonMessage,
+        button: ComponentMessage,
         raw_data: dict,
         message: Message,
     ):

@@ -19,22 +19,22 @@ from json import dumps
 
 from .button import Button
 from .context import Context
-from .message import ButtonMessage
+from .message import ComponentMessage
 
 
-__all__ = ("DiscordButton",)
+__all__ = ("DiscordComponents",)
 
 
-class DiscordButton:
-    """discord_buttons client
+class DiscordComponents:
+    """discord_components client
 
     Parameters
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
         The bot
-    change_discord_methods: :class:`bool`:
+    change_discord_methods: :class:`bool`
         Whether to change the methods of the discord module
-        If this is enabled, you can just use `await <Messageable>.send`, `await <Context>.send` as `await <DiscordButton>.send_button_msg`
+        If this is enabled, you can just use :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordButton>.send_button_msg`, :class:`await <Message>.edit`, as :class:`await <DiscordComponents>.edit_component_msg`
 
     Attributes
     ----------
@@ -50,23 +50,23 @@ class DiscordButton:
     def change_discord_methods(self):
         """A function that change the methods of the discord module"""
 
-        async def send_button_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
+        async def send_component_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
             if isinstance(ctxorchannel, DContext):
-                return await self.send_button_msg(ctxorchannel.channel, *args, **kwargs)
+                return await self.send_component_msg(ctxorchannel.channel, *args, **kwargs)
             else:
-                return await self.send_button_msg(ctxorchannel, *args, **kwargs)
+                return await self.send_component_msg(ctxorchannel, *args, **kwargs)
 
-        async def edit_button_msg_prop(*args, **kwargs):
-            return await self.edit_button_msg(*args, **kwargs)
+        async def edit_component_msg_prop(*args, **kwargs):
+            return await self.edit_component_msg(*args, **kwargs)
 
         async def wait_for_button_click_ctx(ctx, *args, **kwargs):
             return await self.wait_for_button_click(*args, **kwargs)
 
-        Messageable.send = send_button_msg_prop
-        Message.edit = edit_button_msg_prop
+        Messageable.send = send_component_msg_prop
+        Message.edit = edit_component_msg_prop
         DContext.wait_for_button_click = wait_for_button_click_ctx
 
-    async def send_button_msg(
+    async def send_component_msg(
         self,
         channel: TextChannel,
         content: str = "",
@@ -78,7 +78,7 @@ class DiscordButton:
         buttons: List[Button] = None,
         **options,
     ) -> Message:
-        """A function that sends a message with buttons
+        """A function that sends a message with components
 
         :returns: :class:`discord.Message`
 
@@ -101,7 +101,7 @@ class DiscordButton:
             to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
-        buttons: List[Union[:class:`~discord_buttons.Button`, List[:class:`~discord_buttons.Button`]]]
+        buttons: List[Union[:class:`~discord_components.Button`, List[:class:`~discord_components.Button`]]]
             The buttons to send.
             If this is 2-dimensional array, a array is a line
         """
@@ -150,11 +150,11 @@ class DiscordButton:
             data = await self.bot.http.request(
                 Route("POST", f"/channels/{channel.id}/messages"), json=data
             )
-        return ButtonMessage(buttons=buttons, state=state, channel=channel, data=data)
+        return ComponentMessage(buttons=buttons, state=state, channel=channel, data=data)
 
-    async def edit_button_msg(
+    async def edit_component_msg(
         self,
-        message: ButtonMessage,
+        message: ComponentMessage,
         content: str = "",
         *,
         tts: bool = False,
@@ -165,9 +165,9 @@ class DiscordButton:
         **options,
     ):
 
-        """A function that edits a message with buttons
+        """A function that edits a message with components
 
-        :returns: :class:`discord_buttons.ButtonMessage`
+        :returns: :class:`discord_components.ComponentMessage`
 
         Parameters
         ----------
@@ -188,9 +188,9 @@ class DiscordButton:
             to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
-        buttons: List[Union[:class:`~discord_buttons.Button`, List[:class:`~discord_buttons.Button`]]]
+        buttons: List[Union[:class:`~discord_components.Button`, List[:class:`~discord_components.Button`]]]
             The buttons to send.
-            If this is 2-dimensional array, a array is a line
+            If this is 2-dimensional array, a array is a component group
         """
         state = self.bot._get_state()
 
@@ -262,17 +262,17 @@ class DiscordButton:
 
     async def wait_for_button_click(
         self,
-        message: ButtonMessage,
+        message: ComponentMessage,
         check: Callable[[Context], Awaitable[bool]] = None,
         timeout: float = None,
     ) -> Context:
         """A function that waits until a user clicks a button on the message
 
-        :returns: :class:`~discord_buttons.Context`
+        :returns: :class:`~discord_components.Context`
 
         Parameters
         ----------
-        message: :class:`~discord_buttons.ButtonMessage`
+        message: :class:`~discord_components.ComponentMessage`
             The message
         check: Optional[Callable[[:class:`Context`], Coroutine[:class:`bool`]]]
             The wait_for check function
@@ -314,10 +314,10 @@ class DiscordButton:
         )
         return ctx
 
-    async def fetch_button_message(self, message: Message) -> ButtonMessage:
-        """Converts a message class to a ButtonMessage class
+    async def fetch_button_message(self, message: Message) -> ComponentMessage:
+        """Converts a message class to a ComponentMessage class
 
-        :returns: :class:`~discord_butotns.ButtonMessage`
+        :returns: :class:`~discord_butotns.ComponentMessage`
 
         Parameters
         ----------
@@ -351,6 +351,6 @@ class DiscordButton:
                     r["url"] = j["url"]
                 buttons.append(Button(style=j["style"], label=j["label"], **r))
 
-        return ButtonMessage(
+        return ComponentMessage(
             channel=message.channel, state=self.bot._get_state(), data=res, buttons=buttons
         )

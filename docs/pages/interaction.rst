@@ -1,6 +1,6 @@
 Interaction
 ======================================
 
-.. automodule:: discord_buttons.interaction
+.. automodule:: discord_components.interaction
     :members:
     :undoc-members:
