@@ -193,7 +193,9 @@ class Button(Component):
     def __repr__(self) -> str:
         id_st = f"id='{self.id}'" if self.id else ""
         url_st = f"url='{self.url}'" if self.url else ""
-        return f"<Button style={self.style} label='{self.label}' {url_st} {id_st}>"
+        emoji_st = f"emoji={str(self.emoji)}" if self.emoji else ""
+
+        return f"<Button style={self.style} label='{self.label}' {url_st} {id_st} {emoji_st} disabled={self.disabled}>"
 
     def __str__(self) -> str:
         return self.__repr__()

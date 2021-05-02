@@ -1,4 +1,4 @@
-from discord import InvalidArgument
+from discord import InvalidArgument, PartialEmoji
 
 from typing import List
 from uuid import uuid1
@@ -18,13 +18,22 @@ class Option:
         The option's label
     value: :class:`str`
         The option's value
+    emoji: :class:`discord.PartialEmoji`
+        The option's emoji
     """
 
-    __slots__ = ("_label", "_value")
+    __slots__ = ("_label", "_value", "_emoji")
 
-    def __init__(self, *, label: str, value: str):
+    def __init__(self, *, label: str, value: str, emoji: PartialEmoji = None):
         self._label = label
         self._value = value
+
+        if isinstance(emoji, PartialEmoji):
+            self._emoji = emoji
+        elif isinstance(emoji, str):
+            self._emoji = PartialEmoji(name=emoji)
+        else:
+            self._emoji = None
 
     def to_dict(self) -> dict:
         """
@@ -33,7 +42,10 @@ class Option:
         :returns: :class:`dict`
         """
 
-        return {"label": self.label, "value": self.value}
+        data = {"label": self.label, "value": self.value}
+        if self.emoji:
+            data["emoji"] = self.emoji.to_dict()
+        return data
 
     @property
     def label(self) -> str:
@@ -44,6 +56,11 @@ class Option:
     def value(self) -> str:
         """:class:`str`: The option's value"""
         return self._value
+
+    @property
+    def emoji(self) -> PartialEmoji:
+        """:class:`discord.PartialEmoji`: The option's emoji"""
+        return self._emoji
 
     @label.setter
     def label(self, value: str):
@@ -56,8 +73,16 @@ class Option:
     def value(self, value: str):
         self._value = value
 
+    @emoji.setter
+    def emoji(self, emoji: PartialEmoji):
+        if isinstance(emoji, PartialEmoji):
+            self._emoji = emoji
+        elif isinstance(emoji, str):
+            self._emoji = PartialEmoji(name=emoji)
+
     def __repr__(self) -> str:
-        return f"<Button label='{self.label}' value='{self.value}'"
+        emoji_st = f"emoji={str(self.emoji)}" if self.emoji else ""
+        return f"<Button label='{self.label}' value='{self.value}' {emoji_st}"
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -74,7 +99,16 @@ class Option:
             The json
         """
 
-        return Option(label=data["label"], value=data["value"])
+        emoji = data.get("emoji")
+        return Option(
+            label=data["label"],
+            value=data["value"],
+            emoji=PartialEmoji(
+                name=emoji["name"], animated=emoji.get("animated", False), id=emoji.get("id")
+            )
+            if emoji
+            else None,
+        )
 
 
 class Dropdown(Component):
