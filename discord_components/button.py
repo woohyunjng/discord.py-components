@@ -52,7 +52,7 @@ class Button(Component):
     ----------
     label: :class:`str`
         The bot's label
-    style: :class:`style`
+    style: :class:`int`
         The bot's style (1 or more and 5 or less)
     id: :class:`str`
         The button's id.
@@ -177,7 +177,7 @@ class Button(Component):
         if self.style == ButtonStyle.URL:
             raise InvalidArgument("button style is URL")
 
-        self._id = id
+        self._id = value
 
     @disabled.setter
     def disabled(self, value: bool):
