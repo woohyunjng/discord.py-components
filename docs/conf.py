@@ -16,7 +16,7 @@ path.insert(0, abspath("."))
 path.insert(0, abspath(".."))
 path.insert(0, abspath("../../"))
 
-from discord_buttons import (
+from discord_components import (
     __name__ as name,
     __version__ as version,
     __author__ as author,
