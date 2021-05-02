@@ -1,10 +1,11 @@
-from discord import User, Message, Client, Embed, AllowedMentions, InvalidArgument
+from discord import User, Client, Embed, AllowedMentions, InvalidArgument
 from discord.ext.commands import Bot
 from discord.http import Route
 
 from .button import Button
 from .message import ComponentMessage
 from .interaction import InteractionType, FlagsType
+from .component import Component
 
 from typing import Union, List
 
@@ -60,15 +61,15 @@ class Context:
         bot: Union[Client, Bot],
         client: "DiscordComponents",
         user: User,
-        button: ComponentMessage,
+        component: Component,
         raw_data: dict,
-        message: Message,
+        message: ComponentMessage,
     ):
         self.bot = bot
         self.client = client
         self.user = user
 
-        self.button = button
+        self.component = component
         self.raw_data = raw_data
 
         self.message = message

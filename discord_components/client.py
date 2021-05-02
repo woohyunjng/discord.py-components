@@ -20,6 +20,7 @@ from json import dumps
 from .button import Button
 from .context import Context
 from .message import ComponentMessage
+from .interaction import InteractionEventType
 
 
 __all__ = ("DiscordComponents",)
@@ -59,12 +60,12 @@ class DiscordComponents:
         async def edit_component_msg_prop(*args, **kwargs):
             return await self.edit_component_msg(*args, **kwargs)
 
-        async def wait_for_button_click_ctx(ctx, *args, **kwargs):
-            return await self.wait_for_button_click(*args, **kwargs)
+        async def wait_for_interact_ctx(ctx, *args, **kwargs):
+            return await self.wait_for_interact(*args, **kwargs)
 
         Messageable.send = send_component_msg_prop
         Message.edit = edit_component_msg_prop
-        DContext.wait_for_button_click = wait_for_button_click_ctx
+        DContext.wait_for_interact = wait_for_interact_ctx
 
     async def send_component_msg(
         self,
@@ -126,6 +127,7 @@ class DiscordComponents:
             "allowed_mentions": allowed_mentions,
             "tts": tts,
         }
+
         if file:
             try:
                 await self.bot.http.request(
@@ -260,9 +262,42 @@ class DiscordComponents:
             ),
         }
 
-    async def wait_for_button_click(
+    def _structured_raw_data(self, raw_data: dict) -> dict:
+        data = {
+            "interaction": raw_data["d"]["id"],
+            "interaction_token": raw_data["d"]["token"],
+            "raw": raw_data,
+        }
+        raw_data = raw_data["d"]
+        state = self.bot._get_state()
+
+        buttons = []
+        for line in raw_data["message"]["components"]:
+            if line["type"] == 2:
+                buttons.append(Button.from_json(line))
+            for btn in line["components"]:
+                if btn["type"] == 2:
+                    buttons.append(Button.from_json(btn))
+
+        data["message"] = ComponentMessage(
+            state=state,
+            channel=self.bot.get_channel(int(raw_data["channel_id"])),
+            data=raw_data["message"],
+            buttons=buttons,
+        )
+
+        if "member" in raw_data:
+            userData = raw_data["member"]["user"]
+        else:
+            userData = raw_data["user"]
+        data["user"] = User(state=state, data=userData)
+        data["custom_id"] = raw_data["data"]["custom_id"]
+
+        return data
+
+    async def wait_for_interact(
         self,
-        message: ComponentMessage,
+        type: Union["button_click"],
         check: Callable[[Context], Awaitable[bool]] = None,
         timeout: float = None,
     ) -> Context:
@@ -272,45 +307,39 @@ class DiscordComponents:
 
         Parameters
         ----------
-        message: :class:`~discord_components.ComponentMessage`
-            The message
+        type: :class:`str`
+            The interaction event type
         check: Optional[Callable[[:class:`Context`], Coroutine[:class:`bool`]]]
             The wait_for check function
         timeout: Optional[:class:`float`]
             The wait_for timeout
         """
+
         while True:
             res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
 
             if res["t"] != "INTERACTION_CREATE":
                 continue
 
-            if message.id != int(res["d"]["message"]["id"]):
+            if InteractionEventType[type] != res["d"]["data"]["component_type"]:
                 continue
+
             break
 
-        button_id = res["d"]["data"]["custom_id"]
+        data = self._structured_raw_data(res)
         resbutton = None
 
-        for buttons in res["d"]["message"]["components"]:
-            for button in buttons["components"]:
-                if button["style"] == 5:
-                    continue
-
-                if button["custom_id"] == button_id:
-                    resbutton = button
+        for btn in data["message"].buttons:
+            if btn.id == data["custom_id"]:
+                resbutton = btn
 
         ctx = Context(
             bot=self.bot,
             client=self,
-            user=User(state=self.bot._get_state(), data=res["d"]["member"]["user"]),
-            button=Button(
-                style=resbutton["style"],
-                label=resbutton["label"],
-                id=resbutton["custom_id"],
-            ),
-            raw_data=res,
-            message=message,
+            user=data["user"],
+            component=resbutton,
+            raw_data=data["raw_data"],
+            message=data["message"],
         )
         return ctx
 

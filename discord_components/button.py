@@ -1,8 +1,10 @@
-from discord import InvalidArgument, Emoji
+from discord import InvalidArgument, PartialEmoji
 
 from typing import Union, Optional
 from uuid import uuid1
 from random import randint
+
+from .component import Component
 
 
 __all__ = ("ButtonStyle", "Button")
@@ -43,7 +45,7 @@ class ButtonStyle:
         }
 
 
-class Button:
+class Button(Component):
     """The button class
 
     Parameters
@@ -60,7 +62,7 @@ class Button:
         The button's hyperlink.
     disabled: :class:`bool`
         bool: If the buttons is disabled
-    emoji: Union[:class:`discord.Emoji`, :class:`str`]
+    emoji: :class:`discord.PartialEmoji`
         The button's emoji
     """
 
@@ -74,7 +76,7 @@ class Button:
         id: Optional[str] = None,
         url: Optional[str] = None,
         disabled: bool = False,
-        emoji: Emoji = None,
+        emoji: PartialEmoji = None,
     ):
         if style == ButtonStyle.URL and not url:
             raise InvalidArgument("You must provide a URL when the style is URL")
@@ -90,7 +92,13 @@ class Button:
         self._label = label
         self._url = url
         self._disabled = disabled
-        self._emoji = emoji
+
+        if isinstance(emoji, PartialEmoji):
+            self._emoji = emoji
+        elif isinstance(emoji, str):
+            self._emoji = PartialEmoji(name=emoji)
+        else:
+            self._emoji = None
 
         if not self.style == ButtonStyle.URL:
             self._id = id or str(uuid1())
@@ -113,15 +121,7 @@ class Button:
             "disabled": self.disabled,
         }
         if self.emoji:
-            emojidata = {}
-            if isinstance(self.emoji, str):
-                emojidata["name"] = self.emoji
-            elif isinstance(self.emoji, Emoji):
-                emojidata = {"id": self.emoji.id, "name": self.emoji.name}
-                if self.emoji.animated:
-                    emojidata["animated"] = True
-            data["emoji"] = emojidata
-
+            data["emoji"] = self.emoji.to_dict()
         return data
 
     @property
@@ -154,8 +154,8 @@ class Button:
         return self._disabled
 
     @property
-    def emoji(self) -> Union[Emoji, str]:
-        """Union[:class:`discord.Emoji`, :class:`str`]: The button's emoji"""
+    def emoji(self) -> PartialEmoji:
+        """:class:`discord.PartialEmoji`: The button's emoji"""
         return self._emoji
 
     @label.setter
@@ -184,8 +184,11 @@ class Button:
         self._disabled = value
 
     @emoji.setter
-    def emoji(self, value: bool):
-        self._emoji = value
+    def emoji(self, emoji: PartialEmoji):
+        if isinstance(emoji, PartialEmoji):
+            self._emoji = emoji
+        elif isinstance(emoji, str):
+            self._emoji = PartialEmoji(name=emoji)
 
     def __repr__(self) -> str:
         id_st = f"id='{self.id}'" if self.id else ""
@@ -194,3 +197,29 @@ class Button:
 
     def __str__(self) -> str:
         return self.__repr__()
+
+    @staticmethod
+    def from_json(data: dict):
+        """Create button instance from json
+
+        :returns: :class:`~discord_components.Button`
+
+        Parameters
+        ----------
+        data: :class:`dict`
+            The json
+        """
+
+        emoji = data.get("emoji")
+        return Button(
+            label=data["label"],
+            style=data["style"],
+            id=data.get("custom_id"),
+            url=data.get("url"),
+            disabled=data.get("disabled", False),
+            emoji=PartialEmoji(
+                name=emoji["name"], animated=emoji.get("animated", False), id=emoji.get("id")
+            )
+            if emoji
+            else None,
+        )
