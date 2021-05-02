@@ -105,6 +105,7 @@ class Dropdown(Component):
         """
 
         return {
+            "type": 3,
             "options": list(map(lambda option: option.to_dict(), self.options)),
             "custom_id": self.id,
         }

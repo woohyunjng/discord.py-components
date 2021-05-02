@@ -1,8 +1,7 @@
 from discord import Message
-from typing import List
+from typing import List, Union
 
-from .button import Button
-from .dropdown import Dropdown
+from .component import Component
 
 
 class ComponentMessage(Message):
@@ -10,20 +9,15 @@ class ComponentMessage(Message):
 
     Parameters
     ----------
-    buttons: List[:class:`~discord_components.Button`]
-        The message's buttons
-    dropdowns: List[:class:`~discord_components.Dropdown`]
-        The message's dropdowns
+    components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+        The message's components
 
     Attributes
     ----------
-    buttons: List[:class:`~discord_components.Button`]
-        The message's buttons
-    dropdowns: List[:class:`~discord_components.Dropdown`]
-        The message's dropdowns
+    components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+        The message's components
     """
 
-    def __init__(self, *, buttons: List[Button], dropdowns: List[Dropdown], **kwargs):
+    def __init__(self, *, components: List[Union[Component, List[Component]]], **kwargs):
         super().__init__(**kwargs)
-        self.buttons = buttons
-        self.dropdowns = dropdowns
+        self.components = components

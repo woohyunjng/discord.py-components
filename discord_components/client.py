@@ -18,6 +18,8 @@ from typing import Union, List, Callable, Awaitable
 from json import dumps
 
 from .button import Button
+from .dropdown import Dropdown
+from .component import Component
 from .context import Context
 from .message import ComponentMessage
 from .interaction import InteractionEventType
@@ -76,7 +78,7 @@ class DiscordComponents:
         embed: Embed = None,
         file: File = None,
         allowed_mentions: AllowedMentions = None,
-        buttons: List[Button] = None,
+        components: List[Union[Component, List[Component]]] = None,
         **options,
     ) -> Message:
         """A function that sends a message with components
@@ -102,8 +104,8 @@ class DiscordComponents:
             to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
-        buttons: List[Union[:class:`~discord_components.Button`, List[:class:`~discord_components.Button`]]]
-            The buttons to send.
+        components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+            The components to send.
             If this is 2-dimensional array, a array is a line
         """
         state = self.bot._get_state()
@@ -121,7 +123,7 @@ class DiscordComponents:
 
         data = {
             "content": content,
-            **self._get_buttons_json(buttons),
+            **self._get_components_json(components),
             **options,
             "embed": embed,
             "allowed_mentions": allowed_mentions,
@@ -152,7 +154,7 @@ class DiscordComponents:
             data = await self.bot.http.request(
                 Route("POST", f"/channels/{channel.id}/messages"), json=data
             )
-        return ComponentMessage(buttons=buttons, state=state, channel=channel, data=data)
+        return ComponentMessage(components=components, state=state, channel=channel, data=data)
 
     async def edit_component_msg(
         self,
@@ -163,7 +165,7 @@ class DiscordComponents:
         embed: Embed = None,
         file: File = None,
         allowed_mentions: AllowedMentions = None,
-        buttons: List[Button] = None,
+        components: List[Union[Component, List[Component]]] = None,
         **options,
     ):
 
@@ -190,9 +192,9 @@ class DiscordComponents:
             to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
-        buttons: List[Union[:class:`~discord_components.Button`, List[:class:`~discord_components.Button`]]]
-            The buttons to send.
-            If this is 2-dimensional array, a array is a component group
+        components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+            The components to send.
+            If this is 2-dimensional array, a array is a line
         """
         state = self.bot._get_state()
 
@@ -209,7 +211,7 @@ class DiscordComponents:
 
         data = {
             "content": content,
-            **self._get_buttons_json(buttons),
+            **self._get_components_json(components),
             **options,
             "embed": embed,
             "allowed_mentions": allowed_mentions,
@@ -240,27 +242,36 @@ class DiscordComponents:
                 Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
             )
 
-    def _get_buttons_json(self, buttons: List[Union[Button, List[Button]]] = None) -> dict:
-        if not buttons:
+    def _get_components_json(
+        self, components: List[Union[Component, List[Component]]] = None
+    ) -> dict:
+        if not components:
             return {}
 
-        if isinstance(buttons[0], Button):
-            buttons = [buttons]
+        for i in range(len(components)):
+            if not isinstance(components[i], list):
+                components[i] = [components[i]]
 
-        lines = buttons
+        lines = components
         return {
             "components": (
                 [
                     {
                         "type": 1,
-                        "components": [button.to_dict() for button in buttons],
+                        "components": [component.to_dict() for component in components],
                     }
-                    for buttons in lines
+                    for components in lines
                 ]
-                if buttons
+                if lines
                 else []
             ),
         }
+
+    def _get_component_type(self, type: int):
+        if type == 2:
+            return Button
+        elif type == 3:
+            return Dropdown
 
     def _structured_raw_data(self, raw_data: dict) -> dict:
         data = {
@@ -271,19 +282,19 @@ class DiscordComponents:
         raw_data = raw_data["d"]
         state = self.bot._get_state()
 
-        buttons = []
+        components = []
         for line in raw_data["message"]["components"]:
-            if line["type"] == 2:
-                buttons.append(Button.from_json(line))
+            if line["type"] >= 2:
+                components.append(self._get_component_type(line["type"]).from_json(line))
             for btn in line["components"]:
-                if btn["type"] == 2:
-                    buttons.append(Button.from_json(btn))
+                if btn["type"] >= 2:
+                    components.append(self._get_component_type(line["type"]).from_json(btn))
 
         data["message"] = ComponentMessage(
             state=state,
             channel=self.bot.get_channel(int(raw_data["channel_id"])),
             data=raw_data["message"],
-            buttons=buttons,
+            components=components,
         )
 
         if "member" in raw_data:
@@ -297,7 +308,7 @@ class DiscordComponents:
 
     async def wait_for_interact(
         self,
-        type: Union["button_click"],
+        type: str,
         check: Callable[[Context], Awaitable[bool]] = None,
         timeout: float = None,
     ) -> Context:
@@ -327,26 +338,26 @@ class DiscordComponents:
             break
 
         data = self._structured_raw_data(res)
-        resbutton = None
+        rescomponent = None
 
-        for btn in data["message"].buttons:
-            if btn.id == data["custom_id"]:
-                resbutton = btn
+        for component in data["message"].components:
+            if component.id == data["custom_id"]:
+                rescomponent = component
 
         ctx = Context(
             bot=self.bot,
             client=self,
             user=data["user"],
-            component=resbutton,
+            component=rescomponent,
             raw_data=data["raw_data"],
             message=data["message"],
         )
         return ctx
 
-    async def fetch_button_message(self, message: Message) -> ComponentMessage:
+    async def fetch_component_message(self, message: Message) -> ComponentMessage:
         """Converts a message class to a ComponentMessage class
 
-        :returns: :class:`~discord_butotns.ComponentMessage`
+        :returns: :class:`~discord_components.ComponentMessage`
 
         Parameters
         ----------
@@ -357,29 +368,18 @@ class DiscordComponents:
         res = await self.bot.http.request(
             Route("GET", f"/channels/{message.channel.id}/messages/{message.id}")
         )
-        buttons = []
+        components = []
 
         for i in res["components"]:
-            if i["type"] == 2:
-                r = {}
-                if "custom_id" in i.keys():
-                    r["id"] = i["custom_id"]
-                if "url" in i.keys():
-                    r["url"] = i["url"]
-                buttons.append(Button(style=i["style"], label=i["label"], **r))
+            if i["type"] >= 2:
+                components.append(self._get_component_type(i["type"]).from_json(i))
                 continue
 
             for j in i["components"]:
-                if j["type"] != 2:
+                if j["type"] < 2:
                     continue
-
-                r = {}
-                if "custom_id" in j.keys():
-                    r["id"] = j["custom_id"]
-                if "url" in j.keys():
-                    r["url"] = j["url"]
-                buttons.append(Button(style=j["style"], label=j["label"], **r))
+                components.append(self._get_component_type(i["type"]).from_json(i))
 
         return ComponentMessage(
-            channel=message.channel, state=self.bot._get_state(), data=res, buttons=buttons
+            channel=message.channel, state=self.bot._get_state(), data=res, components=components
         )

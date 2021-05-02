@@ -30,20 +30,21 @@ Examples
 
     @bot.event
     async def on_message(msg):
-        m = await msg.channel.send(
+        await msg.channel.send(
             "Content",
-            buttons=[
+            components=[
                 Button(style=ButtonStyle.blue, label="Blue"),
                 Button(style=ButtonStyle.red, label="Red"),
                 Button(style=ButtonStyle.URL, label="url", url="https://example.org"),
             ],
         )
 
-        res = await ddb.wait_for_button_click(m)
-        await res.respond(
-            type=InteractionType.ChannelMessageWithSource,
-            content=f'{res.button.label} clicked'
-        )
+        res = await ddb.wait_for_interact("button_click")
+        if res.channel == msg.channel:
+            await res.respond(
+                type=InteractionType.ChannelMessageWithSource,
+                content=f'{res.button.label} clicked'
+            )
 
 
     bot.run("token")
