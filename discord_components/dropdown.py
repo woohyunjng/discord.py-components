@@ -20,13 +20,27 @@ class Option:
         The option's value
     emoji: :class:`discord.PartialEmoji`
         The option's emoji
+    description: :class:`str`
+        The option's description
+    default: :class:`bool`
+        If the option is default
     """
 
-    __slots__ = ("_label", "_value", "_emoji")
+    __slots__ = ("_label", "_value", "_emoji", "_description", "_default")
 
-    def __init__(self, *, label: str, value: str, emoji: PartialEmoji = None):
+    def __init__(
+        self,
+        *,
+        label: str,
+        value: str,
+        emoji: PartialEmoji = None,
+        description: str = None,
+        default: bool = False,
+    ):
         self._label = label
         self._value = value
+        self._description = description
+        self._default = default
 
         if isinstance(emoji, PartialEmoji):
             self._emoji = emoji
@@ -42,7 +56,12 @@ class Option:
         :returns: :class:`dict`
         """
 
-        data = {"label": self.label, "value": self.value}
+        data = {
+            "label": self.label,
+            "value": self.value,
+            "description": self.description,
+            "default": self.default,
+        }
         if self.emoji:
             data["emoji"] = self.emoji.to_dict()
         return data
@@ -62,6 +81,16 @@ class Option:
         """:class:`discord.PartialEmoji`: The option's emoji"""
         return self._emoji
 
+    @property
+    def description(self) -> str:
+        """:class:`str`: The option's description"""
+        return self._description
+
+    @property
+    def default(self) -> bool:
+        """:class:`bool`: If the option is default"""
+        return self._default
+
     @label.setter
     def label(self, value: str):
         if not len(value):
@@ -80,9 +109,20 @@ class Option:
         elif isinstance(emoji, str):
             self._emoji = PartialEmoji(name=emoji)
 
+    @description.setter
+    def description(self, value: str):
+        self._description = value
+
+    @default.setter
+    def default(self, value: bool):
+        self._default = value
+
     def __repr__(self) -> str:
         emoji_st = f"emoji={str(self.emoji)}" if self.emoji else ""
-        return f"<Button label='{self.label}' value='{self.value}' {emoji_st}"
+        description_st = f"description='{self.description}'" if self.description else ""
+        default_st = f"default={self.default}" if self.default else ""
+
+        return f"<Button label='{self.label}' value='{self.value}' {emoji_st} {description_st} {default_st}>"
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -108,6 +148,8 @@ class Option:
             )
             if emoji
             else None,
+            description=data.get("description"),
+            default=data.get("default", False),
         )
 
 
