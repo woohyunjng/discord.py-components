@@ -122,7 +122,7 @@ class Option:
         description_st = f"description='{self.description}'" if self.description else ""
         default_st = f"default={self.default}" if self.default else ""
 
-        return f"<Button label='{self.label}' value='{self.value}' {emoji_st} {description_st} {default_st}>"
+        return f"<Option label='{self.label}' value='{self.value}' {emoji_st} {description_st} {default_st}>"
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -162,16 +162,33 @@ class Dropdown(Component):
         The dropdown's options
     id: :class:`str`
         The dropdown's id
+    placeholder: :class:`str`
+        The dropdown's placeholder
+    min_values: :class:`int`
+        The dropdown's min values
+    max_values: :class:`int`
+        The dropdown's max values
     """
 
-    __slots__ = ("_id", "_options")
+    __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values")
 
-    def __init__(self, *, options: List[Option], id: str = None):
+    def __init__(
+        self,
+        *,
+        options: List[Option],
+        id: str = None,
+        placeholder: str = None,
+        min_values: int = None,
+        max_values: int = None,
+    ):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("options length should be between 1 and 25")
 
         self._id = id or str(uuid1())
         self._options = options
+        self._placeholder = placeholder
+        self._min_values = min_values
+        self._max_values = max_values
 
     def to_dict(self) -> dict:
         """
@@ -184,6 +201,9 @@ class Dropdown(Component):
             "type": 3,
             "options": list(map(lambda option: option.to_dict(), self.options)),
             "custom_id": self.id,
+            "placeholder": self.placeholder,
+            "min_values": self.min_values,
+            "max_values": self.max_values,
         }
 
     @property
@@ -195,6 +215,21 @@ class Dropdown(Component):
     def options(self) -> List[Option]:
         """List[:class:`~discord_components.Option`]: The dropdown's options"""
         return self._options
+
+    @property
+    def placeholder(self) -> str:
+        """:class:`str`: The dropdown's placeholder"""
+        return self._placeholder
+
+    @property
+    def min_values(self) -> str:
+        """:class:`str`: The dropdown's min values"""
+        return self._min_values
+
+    @property
+    def max_values(self) -> str:
+        """:class:`str`: The dropdown's max values"""
+        return self._max_values
 
     @id.setter
     def id(self, value: str):
@@ -208,7 +243,11 @@ class Dropdown(Component):
         self._options = value
 
     def __repr__(self) -> str:
-        return f"<Button id='{self.id}' options=[{', '.join(map(lambda x: str(x), self.options))}]"
+        placeholder_st = f"placholder='{self.placeholder}'" if self.placeholder else ""
+        min_values_st = f"min_values{self.min_values}" if self.min_values else ""
+        max_values_st = f"max_values{self.max_values}" if self.max_values else ""
+
+        return f"<Dropdown id='{self.id}' options=[{', '.join(map(lambda x: str(x), self.options))}] {placeholder_st} {min_values_st} {max_values_st}>"
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -226,5 +265,9 @@ class Dropdown(Component):
         """
 
         return Dropdown(
-            id=data["custom_id"], options=list(map(lambda x: Option.from_json(x), data["options"]))
+            id=data["custom_id"],
+            options=list(map(lambda x: Option.from_json(x), data["options"])),
+            placeholder=data.get("placeholder"),
+            min_values=data.get("min_values"),
+            max_values=data.get("max_values"),
         )
