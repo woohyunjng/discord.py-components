@@ -1,6 +1,6 @@
-Dropdown
+Select
 ======================================
 
-.. automodule:: discord_components.dropdown
+.. automodule:: discord_components.select
     :members:
     :undoc-members:

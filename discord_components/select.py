@@ -6,11 +6,11 @@ from uuid import uuid1
 from .component import Component
 
 
-__all__ = ("Dropdown", "Option")
+__all__ = ("Select", "Option")
 
 
 class Option:
-    """The dropdown option
+    """The select option
 
     Parameters
     ----------
@@ -51,7 +51,7 @@ class Option:
 
     def to_dict(self) -> dict:
         """
-        Converts the dropdown option information required for API request to dict and returns
+        Converts the select option information required for API request to dict and returns
 
         :returns: :class:`dict`
         """
@@ -153,21 +153,21 @@ class Option:
         )
 
 
-class Dropdown(Component):
-    """The dropdown
+class Select(Component):
+    """The select
 
     Parameters
     ----------
     options: List[:class:`~discord_components.Option`]
-        The dropdown's options
+        The select's options
     id: :class:`str`
-        The dropdown's id
+        The select's id
     placeholder: :class:`str`
-        The dropdown's placeholder
+        The select's placeholder
     min_values: :class:`int`
-        The dropdown's min values
+        The select's min values
     max_values: :class:`int`
-        The dropdown's max values
+        The select's max values
     """
 
     __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values")
@@ -192,7 +192,7 @@ class Dropdown(Component):
 
     def to_dict(self) -> dict:
         """
-        Converts the dropdown information required for API request to dict and returns
+        Converts the select information required for API request to dict and returns
 
         :returns: :class:`dict`
         """
@@ -208,27 +208,27 @@ class Dropdown(Component):
 
     @property
     def id(self) -> str:
-        """:class:`str`: The dropdown's id"""
+        """:class:`str`: The select's id"""
         return self._id
 
     @property
     def options(self) -> List[Option]:
-        """List[:class:`~discord_components.Option`]: The dropdown's options"""
+        """List[:class:`~discord_components.Option`]: The select's options"""
         return self._options
 
     @property
     def placeholder(self) -> str:
-        """:class:`str`: The dropdown's placeholder"""
+        """:class:`str`: The select's placeholder"""
         return self._placeholder
 
     @property
     def min_values(self) -> str:
-        """:class:`str`: The dropdown's min values"""
+        """:class:`str`: The select's min values"""
         return self._min_values
 
     @property
     def max_values(self) -> str:
-        """:class:`str`: The dropdown's max values"""
+        """:class:`str`: The select's max values"""
         return self._max_values
 
     @id.setter
@@ -247,16 +247,16 @@ class Dropdown(Component):
         min_values_st = f"min_values{self.min_values}" if self.min_values else ""
         max_values_st = f"max_values{self.max_values}" if self.max_values else ""
 
-        return f"<Dropdown id='{self.id}' options=[{', '.join(map(lambda x: str(x), self.options))}] {placeholder_st} {min_values_st} {max_values_st}>"
+        return f"<Select id='{self.id}' options=[{', '.join(map(lambda x: str(x), self.options))}] {placeholder_st} {min_values_st} {max_values_st}>"
 
     def __str__(self) -> str:
         return self.__repr__()
 
     @staticmethod
     def from_json(data: dict):
-        """Create dropdown instance from json
+        """Create a select instance from json
 
-        :returns: :class:`~discord_components.Dropdown`
+        :returns: :class:`~discord_components.Select`
 
         Parameters
         ----------
@@ -264,7 +264,7 @@ class Dropdown(Component):
             The json
         """
 
-        return Dropdown(
+        return Select(
             id=data["custom_id"],
             options=list(map(lambda x: Option.from_json(x), data["options"])),
             placeholder=data.get("placeholder"),
