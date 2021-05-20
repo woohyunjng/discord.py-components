@@ -18,7 +18,7 @@ from typing import Union, List, Callable, Awaitable
 from json import dumps
 
 from .button import Button
-from .dropdown import Dropdown
+from .select import Select
 from .component import Component
 from .context import Context
 from .message import ComponentMessage
@@ -271,7 +271,7 @@ class DiscordComponents:
         if type == 2:
             return Button
         elif type == 3:
-            return Dropdown
+            return Select
 
     def _structured_raw_data(self, raw_data: dict) -> dict:
         data = {
