@@ -8,7 +8,7 @@ unofficial library for discord components(on development)
 Install
 --------
 
-`pip install --upgrade discord_components`
+`pip install --upgrade discord-components`
 
 Features
 --------
