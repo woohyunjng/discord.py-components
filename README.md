@@ -33,7 +33,7 @@ async def on_message(msg):
     if res.channel == msg.channel:
         await res.respond(
             type=InteractionType.ChannelMessageWithSource,
-            content=f'{res.button.label} clicked'
+            content=f'{res.component.label} clicked'
         )
 
 
