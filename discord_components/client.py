@@ -288,7 +288,7 @@ class DiscordComponents:
                 components.append(self._get_component_type(line["type"]).from_json(line))
             for btn in line["components"]:
                 if btn["type"] >= 2:
-                    components.append(self._get_component_type(line["type"]).from_json(btn))
+                    components.append(self._get_component_type(btn["type"]).from_json(btn))
 
         data["message"] = ComponentMessage(
             state=state,
@@ -349,7 +349,7 @@ class DiscordComponents:
             client=self,
             user=data["user"],
             component=rescomponent,
-            raw_data=data["raw_data"],
+            raw_data=data["raw"],
             message=data["message"],
         )
         return ctx
