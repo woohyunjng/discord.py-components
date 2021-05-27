@@ -30,6 +30,9 @@ Examples
 
     @bot.event
     async def on_message(msg):
+        if msg.author.bot:
+            return
+
         await msg.channel.send(
             "Content",
             components=[
