@@ -142,7 +142,7 @@ class Context:
             "tts": tts,
             "flags": flags,
         }
-
+        print(data)
         await self.bot.http.request(
             Route("POST", f"/interactions/{self.interaction_id}/{self.interaction_token}/callback"),
             json={"type": type, "data": data},
