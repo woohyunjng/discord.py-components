@@ -337,6 +337,11 @@ class DiscordComponents:
         data["user"] = User(state=state, data=userData)
         data["custom_id"] = raw_data["data"]["custom_id"]
 
+        if "values" in raw_data["data"]:
+            data["values"] = raw_data["data"]["values"]
+        else:
+            data["values"] = []
+
         return data
 
     async def wait_for_interact(
@@ -371,11 +376,20 @@ class DiscordComponents:
             break
 
         data = self._structured_raw_data(res)
-        rescomponent = None
+        rescomponent = []
 
         for component in data["message"].components:
-            if component.id == data["custom_id"]:
-                rescomponent = component
+            if isinstance(component, Select):
+                for option in component.options:
+                    if option.value in data["values"]:
+                        if len(data["values"]) > 1:
+                            rescomponent.append(option)
+                        else:
+                            rescomponent = [option]
+                            break
+            else:
+                if component.id == data["custom_id"]:
+                    rescomponent = component
 
         ctx = Context(
             bot=self.bot,

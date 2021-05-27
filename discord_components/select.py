@@ -9,7 +9,7 @@ from .component import Component
 __all__ = ("Select", "Option")
 
 
-class Option:
+class Option(Component):
     """The select option
 
     Parameters

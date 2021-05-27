@@ -1,7 +1,7 @@
 __all__ = ("InteractionType", "InteractionEventType", "FlagsType")
 
 
-InteractionEventType = {"button_click": 2, "dropdown_select": 3}
+InteractionEventType = {"button_click": 2, "select_option": 3}
 
 
 class InteractionType:
