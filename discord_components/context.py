@@ -120,7 +120,7 @@ class Context:
         if embed and embeds:
             embeds.append(embed)
         elif embed:
-            embeds = embed
+            embeds = [embed]
 
         if len(embeds) > 10:
             raise InvalidArgument("Do not provide more than 10 embeds")
