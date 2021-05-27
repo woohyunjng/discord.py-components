@@ -122,7 +122,7 @@ class Context:
         elif embed:
             embeds = embed
 
-        if len(embeds) > 0:
+        if len(embeds) > 10:
             raise InvalidArgument("Do not provide more than 10 embeds")
         if embeds:
             embeds = list(map(lambda x: x.to_dict(), embeds))
