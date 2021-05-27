@@ -82,7 +82,7 @@ class Context:
     async def respond(
         self,
         *,
-        type=InteractionType.IgnoredChannelMessageWithSource,
+        type=InteractionType.ChannelMessageWithSource,
         content=None,
         embed=None,
         embeds=[],
@@ -101,7 +101,7 @@ class Context:
         ----------
         type: :class:`int`
             The interaction's type. (4 or more and 6 or less)
-            Default 6 (InteractionType.IgnoredChannelMessageWithSource)
+            Default 6 (InteractionType.ChannelMessageWithSource)
         content: Optional[:class:`str`]
             The response message's content
         embed: Optional[:class:`discord.Embed`]
