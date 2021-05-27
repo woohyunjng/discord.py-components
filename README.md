@@ -5,6 +5,8 @@
 
 unofficial library for discord components(on development)
 
+For help, contact with `키키#4242` or create an issue or a discussion
+
 ## Install
 ```sh
 pip install --upgrade discord-components
