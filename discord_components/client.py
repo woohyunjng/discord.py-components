@@ -111,6 +111,7 @@ class DiscordComponents:
         embed=None,
         file=None,
         allowed_mentions=None,
+        reference=None,
         components=None,
         **options,
     ) -> Message:
@@ -137,6 +138,8 @@ class DiscordComponents:
             to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
+        reference: Union[:class:`discord.Message`, :class:`discord.MessageReference`]
+            A reference to the Message to which you are replying.
         components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
             The components to send.
             If this is 2-dimensional array, an array is a line
@@ -154,6 +157,14 @@ class DiscordComponents:
         else:
             allowed_mentions = state.allowed_mentions and state.allowed_mentions.to_dict()
 
+        if reference is not None:
+            try:
+                reference = reference.to_message_reference_dict()
+            except AttributeError:
+                raise InvalidArgument(
+                    "reference parameter must be Message or MessageReference"
+                ) from None
+
         data = {
             "content": content,
             **self._get_components_json(components),
@@ -161,6 +172,7 @@ class DiscordComponents:
             "embed": embed,
             "allowed_mentions": allowed_mentions,
             "tts": tts,
+            "message_reference": reference,
         }
 
         if file:
