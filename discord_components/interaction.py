@@ -10,7 +10,8 @@ class InteractionType:
     Pong = 1
     ChannelMessageWithSource = 4
     DeferredChannelMessageWithSource = 5
-    IgnoredChannelMessageWithSource = 6
+    DeferredUpdateMessage = 6
+    UpdateMessage = 7
 
 
 class FlagsType:
