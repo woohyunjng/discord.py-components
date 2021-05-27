@@ -39,7 +39,10 @@ class DiscordComponents:
         Default value set to True
 
         Whether to change the methods of the discord module
+
         If this is enabled, you can just use :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordButton>.send_button_msg`, :class:`await <Message>.edit`, as :class:`await <DiscordComponents>.edit_component_msg`
+
+        Also you can use `on_interact`
 
     Attributes
     ----------
@@ -49,6 +52,8 @@ class DiscordComponents:
 
     def __init__(self, bot, change_discord_methods=True):
         self.bot = bot
+        self._events = {}
+
         if change_discord_methods:
             self.change_discord_methods()
 
@@ -67,6 +72,32 @@ class DiscordComponents:
         async def wait_for_interact_ctx(ctx, *args, **kwargs):
             return await self.wait_for_interact(*args, **kwargs)
 
+        async def on_socket_response(res):
+            if res["t"] != "INTERACTION_CREATE":
+                return
+
+            event = self._events.get(res["d"]["data"]["component_type"], None)
+            if not event:
+                return
+
+            data = self._structured_raw_data(res)
+            rescomponent = None
+
+            for component in data["message"].components:
+                if component.id == data["custom_id"]:
+                    rescomponent = component
+
+            ctx = Context(
+                bot=self.bot,
+                client=self,
+                user=data["user"],
+                component=rescomponent,
+                raw_data=data["raw"],
+                message=data["message"],
+            )
+            await event(ctx)
+
+        self.bot.on_socket_response = on_socket_response
         Messageable.send = send_component_msg_prop
         Message.edit = edit_component_msg_prop
         DContext.wait_for_interact = wait_for_interact_ctx
@@ -385,3 +416,9 @@ class DiscordComponents:
         return ComponentMessage(
             channel=message.channel, state=self.bot._get_state(), data=res, components=components
         )
+
+    def on_interact(self, type):
+        def wrapper(func):
+            self._events[InteractionEventType[type]] = func
+
+        return wrapper

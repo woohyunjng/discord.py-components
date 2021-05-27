@@ -72,7 +72,7 @@ class Button(Component):
         self,
         *,
         label,
-        style,
+        style=ButtonStyle.gray,
         id=None,
         url=None,
         disabled=False,
