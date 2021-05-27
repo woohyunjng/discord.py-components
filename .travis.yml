@@ -7,5 +7,6 @@ deploy:
     secure: sONiGWE46i9AcvMjL1rFqWkz/0OYk8QZuNIaXAy6lqD3/2WWBXZT9K0El1nJQxRKNLpuVoFfHi3LW8K+pO4Sn0AQGFsr72eWV77u+xRzzV8RpqCnpC+BVribDYnlmmfHwimsiWKtzvYCWUiszGygY/qnxBzvGpXxu7ZXLU+nz0bDhhfCF/yACDWbEGssCQUsQzmFkaPOZL28fq3l5qW5aKbfLN3cdgBxxGc0PCO59SqGJNZzfA0h9hglyrgNkQwNaeDkXIlFyGp7q/Aibshzev+W7eUPaHoQt4pcqav1lvn+TIwsTYTQ2NR/S7o2duW4u3dbNSgaG/pnrz+Q3t90U1cbxSZPKawP8+MrY1h/EzyorjLydG1wAKb0vrlTE+hJe82UpSjB1Ij3/umvVK/GRwMidFVYJR4kFZm9/Cv0zLPvQrhBWtzI+VbINCjF4Jw9Olmfe40UNIJT8UYAulHXxsjLNjL7sGgRjLMBiT03ECrQ3XdlZSKDOYDtdj01Fiq4TvuKZJeGQHKFIAYHKhIgQ5QrGOaNOwgjgw1QXPAq6PDERtFdjtFu5xuc+N91eqPGFOCzao1+QYgThqZqVKUGwJaZ0mhIiitcexd+paOZPuhHnQCCdYdX24MzGCFAVw3OkjqeIPFjFsx8AAXC/JNcgp+mAihZEzHnd7wXDeobA/Y=
   distributions: sdist bdist_wheel
   on:
-    branch: master
+    tags: true
+  edge: true
   skip_existing: true
