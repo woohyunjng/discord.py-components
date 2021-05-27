@@ -31,11 +31,11 @@ class Option:
     def __init__(
         self,
         *,
-        label: str,
-        value: str,
-        emoji: PartialEmoji = None,
-        description: str = None,
-        default: bool = False,
+        label,
+        value,
+        emoji=None,
+        description=None,
+        default=False,
     ):
         self._label = label
         self._value = value
@@ -128,7 +128,7 @@ class Option:
         return self.__repr__()
 
     @staticmethod
-    def from_json(data: dict):
+    def from_json(data):
         """Create option instance from json
 
         :returns: :class:`~discord_components.Option`
@@ -175,11 +175,11 @@ class Select(Component):
     def __init__(
         self,
         *,
-        options: List[Option],
-        id: str = None,
-        placeholder: str = None,
-        min_values: int = None,
-        max_values: int = None,
+        options,
+        id=None,
+        placeholder=None,
+        min_values=None,
+        max_values=None,
     ):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("options length should be between 1 and 25")
@@ -253,7 +253,7 @@ class Select(Component):
         return self.__repr__()
 
     @staticmethod
-    def from_json(data: dict):
+    def from_json(data):
         """Create a select instance from json
 
         :returns: :class:`~discord_components.Select`

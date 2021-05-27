@@ -71,12 +71,12 @@ class Button(Component):
     def __init__(
         self,
         *,
-        label: str,
-        style: int = ButtonStyle.gray,
-        id: Optional[str] = None,
-        url: Optional[str] = None,
-        disabled: bool = False,
-        emoji: PartialEmoji = None,
+        label,
+        style,
+        id=None,
+        url=None,
+        disabled=False,
+        emoji=None,
     ):
         if style == ButtonStyle.URL and not url:
             raise InvalidArgument("You must provide a URL when the style is URL")
@@ -201,7 +201,7 @@ class Button(Component):
         return self.__repr__()
 
     @staticmethod
-    def from_json(data: dict):
+    def from_json(data):
         """Create button instance from json
 
         :returns: :class:`~discord_components.Button`

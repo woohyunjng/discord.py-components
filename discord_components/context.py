@@ -58,12 +58,12 @@ class Context:
     def __init__(
         self,
         *,
-        bot: Union[Client, Bot],
-        client: "DiscordComponents",
-        user: User,
-        component: Component,
-        raw_data: dict,
-        message: ComponentMessage,
+        bot,
+        client,
+        user,
+        component,
+        raw_data,
+        message,
     ):
         self.bot = bot
         self.client = client
@@ -82,13 +82,13 @@ class Context:
     async def respond(
         self,
         *,
-        type: int = InteractionType.IgnoredChannelMessageWithSource,
-        content: str = None,
-        embed: Embed = None,
-        embeds: List[Embed] = [],
-        allowed_mentions: AllowedMentions = None,
-        tts: bool = False,
-        flags: int = FlagsType.Ephemeral,
+        type=InteractionType.IgnoredChannelMessageWithSource,
+        content=None,
+        embed=None,
+        embeds=[],
+        allowed_mentions=None,
+        tts=False,
+        flags=FlagsType.Ephemeral,
     ) -> None:
         """Function to send response to discord
 

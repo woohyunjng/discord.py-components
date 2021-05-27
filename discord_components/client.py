@@ -35,7 +35,9 @@ class DiscordComponents:
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
         The bot
-    change_discord_methods: :class:`bool`
+    change_discord_methods: Optional[:class:`bool`]
+        Default value set to True
+
         Whether to change the methods of the discord module
         If this is enabled, you can just use :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordButton>.send_button_msg`, :class:`await <Message>.edit`, as :class:`await <DiscordComponents>.edit_component_msg`
 
@@ -45,7 +47,7 @@ class DiscordComponents:
         The bot
     """
 
-    def __init__(self, bot: Union[Client, Bot], change_discord_methods: bool = True):
+    def __init__(self, bot, change_discord_methods=True):
         self.bot = bot
         if change_discord_methods:
             self.change_discord_methods()
@@ -71,14 +73,14 @@ class DiscordComponents:
 
     async def send_component_msg(
         self,
-        channel: TextChannel,
-        content: str = "",
+        channel,
+        content="",
         *,
-        tts: bool = False,
-        embed: Embed = None,
-        file: File = None,
-        allowed_mentions: AllowedMentions = None,
-        components: List[Union[Component, List[Component]]] = None,
+        tts=False,
+        embed=None,
+        file=None,
+        allowed_mentions=None,
+        components=None,
         **options,
     ) -> Message:
         """A function that sends a message with components
@@ -106,7 +108,7 @@ class DiscordComponents:
             are used instead.
         components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
             The components to send.
-            If this is 2-dimensional array, a array is a line
+            If this is 2-dimensional array, an array is a line
         """
         state = self.bot._get_state()
 
@@ -158,14 +160,14 @@ class DiscordComponents:
 
     async def edit_component_msg(
         self,
-        message: ComponentMessage,
-        content: str = "",
+        message,
+        content="",
         *,
-        tts: bool = False,
-        embed: Embed = None,
-        file: File = None,
-        allowed_mentions: AllowedMentions = None,
-        components: List[Union[Component, List[Component]]] = None,
+        tts=False,
+        embed=None,
+        file=None,
+        allowed_mentions=None,
+        components=None,
         **options,
     ):
 
@@ -194,7 +196,7 @@ class DiscordComponents:
             are used instead.
         components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
             The components to send.
-            If this is 2-dimensional array, a array is a line
+            If this is 2-dimensional array, an array is a line
         """
         state = self.bot._get_state()
 
@@ -308,9 +310,9 @@ class DiscordComponents:
 
     async def wait_for_interact(
         self,
-        type: str,
-        check: Callable[[Context], Awaitable[bool]] = None,
-        timeout: float = None,
+        type,
+        check=None,
+        timeout=None,
     ) -> Context:
         """A function that waits until a user clicks a button on the message
 
@@ -354,7 +356,7 @@ class DiscordComponents:
         )
         return ctx
 
-    async def fetch_component_message(self, message: Message) -> ComponentMessage:
+    async def fetch_component_message(self, message) -> ComponentMessage:
         """Converts a message class to a ComponentMessage class
 
         :returns: :class:`~discord_components.ComponentMessage`
