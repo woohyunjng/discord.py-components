@@ -22,7 +22,7 @@ class ButtonStyle:
 
     @classmethod
     def randomColor(cls) -> int:
-        """Returns a random number between 1, 5
+        """Returns a random number between 1, 4
 
         :returns: :class:`int`
         """

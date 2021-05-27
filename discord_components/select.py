@@ -243,7 +243,7 @@ class Select(Component):
         self._options = value
 
     def __repr__(self) -> str:
-        placeholder_st = f"placholder='{self.placeholder}'" if self.placeholder else ""
+        placeholder_st = f"placeholder='{self.placeholder}'" if self.placeholder else ""
         min_values_st = f"min_values{self.min_values}" if self.min_values else ""
         max_values_st = f"max_values{self.max_values}" if self.max_values else ""
 
