@@ -80,22 +80,7 @@ class DiscordComponents:
             if not event:
                 return
 
-            data = self._structured_raw_data(res)
-            rescomponent = None
-
-            for component in data["message"].components:
-                if component.id == data["custom_id"]:
-                    rescomponent = component
-
-            ctx = Context(
-                bot=self.bot,
-                client=self,
-                user=data["user"],
-                component=rescomponent,
-                raw_data=data["raw"],
-                message=data["message"],
-            )
-            await event(ctx)
+            await event(self._get_context(res))
 
         self.bot.on_socket_response = on_socket_response
         Messageable.send = send_component_msg_prop
@@ -377,7 +362,11 @@ class DiscordComponents:
         """
 
         while True:
-            res = await self.bot.wait_for("socket_response", check=check, timeout=timeout)
+            res = await self.bot.wait_for(
+                "socket_response",
+                check=lambda json: check(self._get_context(json)) if check else None,
+                timeout=timeout,
+            )
 
             if res["t"] != "INTERACTION_CREATE":
                 continue
@@ -387,7 +376,10 @@ class DiscordComponents:
 
             break
 
-        data = self._structured_raw_data(res)
+        return self._get_context(res)
+
+    def _get_context(self, json):
+        data = self._structured_raw_data(json)
         rescomponent = []
 
         for component in data["message"].components:
