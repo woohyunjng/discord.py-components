@@ -30,25 +30,26 @@ __all__ = ("DiscordComponents",)
 
 
 class DiscordComponents:
-    """discord_components client
+    """Represents discord_components client.
 
     Parameters
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
-        The bot
+        Discord client to use.
     change_discord_methods: Optional[:class:`bool`]
-        Default value set to True
 
-        Whether to change the methods of the discord module
+        Whether to override the methods of the discord.py module.
 
-        If this is enabled, you can just use :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordButton>.send_button_msg`, :class:`await <Message>.edit`, as :class:`await <DiscordComponents>.edit_component_msg`
-
-        Also you can use `on_interact`
+        If this is enabled, you can just use
+        :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordButton>.send_button_msg`,
+        :class:`await <Message>.edit`, as :class:`await <DiscordComponents>.edit_component_msg`
+        Alternatively, `on_interact` can be used.
+        Defaults to ``True``.
 
     Attributes
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
-        The bot
+        Discord client to use.
     """
 
     def __init__(self, bot, change_discord_methods=True):
@@ -58,7 +59,7 @@ class DiscordComponents:
             self.change_discord_methods()
 
     def change_discord_methods(self):
-        """A function that change the methods of the discord module"""
+        """Overrides the methods of the discord.py module."""
 
         async def send_component_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
             if isinstance(ctxorchannel, DContext):
@@ -100,16 +101,16 @@ class DiscordComponents:
         components=None,
         **options,
     ) -> Message:
-        """A function that sends a message with components
+        """Sends a message with components.
 
         :returns: :class:`discord.Message`
 
         Parameters
         ----------
         channel: :class:`discord.Messageable`
-            The channel to send the message
+            The channel to send the message.
         content: str
-            The message's content
+            The message's content.
         tts: :class:`bool`
             Indicates if the message should be sent using text-to-speech.
         embed: :class:`discord.Embed`
@@ -124,10 +125,10 @@ class DiscordComponents:
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
         reference: Union[:class:`discord.Message`, :class:`discord.MessageReference`]
-            A reference to the Message to which you are replying.
+            A reference to the Message you are replying.
         components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
             The components to send.
-            If this is 2-dimensional array, an array is a line
+            2-dimensional array can be used to send multiple lines of components.
         """
         state = self.bot._get_state()
         channel = await channel._get_channel()
@@ -148,7 +149,7 @@ class DiscordComponents:
                 reference = reference.to_message_reference_dict()
             except AttributeError:
                 raise InvalidArgument(
-                    "reference parameter must be Message or MessageReference"
+                    "Reference parameter must be either Message or MessageReference."
                 ) from None
 
         data = {
@@ -195,16 +196,16 @@ class DiscordComponents:
         **options,
     ):
 
-        """A function that edits a message with components
+        """Edits a message with components.
 
         :returns: :class:`discord_components.ComponentMessage`
 
         Parameters
         ----------
         channel: :class:`discord.Messageable`
-            The channel to send the message
+            The channel to send the message.
         content: str
-            The message's content
+            The message's content.
         tts: :class:`bool`
             Indicates if the message should be sent using text-to-speech.
         embed: :class:`discord.Embed`
@@ -220,7 +221,7 @@ class DiscordComponents:
             are used instead.
         components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
             The components to send.
-            If this is 2-dimensional array, an array is a line
+            2-dimensional array can be used to send multiple lines of components.
         """
         state = self.bot._get_state()
 
@@ -376,7 +377,7 @@ class DiscordComponents:
         Parameters
         ----------
         message: :class:`discord.Message`
-            The message to convert
+            The message to convert.
         """
 
         res = await self.bot.http.request(

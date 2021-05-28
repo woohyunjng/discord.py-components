@@ -1,7 +1,7 @@
 discord_components
 ==================================
 
-unofficial library for discord components(on development)
+Unofficial library for Discord components. (on development)
 
 - `GitHub <https://github.com/kiki7000/discord.py-components>`_
 - `Discord Server <https://discord.gg/pKM6stqPxS>`_
@@ -15,9 +15,9 @@ Install
 Features
 --------
 
-- Send, Edit discord components
+- Send, edit Discord components.
 - Get components interact event!
-- Supports discord.ext.commands
+- Supports discord.py command extension.
 
 Examples
 --------

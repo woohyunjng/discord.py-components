@@ -3,12 +3,12 @@
 [![PyPI version](https://badge.fury.io/py/discord-components.svg)](https://badge.fury.io/py/discord-components)
 [![Documentation Status](https://readthedocs.org/projects/discord-components/badge/?version=latest)](https://discord-components.readthedocs.io/)
 
-unofficial library for discord components(on development)
+An unofficial library for Discord components. (on development)
 
 - [GitHub](https://github.com/kiki7000/discord.py-components)
 - [Discord Server](https://discord.gg/pKM6stqPxS)
 
-## Install
+## Installation
 ```sh
 pip install --upgrade discord-components
 ```
@@ -53,9 +53,9 @@ bot.run("token")
 [The docs](https://discord-components.readthedocs.io/) can contain lot of spelling mistakes, grammar errors so if there is a problem please create an issue!
 
 ## Features
-+ Send, Edit discord components
++ Send, edit Discord components.
 + Get components interact event!
-+ Supports discord.ext.commands
++ Supports discord.py command extension.
 
 ## Helps
 + [Minibox](https://github.com/minibox24) - Button API explanation

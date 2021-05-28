@@ -11,7 +11,7 @@ __all__ = ("ButtonStyle", "Button")
 
 
 class ButtonStyle:
-    """A class containing button styles"""
+    """Contains button styles."""
 
     blue = 1
     gray = 2
@@ -22,7 +22,7 @@ class ButtonStyle:
 
     @classmethod
     def randomColor(cls) -> int:
-        """Returns a random number between 1, 4
+        """Returns a random number between 1, 4.
 
         :returns: :class:`int`
         """
@@ -31,7 +31,7 @@ class ButtonStyle:
 
     @classmethod
     def to_dict(cls) -> dict:
-        """Returns a dict containing style information
+        """Returns a dict containing style information.
 
         :returns: :class:`dict`
         """
@@ -46,24 +46,24 @@ class ButtonStyle:
 
 
 class Button(Component):
-    """The button class
+    """The button class.
 
     Parameters
     ----------
     label: :class:`str`
-        The bot's label
+        The button's label.
     style: :class:`int`
-        The bot's style (1 or more and 5 or less)
+        The button's style. (1 ~ 5)
     id: :class:`str`
         The button's id.
-
-        If this was not passed as an argument when initailized, this value is random
+        Defaults to :class:`ButtonStyle.gray`
     url: :class:`str`
-        The button's hyperlink.
+        The button's url.
     disabled: :class:`bool`
-        bool: If the buttons is disabled
+        bool: Indicates if the button is disabled.
+        Defaults to ``True``.
     emoji: :class:`discord.PartialEmoji`
-        The button's emoji
+        The button's emoji.
     """
 
     __slots__ = ("_style", "_label", "_id", "_url", "_disabled", "_emoji")
@@ -79,14 +79,14 @@ class Button(Component):
         emoji=None,
     ):
         if style == ButtonStyle.URL and not url:
-            raise InvalidArgument("You must provide a URL when the style is URL")
+            raise InvalidArgument("You must provide a URL when the style is set to URL.")
         if style == ButtonStyle.URL and id:
-            raise InvalidArgument("You musn't use both id and url")
+            raise InvalidArgument("Both ID and URL are set.")
         if not (1 <= style <= ButtonStyle.URL):
-            raise InvalidArgument(f"Style must be in between 1, {ButtonStyle.URL}")
+            raise InvalidArgument(f"Style must be between 1, {ButtonStyle.URL}.")
 
         if not len(str(label)) and not emoji:
-            raise InvalidArgument(f"Label or emoji must be given")
+            raise InvalidArgument(f"Label or emoji must be given.")
 
         self._style = style
         self._label = str(label)
@@ -109,7 +109,7 @@ class Button(Component):
 
     def to_dict(self) -> dict:
         """
-        Converts the button information required for API request to dict and returns
+        Gets the button information required for API request in dict form.
 
         :returns: :class:`dict`
         """
@@ -128,22 +128,22 @@ class Button(Component):
 
     @property
     def style(self) -> int:
-        """:class:`int`: The button's style (1 or more and 5 or less)"""
+        """:class:`int`: The button's style. (1 ~ 5)"""
         return self._style
 
     @property
     def label(self) -> str:
-        """:class:`str`: The button's label"""
+        """:class:`str`: The button's label."""
         return self._label
 
     @property
     def id(self) -> str:
-        """:class:`str`: The button's id."""
+        """:class:`str`: The button's ID."""
         return self._id
 
     @property
     def url(self) -> Optional[str]:
-        """Optional[:class:`str`]: The button's hyperlink.
+        """Optional[:class:`str`]: The button's URL.
 
         .. note::
             If the button's style is not `5`(URL), this value is `None`
@@ -152,41 +152,41 @@ class Button(Component):
 
     @property
     def disabled(self) -> bool:
-        """:class:`bool`: If the buttons is disabled"""
+        """:class:`bool`: Indicates if the button is disabled."""
         return self._disabled
 
     @property
     def emoji(self) -> PartialEmoji:
-        """:class:`discord.PartialEmoji`: The button's emoji"""
+        """:class:`discord.PartialEmoji`: The button's emoji."""
         return self._emoji
 
     @style.setter
     def style(self, value: int):
         if value == ButtonStyle.URL and self.id:
-            raise InvalidArgument("You musn't use both id and url")
+            raise InvalidArgument("Both ID and URL are set.")
         if not (1 <= value <= ButtonStyle.URL):
-            raise InvalidArgument(f"Style must be in between 1, {ButtonStyle.URL}")
+            raise InvalidArgument(f"Style must be between 1, {ButtonStyle.URL}.")
 
         self._style = value
 
     @label.setter
     def label(self, value: str):
         if not len(str(value)) and not self.emoji:
-            raise InvalidArgument("Label musn't be empty")
+            raise InvalidArgument("Label should not be empty.")
 
         self._label = str(value)
 
     @url.setter
     def url(self, value: str):
         if value and self.style != ButtonStyle.URL:
-            raise InvalidArgument("button style is not URL")
+            raise InvalidArgument("Button style is not URL. You shouldn't provide URL.")
 
         self._url = value
 
     @id.setter
     def id(self, value: str):
         if self.style == ButtonStyle.URL:
-            raise InvalidArgument("button style is URL")
+            raise InvalidArgument("Button style is set to URL. You shouldn't provide ID.")
 
         self._id = value
 
@@ -203,14 +203,14 @@ class Button(Component):
 
     @staticmethod
     def from_json(data):
-        """Create button instance from json
+        """Creates button instance from json.
 
         :returns: :class:`~discord_components.Button`
 
         Parameters
         ----------
         data: :class:`dict`
-            The json
+            The json to construct button from.
         """
 
         emoji = data.get("emoji")

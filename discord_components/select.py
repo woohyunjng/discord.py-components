@@ -10,20 +10,20 @@ __all__ = ("Select", "Option")
 
 
 class Option(Component):
-    """The select option
+    """The select option.
 
     Parameters
     ----------
     label: :class:`str`
-        The option's label
+        The option's label.
     value: :class:`str`
-        The option's value
+        The option's value.
     emoji: :class:`discord.PartialEmoji`
-        The option's emoji
+        The option's emoji.
     description: :class:`str`
-        The option's description
+        The option's description.
     default: :class:`bool`
-        If the option is default
+        Indicates if the option is default.
     """
 
     __slots__ = ("_label", "_value", "_emoji", "_description", "_default")
@@ -53,7 +53,7 @@ class Option(Component):
 
     def to_dict(self) -> dict:
         """
-        Converts the select option information required for API request to dict and returns
+        Converts the select option information required for API request to dict and returns.
 
         :returns: :class:`dict`
         """
@@ -70,33 +70,33 @@ class Option(Component):
 
     @property
     def label(self) -> str:
-        """:class:`str`: The option's label"""
+        """:class:`str`: The option's label."""
         return self._label
 
     @property
     def value(self) -> str:
-        """:class:`str`: The option's value"""
+        """:class:`str`: The option's value."""
         return self._value
 
     @property
     def emoji(self) -> PartialEmoji:
-        """:class:`discord.PartialEmoji`: The option's emoji"""
+        """:class:`discord.PartialEmoji`: The option's emoji."""
         return self._emoji
 
     @property
     def description(self) -> str:
-        """:class:`str`: The option's description"""
+        """:class:`str`: The option's description."""
         return self._description
 
     @property
     def default(self) -> bool:
-        """:class:`bool`: If the option is default"""
+        """:class:`bool`: Indicates if the option is default."""
         return self._default
 
     @label.setter
     def label(self, value: str):
         if not len(value):
-            raise InvalidArgument("Label musn't be empty")
+            raise InvalidArgument("Label must not be empty.")
 
         self._label = value
 
@@ -121,14 +121,14 @@ class Option(Component):
 
     @staticmethod
     def from_json(data):
-        """Create option instance from json
+        """Creates option instance from json.
 
         :returns: :class:`~discord_components.Option`
 
         Parameters
         ----------
         data: :class:`dict`
-            The json
+            The json to construct option from.
         """
 
         emoji = data.get("emoji")
@@ -146,20 +146,20 @@ class Option(Component):
 
 
 class Select(Component):
-    """The select
+    """The select.
 
     Parameters
     ----------
     options: List[:class:`~discord_components.Option`]
-        The select's options
+        The select's options.
     id: :class:`str`
-        The select's id
+        The select's id.
     placeholder: :class:`str`
-        The select's placeholder
+        The select's placeholder.
     min_values: :class:`int`
-        The select's min values
+        The select's min values.
     max_values: :class:`int`
-        The select's max values
+        The select's max values.
     """
 
     __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values")
@@ -174,7 +174,7 @@ class Select(Component):
         max_values=None,
     ):
         if (not len(options)) or (len(options) > 25):
-            raise InvalidArgument("options length should be between 1 and 25")
+            raise InvalidArgument("Options length should be between 1 and 25.")
 
         self._id = id or str(uuid1())
         self._options = options
@@ -184,7 +184,7 @@ class Select(Component):
 
     def to_dict(self) -> dict:
         """
-        Converts the select information required for API request to dict and returns
+        Converts the select information required for API request to dict and returns.
 
         :returns: :class:`dict`
         """
@@ -200,27 +200,27 @@ class Select(Component):
 
     @property
     def id(self) -> str:
-        """:class:`str`: The select's id"""
+        """:class:`str`: The select's id."""
         return self._id
 
     @property
     def options(self) -> List[Option]:
-        """List[:class:`~discord_components.Option`]: The select's options"""
+        """List[:class:`~discord_components.Option`]: The select's options."""
         return self._options
 
     @property
     def placeholder(self) -> str:
-        """:class:`str`: The select's placeholder"""
+        """:class:`str`: The select's placeholder."""
         return self._placeholder
 
     @property
     def min_values(self) -> int:
-        """:class:`int`: The select's min values"""
+        """:class:`int`: The select's min values."""
         return self._min_values
 
     @property
     def max_values(self) -> int:
-        """:class:`int`: The select's max values"""
+        """:class:`int`: The select's max values."""
         return self._max_values
 
     @id.setter
@@ -230,7 +230,7 @@ class Select(Component):
     @options.setter
     def options(self, value: List[Option]):
         if (not len(value)) or (len(value) > 25):
-            raise InvalidArgument("options length should be between 1 and 25")
+            raise InvalidArgument("Options length should be between 1 and 25.")
 
         self._options = value
 
@@ -248,14 +248,14 @@ class Select(Component):
 
     @staticmethod
     def from_json(data):
-        """Create a select instance from json
+        """Creates a select instance from json.
 
         :returns: :class:`~discord_components.Select`
 
         Parameters
         ----------
         data: :class:`dict`
-            The json
+            The json to construct select from.
         """
 
         return Select(
