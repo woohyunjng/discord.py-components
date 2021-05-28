@@ -268,7 +268,7 @@ class DiscordComponents:
     def _get_components_json(
         self, components: List[Union[Component, List[Component]]] = None
     ) -> dict:
-        if not components:
+        if not isinstance(components, list) and not components:
             return {}
 
         for i in range(len(components)):
