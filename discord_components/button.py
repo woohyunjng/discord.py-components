@@ -215,8 +215,8 @@ class Button(Component):
 
         emoji = data.get("emoji")
         return Button(
-            label=data["label"],
             style=data["style"],
+            label=data.get("label"),
             id=data.get("custom_id"),
             url=data.get("url"),
             disabled=data.get("disabled", False),
