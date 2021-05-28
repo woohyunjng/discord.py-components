@@ -242,16 +242,6 @@ class Select(Component):
 
         self._options = value
 
-    def __repr__(self) -> str:
-        placeholder_st = f"placeholder='{self.placeholder}'" if self.placeholder else ""
-        min_values_st = f"min_values{self.min_values}" if self.min_values else ""
-        max_values_st = f"max_values{self.max_values}" if self.max_values else ""
-
-        return f"<Select id='{self.id}' options=[{', '.join(map(lambda x: str(x), self.options))}] {placeholder_st} {min_values_st} {max_values_st}>"
-
-    def __str__(self) -> str:
-        return self.__repr__()
-
     @staticmethod
     def from_json(data):
         """Create a select instance from json

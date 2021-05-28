@@ -71,7 +71,7 @@ class Button(Component):
     def __init__(
         self,
         *,
-        label,
+        label=None,
         style=ButtonStyle.gray,
         id=None,
         url=None,
@@ -83,10 +83,10 @@ class Button(Component):
         if style == ButtonStyle.URL and id:
             raise InvalidArgument("You musn't use both id and url")
         if not (1 <= style <= ButtonStyle.URL):
-            raise InvalidArgument(f"style must be in between 1, {ButtonStyle.URL}")
+            raise InvalidArgument(f"Style must be in between 1, {ButtonStyle.URL}")
 
-        if not len(label):
-            raise InvalidArgument("Label musn't be empty")
+        if not label and not emoji:
+            raise InvalidArgument(f"Label or emoji must be given")
 
         self._style = style
         self._label = label
@@ -191,16 +191,6 @@ class Button(Component):
             self._emoji = emoji
         elif isinstance(emoji, str):
             self._emoji = PartialEmoji(name=emoji)
-
-    def __repr__(self) -> str:
-        id_st = f"id='{self.id}'" if self.id else ""
-        url_st = f"url='{self.url}'" if self.url else ""
-        emoji_st = f"emoji={str(self.emoji)}" if self.emoji else ""
-
-        return f"<Button style={self.style} label='{self.label}' {url_st} {id_st} {emoji_st} disabled={self.disabled}>"
-
-    def __str__(self) -> str:
-        return self.__repr__()
 
     @staticmethod
     def from_json(data):
