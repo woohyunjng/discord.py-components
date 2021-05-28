@@ -69,6 +69,8 @@ class Context:
         The interaction's token
     is_ephemeral: :class:`bool`
         If ephemeral message
+    responded: :class:`bool`
+        If responded?
     """
 
     def __init__(
@@ -81,6 +83,7 @@ class Context:
         self.component = component
         self.raw_data = raw_data
         self.is_ephemeral = is_ephemeral
+        self.responded = False
 
         self.message = message
         self.channel = message.channel if message else None
@@ -162,3 +165,4 @@ class Context:
             Route("POST", f"/interactions/{self.interaction_id}/{self.interaction_token}/callback"),
             json={"type": type, "data": data},
         )
+        self.responded = True
