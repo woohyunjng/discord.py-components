@@ -390,9 +390,7 @@ class DiscordComponents:
                 continue
 
             for j in i["components"]:
-                if j["type"] < 2:
-                    continue
-                components.append(self._get_component_type(i["type"]).from_json(i))
+                components.append(self._get_component_type(j["type"]).from_json(j))
 
         return ComponentMessage(
             channel=message.channel, state=self.bot._get_state(), data=res, components=components

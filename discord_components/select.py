@@ -222,13 +222,13 @@ class Select(Component):
         return self._placeholder
 
     @property
-    def min_values(self) -> str:
-        """:class:`str`: The select's min values"""
+    def min_values(self) -> int:
+        """:class:`int`: The select's min values"""
         return self._min_values
 
     @property
-    def max_values(self) -> str:
-        """:class:`str`: The select's max values"""
+    def max_values(self) -> int:
+        """:class:`int`: The select's max values"""
         return self._max_values
 
     @id.setter
@@ -241,6 +241,18 @@ class Select(Component):
             raise InvalidArgument("options length should be between 1 and 25")
 
         self._options = value
+
+    @placeholder.setter
+    def placeholder(self, value: str):
+        self._placeholder = value
+
+    @min_values.setter
+    def min_values(self, value: int):
+        self._min_values = value
+
+    @max_values.setter
+    def max_values(self, value: int):
+        self._max_values = value
 
     @staticmethod
     def from_json(data):
