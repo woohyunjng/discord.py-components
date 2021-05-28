@@ -1,4 +1,4 @@
-from discord import InvalidArgument, PartialEmoji
+from discord import InvalidArgument, PartialEmoji, Emoji
 
 from typing import List
 from uuid import uuid1
@@ -42,7 +42,9 @@ class Option(Component):
         self._description = description
         self._default = default
 
-        if isinstance(emoji, PartialEmoji):
+        if isinstance(emoji, Emoji):
+            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+        elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
             self._emoji = PartialEmoji(name=emoji)
@@ -116,16 +118,6 @@ class Option(Component):
     @default.setter
     def default(self, value: bool):
         self._default = value
-
-    def __repr__(self) -> str:
-        emoji_st = f"emoji={str(self.emoji)}" if self.emoji else ""
-        description_st = f"description='{self.description}'" if self.description else ""
-        default_st = f"default={self.default}" if self.default else ""
-
-        return f"<Option label='{self.label}' value='{self.value}' {emoji_st} {description_st} {default_st}>"
-
-    def __str__(self) -> str:
-        return self.__repr__()
 
     @staticmethod
     def from_json(data):
