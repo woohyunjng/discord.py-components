@@ -5,7 +5,7 @@
 
 unofficial library for discord components(on development)
 
-For help, contact with `키키#4242` or create an issue or a discussion
+For help, come to the [discord server](https://discord.gg/pKM6stqPxS)
 
 ## Install
 ```sh

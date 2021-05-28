@@ -2,7 +2,10 @@ discord_components
 ==================================
 
 unofficial library for discord components(on development)
+
 `This <https://github.com/kiki7000/discord.py-components>`_ is the github repository
+
+`Discord Server <https://discord.gg/pKM6stqPxS>`_
 
 
 Install
