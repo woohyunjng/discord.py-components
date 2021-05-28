@@ -52,7 +52,6 @@ class DiscordComponents:
 
     def __init__(self, bot, change_discord_methods=True):
         self.bot = bot
-        self._events = {}
 
         if change_discord_methods:
             self.change_discord_methods()
@@ -72,24 +71,20 @@ class DiscordComponents:
         async def reply_component_msg_prop(msg, *args, **kwargs):
             return await self.send_component_msg(msg.channel, *args, **kwargs, reference=msg)
 
-        async def wait_for_interact_ctx(ctx, *args, **kwargs):
-            return await self.wait_for_interact(*args, **kwargs)
-
         async def on_socket_response(res):
             if res["t"] != "INTERACTION_CREATE":
                 return
 
-            event = self._events.get(res["d"]["data"]["component_type"], None)
-            if not event:
-                return
-
-            await event(self._get_context(res))
+            ctx = self._get_context(res)
+            for key, value in InteractionEventType.items():
+                if value == res["d"]["data"]["component_type"]:
+                    self.bot.dispatch(key, ctx)
+                    break
 
         self.bot.on_socket_response = on_socket_response
         Messageable.send = send_component_msg_prop
         Message.edit = edit_component_msg_prop
         Message.reply = reply_component_msg_prop
-        DContext.wait_for_interact = wait_for_interact_ctx
 
     async def send_component_msg(
         self,
@@ -346,43 +341,6 @@ class DiscordComponents:
 
         return data
 
-    async def wait_for_interact(
-        self,
-        type,
-        check=None,
-        timeout=None,
-    ) -> Context:
-        """A function that waits until a user clicks a button on the message
-
-        :returns: :class:`~discord_components.Context`
-
-        Parameters
-        ----------
-        type: :class:`str`
-            The interaction event type
-        check: Optional[Callable[[:class:`Context`], Coroutine[:class:`bool`]]]
-            The wait_for check function
-        timeout: Optional[:class:`float`]
-            The wait_for timeout
-        """
-
-        while True:
-            res = await self.bot.wait_for(
-                "socket_response",
-                check=(lambda json: check(self._get_context(json))) if check else None,
-                timeout=timeout,
-            )
-
-            if res["t"] != "INTERACTION_CREATE":
-                continue
-
-            if InteractionEventType[type] != res["d"]["data"]["component_type"]:
-                continue
-
-            break
-
-        return self._get_context(res)
-
     def _get_context(self, json):
         data = self._structured_raw_data(json)
         rescomponent = []
@@ -439,9 +397,3 @@ class DiscordComponents:
         return ComponentMessage(
             channel=message.channel, state=self.bot._get_state(), data=res, components=components
         )
-
-    def on_interact(self, type):
-        def wrapper(func):
-            self._events[InteractionEventType[type]] = func
-
-        return wrapper

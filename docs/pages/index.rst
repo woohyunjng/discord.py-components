@@ -29,7 +29,7 @@ Examples
     from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
     bot = Client()
-    ddb = DiscordComponents(bot)
+    DiscordComponents(bot)
 
     @bot.event
     async def on_message(msg):
@@ -45,7 +45,7 @@ Examples
             ],
         )
 
-        res = await ddb.wait_for_interact("button_click")
+        res = await bot.wait_for("button_click")
         if res.channel == msg.channel:
             await res.respond(
                 type=InteractionType.ChannelMessageWithSource,

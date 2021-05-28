@@ -34,7 +34,7 @@ async def on_message(msg):
         ],
     )
 
-    res = await ddb.wait_for_interact("button_click")
+    res = await bot.wait_for("button_click")
     if res.channel == msg.channel:
         await res.respond(
             type=InteractionType.ChannelMessageWithSource,
