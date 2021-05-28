@@ -85,11 +85,11 @@ class Button(Component):
         if not (1 <= style <= ButtonStyle.URL):
             raise InvalidArgument(f"Style must be in between 1, {ButtonStyle.URL}")
 
-        if not label and not emoji:
+        if not len(str(label)) and not emoji:
             raise InvalidArgument(f"Label or emoji must be given")
 
         self._style = style
-        self._label = label
+        self._label = str(label)
         self._url = url
         self._disabled = disabled
 
@@ -171,10 +171,10 @@ class Button(Component):
 
     @label.setter
     def label(self, value: str):
-        if not len(value):
+        if not len(str(value)) and not self.emoji:
             raise InvalidArgument("Label musn't be empty")
 
-        self._label = value
+        self._label = str(value)
 
     @url.setter
     def url(self, value: str):
