@@ -89,6 +89,7 @@ class Context:
         allowed_mentions=None,
         tts=False,
         flags=FlagsType.Ephemeral,
+        components=[],
     ) -> None:
         """Function to send response to discord
 
@@ -114,6 +115,9 @@ class Context:
             The response message's tts (default False)
         flags: Optional[:class:`int`]
             The response message's flags (default 64)
+        components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+            The components to send.
+            If this is 2-dimensional array, an array is a line
         """
         state = self.bot._get_state()
 
@@ -138,6 +142,7 @@ class Context:
         data = {
             "content": content,
             "embeds": embeds,
+            **self.client._get_components_json(components),
             "allowed_mentions": allowed_mentions,
             "tts": tts,
             "flags": flags,
