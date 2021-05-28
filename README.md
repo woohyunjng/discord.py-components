@@ -19,7 +19,10 @@ from discord import Client
 from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 bot = Client()
-ddb = DiscordComponents(bot)
+
+@bot.event
+async def on_ready():
+    DiscordComponents(bot)
 
 @bot.event
 async def on_message(msg):

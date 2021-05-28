@@ -28,7 +28,10 @@ Examples
     from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
     bot = Client()
-    DiscordComponents(bot)
+
+    @bot.event
+    async def on_ready():
+        DiscordComponents(bot)
 
     @bot.event
     async def on_message(msg):
