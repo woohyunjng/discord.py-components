@@ -69,6 +69,9 @@ class DiscordComponents:
         async def edit_component_msg_prop(*args, **kwargs):
             return await self.edit_component_msg(*args, **kwargs)
 
+        async def reply_component_msg_prop(msg, *args, **kwargs):
+            return await self.send_component_msg(msg.channel, *args, **kwargs, reference=msg)
+
         async def wait_for_interact_ctx(ctx, *args, **kwargs):
             return await self.wait_for_interact(*args, **kwargs)
 
@@ -85,6 +88,7 @@ class DiscordComponents:
         self.bot.on_socket_response = on_socket_response
         Messageable.send = send_component_msg_prop
         Message.edit = edit_component_msg_prop
+        Message.reply = reply_component_msg_prop
         DContext.wait_for_interact = wait_for_interact_ctx
 
     async def send_component_msg(
