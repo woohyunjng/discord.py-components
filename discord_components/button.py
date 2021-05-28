@@ -1,4 +1,4 @@
-from discord import InvalidArgument, PartialEmoji
+from discord import InvalidArgument, PartialEmoji, Emoji
 
 from typing import Union, Optional
 from uuid import uuid1
@@ -93,7 +93,9 @@ class Button(Component):
         self._url = url
         self._disabled = disabled
 
-        if isinstance(emoji, PartialEmoji):
+        if isinstance(emoji, Emoji):
+            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+        elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
             self._emoji = PartialEmoji(name=emoji)
