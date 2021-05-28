@@ -13,6 +13,7 @@ from discord.http import Route
 from discord.abc import Messageable
 
 from functools import wraps
+from aiohttp import FormData
 from asyncio import TimeoutError
 from typing import Union, List, Callable, Awaitable
 from json import dumps
@@ -162,21 +163,16 @@ class DiscordComponents:
 
         if file:
             try:
-                await self.bot.http.request(
-                    Route("POST", f"/channels/{channel.id}/messages"),
-                    form=[
-                        {
-                            "name": "payload_json",
-                            "value": dumps(data, separators=(",", ":"), ensure_ascii=True),
-                        },
-                        {
-                            "name": "file",
-                            "value": file.fp,
-                            "filename": file.filename,
-                            "content_type": "application/octet-stream",
-                        },
-                    ],
-                    files=[file],
+                form = FormData()
+                form.add_field(
+                    "payload_json", dumps(data, separators=(",", ":"), ensure_ascii=True)
+                )
+                form.add_field(
+                    "file", file.fp, filename=file.filename, content_type="application/octet-stream"
+                )
+
+                data = await self.bot.http.request(
+                    Route("POST", f"/channels/{channel.id}/messages"), data=form, files=[file]
                 )
             finally:
                 file.close()
@@ -249,20 +245,17 @@ class DiscordComponents:
         }
         if file:
             try:
-                await self.bot.http.request(
+                form = FormData()
+                form.add_field(
+                    "payload_json", dumps(data, separators=(",", ":"), ensure_ascii=True)
+                )
+                form.add_field(
+                    "file", file.fp, filename=file.filename, content_type="application/octet-stream"
+                )
+
+                data = await self.bot.http.request(
                     Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"),
-                    form=[
-                        {
-                            "name": "payload_json",
-                            "value": dumps(data, separators=(",", ":"), ensure_ascii=True),
-                        },
-                        {
-                            "name": "file",
-                            "value": file.fp,
-                            "filename": file.filename,
-                            "content_type": "application/octet-stream",
-                        },
-                    ],
+                    data=form,
                     files=[file],
                 )
             finally:
