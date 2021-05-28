@@ -160,6 +160,15 @@ class Button(Component):
         """:class:`discord.PartialEmoji`: The button's emoji"""
         return self._emoji
 
+    @style.setter
+    def style(self, value: int):
+        if value == ButtonStyle.URL and self.id:
+            raise InvalidArgument("You musn't use both id and url")
+        if not (1 <= value <= ButtonStyle.URL):
+            raise InvalidArgument(f"Style must be in between 1, {ButtonStyle.URL}")
+
+        self._style = value
+
     @label.setter
     def label(self, value: str):
         if not len(value):
@@ -169,7 +178,7 @@ class Button(Component):
 
     @url.setter
     def url(self, value: str):
-        if self.style != ButtonStyle.URL:
+        if value and self.style != ButtonStyle.URL:
             raise InvalidArgument("button style is not URL")
 
         self._url = value
