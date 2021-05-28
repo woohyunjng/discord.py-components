@@ -134,6 +134,7 @@ class DiscordComponents:
             If this is 2-dimensional array, an array is a line
         """
         state = self.bot._get_state()
+        channel = await channel._get_channel()
 
         if embed:
             embed = embed.to_dict()
