@@ -152,7 +152,7 @@ class Button(Component):
 
     @property
     def disabled(self) -> bool:
-        """Optional[:class:`str`]: If the buttons is disabled"""
+        """:class:`bool`: If the buttons is disabled"""
         return self._disabled
 
     @property
