@@ -5,7 +5,7 @@ InteractionEventType = {"button_click": 2, "select_option": 3}
 
 
 class InteractionType:
-    """A class containing interaction types"""
+    """Represents interaction types."""
 
     Pong = 1
     ChannelMessageWithSource = 4
@@ -15,7 +15,7 @@ class InteractionType:
 
 
 class FlagsType:
-    """A class containing flag types"""
+    """Represents flag types."""
 
     Crossposted = 1 << 0
     Is_crosspost = 1 << 1

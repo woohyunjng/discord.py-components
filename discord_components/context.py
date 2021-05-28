@@ -14,45 +14,45 @@ __all__ = ("Context",)
 
 
 class Context:
-    """A class which contains a lot of information about components interact event
+    """Contains information about components interact event.
 
     Parameters
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
-        The bot
+        Discord client to use.
     client: :class:`~discord_components.DiscordComponents`
-        The client for discord_components
+        The client for discord_components.
     user: :class:`discord.User`
-        The user which interacted with the component
+        The user interacted with the component.
     component: :class:`~discord_components.Component`
-        The component which was interacted
+        The interacted component.
     raw_data: :class:`dict`
-        JSON which was sent by discord api
+        JSON sent by discord api.
     message: :class:`~discord_components.ComponentMessage`
-        The component's message
+        The component's message.
 
     Attributes
     ----------
     bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
-        The bot
+        Discord client to use.
     client: :class:`~discord_components.DiscordComponent`
-        The client for discord_components
+        The client for discord_components.
     user: :class:`discord.User`
-        The user which interacted with the component
+        The user interacted with the component.
     component: :class:`~discord_components.Component`
-        The component which was interacted
+        The interacted component.
     raw_data: :class:`dict`
-        JSON which was sent by discord api
+        JSON sent by discord api.
     message: :class:`discord_components.ComponentMessage`
-        The component's message
+        The component's message.
     channel: :class:`discord.abc.Messageable`
-        The component's message's channel
+        The component message's channel.
     guild: :class:`discord.Guild`
-        The component's message's guild
+        The component message's guild.
     interaction_id: :class:`str`
-        The interaction's id
+        The interaction's ID.
     interaction_token: :class:`str`
-        The interaction's token
+        The interaction's token.
     """
 
     def __init__(
@@ -90,30 +90,30 @@ class Context:
         tts=False,
         flags=FlagsType.Ephemeral,
     ) -> None:
-        """Function to send response to discord
+        """Sends response to Discord.
 
         .. note::
-            If you don't use this function after using `wait_for_button_click`, a interaction error will be raised
+            If this function is invoked before `wait_for_button_click`, a interaction error will be raised.
 
         :returns: :class:`None`
 
         Parameters
         ----------
         type: :class:`int`
-            The interaction's type. (4 or more and 6 or less)
-            Default 6 (InteractionType.ChannelMessageWithSource)
+            The interaction's type. (4 ~ 6)
+            Defaults to ``6``. (InteractionType.ChannelMessageWithSource)
         content: Optional[:class:`str`]
-            The response message's content
+            The response message's content.
         embed: Optional[:class:`discord.Embed`]
-            The response message's embed
+            The response message's embed.
         embeds: Optional[List[:class:`discord.Embed`]]
-            The response message's embeds
+            The response message's embeds.
         allowed_mentions: Optional[:class:`discord.AllowedMentions`]
-            The response message's allowed mentions
+            The response message's allowed mentions.
         tts: Optional[:class:`bool`]
-            The response message's tts (default False)
+            The response message's tts. (Defaults to ``False``)
         flags: Optional[:class:`int`]
-            The response message's flags (default 64)
+            The response message's flags. (Defaults to ``64``)
         """
         state = self.bot._get_state()
 
@@ -123,7 +123,7 @@ class Context:
             embeds = [embed]
 
         if len(embeds) > 10:
-            raise InvalidArgument("Do not provide more than 10 embeds")
+            raise InvalidArgument("Embed limit exceeded. (Max: 10)")
         if embeds:
             embeds = list(map(lambda x: x.to_dict(), embeds))
 
