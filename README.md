@@ -5,7 +5,8 @@
 
 unofficial library for discord components(on development)
 
-For help, come to the [discord server](https://discord.gg/pKM6stqPxS)
+- [GitHub](https://github.com/kiki7000/discord.py-components)
+- [Discord Server](https://discord.gg/pKM6stqPxS)
 
 ## Install
 ```sh
