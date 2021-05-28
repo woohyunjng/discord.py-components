@@ -364,7 +364,7 @@ class DiscordComponents:
         while True:
             res = await self.bot.wait_for(
                 "socket_response",
-                check=lambda json: check(self._get_context(json)) if check else None,
+                check=(lambda json: check(self._get_context(json))) if check else None,
                 timeout=timeout,
             )
 
