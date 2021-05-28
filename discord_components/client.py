@@ -306,50 +306,56 @@ class DiscordComponents:
         state = self.bot._get_state()
 
         components = []
-        for line in raw_data["message"]["components"]:
-            if line["type"] >= 2:
-                components.append(self._get_component_type(line["type"]).from_json(line))
-            for btn in line["components"]:
-                if btn["type"] >= 2:
-                    components.append(self._get_component_type(btn["type"]).from_json(btn))
+        if "components" not in raw_data["message"]:
+            components = []
 
-        data["message"] = ComponentMessage(
-            state=state,
-            channel=self.bot.get_channel(int(raw_data["channel_id"])),
-            data=raw_data["message"],
-            components=components,
-        )
-
-        if "member" in raw_data:
-            userData = raw_data["member"]["user"]
+            data["message"] = None
+            data["user"] = None
         else:
-            userData = raw_data["user"]
-        data["user"] = User(state=state, data=userData)
-        data["custom_id"] = raw_data["data"]["custom_id"]
+            for line in raw_data["message"]["components"]:
+                if line["type"] >= 2:
+                    components.append(self._get_component_type(line["type"]).from_json(line))
+                for component in line["components"]:
+                    if component["type"] >= 2:
+                        components.append(
+                            self._get_component_type(component["type"]).from_json(component)
+                        )
 
-        if "values" in raw_data["data"]:
-            data["values"] = raw_data["data"]["values"]
-        else:
-            data["values"] = []
+            data["message"] = ComponentMessage(
+                state=state,
+                channel=self.bot.get_channel(int(raw_data["channel_id"])),
+                data=raw_data["message"],
+                components=components,
+            )
 
+            if "member" in raw_data:
+                userData = raw_data["member"]["user"]
+            else:
+                userData = raw_data["user"]
+            data["user"] = User(state=state, data=userData)
+
+        data["component"] = raw_data["data"]
         return data
 
     def _get_context(self, json):
         data = self._structured_raw_data(json)
         rescomponent = []
 
-        for component in data["message"].components:
-            if isinstance(component, Select):
-                for option in component.options:
-                    if option.value in data["values"]:
-                        if len(data["values"]) > 1:
-                            rescomponent.append(option)
-                        else:
-                            rescomponent = [option]
-                            break
-            else:
-                if component.id == data["custom_id"]:
-                    rescomponent = component
+        if data["message"]:
+            for component in data["message"].components:
+                if isinstance(component, Select):
+                    for option in component.options:
+                        if option.value in data["values"]:
+                            if len(data["values"]) > 1:
+                                rescomponent.append(option)
+                            else:
+                                rescomponent = [option]
+                                break
+                else:
+                    if component.id == data["component"]["custom_id"]:
+                        rescomponent = component
+        else:
+            rescomponent = data["component"]
 
         ctx = Context(
             bot=self.bot,
@@ -358,6 +364,7 @@ class DiscordComponents:
             component=rescomponent,
             raw_data=data["raw"],
             message=data["message"],
+            is_ephemeral=not bool(data["message"]),
         )
         return ctx
 

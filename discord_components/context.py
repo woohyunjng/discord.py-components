@@ -24,12 +24,16 @@ class Context:
         The client for discord_components
     user: :class:`discord.User`
         The user which interacted with the component
-    component: :class:`~discord_components.Component`
+    component: Union[:class:`~discord_components.Component`, :class:`dict`]
         The component which was interacted
+
+        Component json if ephemeral message
     raw_data: :class:`dict`
         JSON which was sent by discord api
     message: :class:`~discord_components.ComponentMessage`
         The component's message
+    is_ephemeral: :class:`bool`
+        If ephemeral message
 
     Attributes
     ----------
@@ -39,31 +43,36 @@ class Context:
         The client for discord_components
     user: :class:`discord.User`
         The user which interacted with the component
-    component: :class:`~discord_components.Component`
+
+        None if ephemeral message
+    component: Union[:class:`~discord_components.Component`, :class:`dict`]
         The component which was interacted
+
+        Component json if ephemeral message
     raw_data: :class:`dict`
         JSON which was sent by discord api
     message: :class:`discord_components.ComponentMessage`
         The component's message
+
+        None if ephemeral message
     channel: :class:`discord.abc.Messageable`
         The component's message's channel
+
+        None if ephemeral message
     guild: :class:`discord.Guild`
         The component's message's guild
+
+        None if ephemeral message
     interaction_id: :class:`str`
         The interaction's id
     interaction_token: :class:`str`
         The interaction's token
+    is_ephemeral: :class:`bool`
+        If ephemeral message
     """
 
     def __init__(
-        self,
-        *,
-        bot,
-        client,
-        user,
-        component,
-        raw_data,
-        message,
+        self, *, bot, client, user=None, component, raw_data, message=None, is_ephemeral=False
     ):
         self.bot = bot
         self.client = client
@@ -71,10 +80,11 @@ class Context:
 
         self.component = component
         self.raw_data = raw_data
+        self.is_ephemeral = is_ephemeral
 
         self.message = message
-        self.channel = message.channel
-        self.guild = message.guild
+        self.channel = message.channel if message else None
+        self.guild = message.guild if message else None
 
         self.interaction_id = raw_data["d"]["id"]
         self.interaction_token = raw_data["d"]["token"]
