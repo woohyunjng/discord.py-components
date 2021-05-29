@@ -50,12 +50,12 @@ bot.run("token")
 ```
 
 ## Docs
-[The docs](https://discord-components.readthedocs.io/) can contain lot of spelling mistakes, grammar errors so if there is a problem please create an issue!
+[The docs](https://discord-components.readthedocs.io/) can contain a lot of spelling mistakes, grammar errors so if there is a problem please create an issue!
 
 ## Features
 + Send, edit Discord components.
 + Get components interact event!
-+ Supports discord.py command extension.
++ Supports discord.py commands extension.
 
 ## Helps
 + [Minibox](https://github.com/minibox24) - Button API explanation

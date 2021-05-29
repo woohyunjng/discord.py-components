@@ -25,4 +25,4 @@ labels: bug
 
 ## Check
 - [ ] Are you using the newest version?
-- [ ] Does this bug occurs security issues?
+- [ ] Is this bug related to security issues?

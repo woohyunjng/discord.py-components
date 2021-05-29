@@ -14,5 +14,5 @@ labels: "add a feature"
 ## Check
 - [ ] Is this feature related to this module?
 - [ ] Can this feature be implemented?
-- [ ] Does this new feature requires the user to change the code?
+- [ ] Does this new feature requires the user to change their code?
 
