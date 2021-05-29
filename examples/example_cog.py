@@ -3,10 +3,8 @@ from discord.ext import commands
 from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 class examplecog(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
-
     @commands.command()
     async def buttontest(self, ctx):
         m = await ctx.send("Here is an example of a button",
