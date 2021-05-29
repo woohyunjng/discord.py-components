@@ -41,6 +41,39 @@ async def on_button_click(res):
     await res.respond(
         type=InteractionType.ChannelMessageWithSource, content=f"{res.component.label} pressed"
     )
-
+@bot.command()
+async def buttons(ctx):
+    """Buttons example of navigation with while and with check"""
+    msg = await ctx.channel.send(embed=discord.Embed(color=discord.Color.random(), title="Navigation"),
+                                 components=[
+                                   [Button(style=ButtonStyle.blue, label="Backward", emoji="⏮️"),
+                                    Button(style=ButtonStyle.red, label="Stop", emoji="❌"),
+                                    Button(style=ButtonStyle.blue, label="Forward",  emoji="⏭️")]])
+    def check(m):
+        return m.user == ctx.author and m.message.channel == ctx.channel
+    stop = False
+    while not stop:
+        res = await bot.wait_for("button_click", check=check)
+        if res.channel == ctx.channel:
+            if res.component.label == "Forward":
+                await msg.edit(embed=discord.Embed(color=discord.Color.random(),
+                                                   title="Forward"))
+                await res.respond(
+                    type=InteractionType.DeferredUpdateMessage
+                )
+            elif res.component.label == "Backward":
+                await msg.edit(embed=discord.Embed(color=discord.Color.random(),
+                                                   title="Backward"))
+                await res.respond(
+                    type=InteractionType.DeferredUpdateMessage
+                )
+            elif res.component.label == "Stop":
+                await msg.edit(embed=discord.Embed(color=discord.Color.random(),
+                                                   title="Stop"))
+                await res.respond(
+                    type=InteractionType.UpdateMessage
+                )
+                await msg.delete()
+                stop = True
 
 bot.run("TOKEN")
