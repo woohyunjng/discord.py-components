@@ -107,6 +107,7 @@ class Context:
         tts=False,
         flags=FlagsType.Ephemeral,
         components=[],
+        **options,
     ) -> None:
         """Sends response to Discord.
 
@@ -140,11 +141,18 @@ class Context:
             return
 
         state = self.bot._get_state()
+        data = {**self._get_components_json(components), **options}
+
+        if content:
+            data["content"] = content
 
         if embed and embeds:
             embeds.append(embed)
         elif embed:
             embeds = [embed]
+
+        if embeds:
+            data["embeds"] = embeds
 
         if len(embeds) > 10:
             raise InvalidArgument("Embed limit exceeded. (Max: 10)")
@@ -156,15 +164,14 @@ class Context:
                 allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
                 allowed_mentions = allowed_mentions.to_dict()
-        else:
-            allowed_mentions = state.allowed_mentions and state.allowed_mentions.to_dict()
+
+            data["allowed_mentions"] = allowed_mentions
+
+        if tts is not None:
+            data["tts"] = tts
 
         data = {
-            "content": content,
-            "embeds": embeds,
             **self.client._get_components_json(components),
-            "allowed_mentions": allowed_mentions,
-            "tts": tts,
             "flags": flags,
         }
 

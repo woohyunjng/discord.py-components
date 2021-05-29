@@ -239,6 +239,9 @@ class DiscordComponents:
         state = self.bot._get_state()
         data = {**self._get_components_json(components), **options}
 
+        if content:
+            data["content"] = content
+
         if embed:
             embed = embed.to_dict()
             data["embed"] = embed
