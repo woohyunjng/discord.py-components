@@ -83,7 +83,10 @@ class DiscordComponents:
                     self.bot.dispatch(key, ctx)
                     break
 
-        self.bot.add_listener(on_socket_response, name="socket_response")
+        if isinstance(self.bot, Bot):
+            self.bot.add_listener(on_socket_response, name="on_socket_response")
+        else:
+            self.bot.on_socket_response = on_socket_response
 
         Messageable.send = send_component_msg_prop
         Message.edit = edit_component_msg_prop
