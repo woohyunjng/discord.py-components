@@ -43,6 +43,8 @@ class Context:
         The client for discord_components.
     user: :class:`discord.User`
         The user interacted with the component.
+    author: :class:`discord.User`
+        Alias of `user`
     component: :class:`~discord_components.Component`
         The interacted component.
 
@@ -76,7 +78,9 @@ class Context:
     ):
         self.bot = bot
         self.client = client
+
         self.user = user
+        self.author = self.user
 
         self.component = component
         self.raw_data = raw_data
