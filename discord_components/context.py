@@ -141,7 +141,7 @@ class Context:
             return
 
         state = self.bot._get_state()
-        data = {**self.bot._get_components_json(components), **options}
+        data = {**self.client._get_components_json(components), **options}
 
         if content:
             data["content"] = content
