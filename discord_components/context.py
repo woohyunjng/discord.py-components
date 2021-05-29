@@ -141,7 +141,7 @@ class Context:
             return
 
         state = self.bot._get_state()
-        data = {**self.client._get_components_json(components), **options}
+        data = {**self.client._get_components_json(components), **options, "flags": flags}
 
         if content:
             data["content"] = content
@@ -169,11 +169,6 @@ class Context:
 
         if tts is not None:
             data["tts"] = tts
-
-        data = {
-            **self.client._get_components_json(components),
-            "flags": flags,
-        }
 
         self.responded = True
         await self.bot.http.request(
