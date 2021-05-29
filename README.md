@@ -1,46 +1,62 @@
----
-description: Unofficial library for Discord components. (on development)
----
+# discord.py-components
+[![Build Status](https://travis-ci.com/kiki7000/discord.py-components.svg?branch=master)](https://travis-ci.com/kiki7000/discord.py-components)
+[![PyPI version](https://badge.fury.io/py/discord-components.svg)](https://badge.fury.io/py/discord-components)
+[![Documentation Status](https://readthedocs.org/projects/discord-components/badge/?version=latest)](https://discord-components.readthedocs.io/)
 
-# Getting started
+An unofficial library for Discord components. (on development)
 
-## Welcome~!
+- [GitHub](https://github.com/kiki7000/discord.py-components)
+- [Discord Server](https://discord.gg/pKM6stqPxS)
 
-Discord components are cool, but discord.py will support it on version 2.0. It is hard to wait, so we made a third-party library for using components such as buttons or selects!  We're currently developing this library, so it has a lot of bugs. But it has enough features to make the components easy to use :\)
-
-So let's use this library. First, we need to install the library
-
-```bash
+## Installation
+```sh
 pip install --upgrade discord-components
 ```
 
-Assuming you have invited your bot to some server, let's code.  Create any python file and copy & paste that. \(with replacing `your token` with your bot's token and `your prefix` with your bot's prefix\) 
-
-{% code title="bot.py" %}
+## Example
 ```python
-from discord.ext.commands import Bot
+from discord import Client
 from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
-bot = Bot(command_prefix = "your prefix")
-
+bot = Client()
 
 @bot.event
 async def on_ready():
     DiscordComponents(bot)
-    print(f"Logged in as {bot.user}!")
 
+@bot.event
+async def on_message(msg):
+    if msg.author.bot:
+        return
 
-@bot.command()
-async def button(ctx):
-    await ctx.send(
-        "Hello, World!",
-        components = [
-            Button(label = "WOW button!")
+    await msg.channel.send(
+        "Content",
+        components=[
+            Button(style=ButtonStyle.blue, label="Blue"),
+            Button(style=ButtonStyle.red, label="Red"),
+            Button(style=ButtonStyle.URL, label="url", url="https://example.org"),
         ],
     )
 
+    res = await bot.wait_for("button_click")
+    if res.channel == msg.channel:
+        await res.respond(
+            type=InteractionType.ChannelMessageWithSource,
+            content=f'{res.component.label} clicked'
+        )
 
-bot.run("your token")
+
+bot.run("token")
 ```
-{% endcode %}
 
+## Docs
+[The docs](https://discord-components.readthedocs.io/) can contain lot of spelling mistakes, grammar errors so if there is a problem please create an issue!
+
+## Features
++ Send, edit Discord components.
++ Get components interact event!
++ Supports discord.py command extension.
+
+## Helps
++ [Minibox](https://github.com/minibox24) - Button API explanation
++ [Lapis](https://github.com/Lapis0875) - Told me how to replace a property
