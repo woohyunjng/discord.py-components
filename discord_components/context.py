@@ -151,13 +151,13 @@ class Context:
         elif embed:
             embeds = [embed]
 
-        if embeds:
-            data["embeds"] = embeds
-
         if len(embeds) > 10:
             raise InvalidArgument("Embed limit exceeded. (Max: 10)")
         if embeds:
             embeds = list(map(lambda x: x.to_dict(), embeds))
+
+        if embeds:
+            data["embeds"] = embeds
 
         if allowed_mentions:
             if state.allowed_mentions:
