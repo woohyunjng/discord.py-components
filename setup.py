@@ -1,10 +1,14 @@
+from os import environ
 from setuptools import setup, find_packages
 
 from discord_components import (
-    __version__ as version,
     __author__ as author,
     __license__ as _license,
     __name__ as name,
+)
+
+version = (
+    environ["TRAVIS_TAG"].lstrip("v") if environ["TRAVIS"] == "true" else environ["VERSION_NUMBER"]
 )
 
 setup(
