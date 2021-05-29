@@ -11,4 +11,4 @@
 - [ ] Did you test?
 - [ ] Have you updated the docs?
 - [ ] Can you listen to our requests?
-- [ ] Did you use [conventional commits](https://www.conventionalcommits.org/ko/v1.0.0/)
+- [ ] Did you use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
