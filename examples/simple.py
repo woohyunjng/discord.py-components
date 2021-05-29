@@ -53,7 +53,12 @@ async def buttons(ctx):
         return m.user == ctx.author and m.message.channel == ctx.channel
     stop = False
     while not stop:
-        res = await bot.wait_for("button_click", check=check)
+        try:
+            res = await bot.wait_for("button_click", check=check, timeout=60)
+        except asyncio.TimeoutError:
+            await msg.delete()
+            return await ctx.send(embed=discord.Embed(color=discord.Color.red(),
+                                                      title="TImeout"))
         if res.channel == ctx.channel:
             if res.component.label == "Forward":
                 await msg.edit(embed=discord.Embed(color=discord.Color.random(),
