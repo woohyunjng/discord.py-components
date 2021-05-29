@@ -3,13 +3,15 @@ from discord.ext.commands import Bot
 from discord.http import Route
 
 from aiohttp import FormData
-from typing import Union, List
+from typing import List
 from json import dumps
 
 from .button import Button
 from .message import ComponentMessage
 from .interaction import InteractionType, FlagsType
 from .component import Component
+
+from typing import List
 
 
 __all__ = ("Context",)
@@ -20,7 +22,7 @@ class Context:
 
     Parameters
     ----------
-    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+    bot: :class:`discord.Client` | :class:`discord.ext.commands.Bot`
         Discord client to use.
     client: :class:`~discord_components.DiscordComponents`
         The client for discord_components.
@@ -39,7 +41,7 @@ class Context:
 
     Attributes
     ----------
-    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+    bot: :class:`discord.Client` | :class:`discord.ext.commands.Bot`
         Discord client to use.
     client: :class:`~discord_components.DiscordComponent`
         The client for discord_components.
@@ -133,7 +135,7 @@ class Context:
             The response message's tts. (Defaults to ``False``)
         flags: Optional[:class:`int`]
             The response message's flags. (Defaults to ``64``)
-        components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+        components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
             The components to send.
             If this is 2-dimensional array, an array is a line
         """
