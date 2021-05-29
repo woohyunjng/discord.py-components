@@ -5,6 +5,7 @@ Unofficial library for Discord components. (on development)
 
 - `GitHub <https://github.com/kiki7000/discord.py-components>`_
 - `Discord Server <https://discord.gg/pKM6stqPxS>`_
+- `Examples <https://github.com/kiki7000/discord.py-components/tree/master/examples>`_
 
 
 Install
