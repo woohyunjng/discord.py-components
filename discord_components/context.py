@@ -2,12 +2,14 @@ from discord import User, Client, Embed, AllowedMentions, InvalidArgument
 from discord.ext.commands import Bot
 from discord.http import Route
 
+from aiohttp import FormData
+from typing import Union, List
+from json import dumps
+
 from .button import Button
 from .message import ComponentMessage
 from .interaction import InteractionType, FlagsType
 from .component import Component
-
-from typing import Union, List
 
 
 __all__ = ("Context",)
@@ -134,6 +136,9 @@ class Context:
             The components to send.
             If this is 2-dimensional array, an array is a line
         """
+        if self.responded:
+            return
+
         state = self.bot._get_state()
 
         if embed and embeds:
@@ -163,8 +168,8 @@ class Context:
             "flags": flags,
         }
 
+        self.responded = True
         await self.bot.http.request(
             Route("POST", f"/interactions/{self.interaction_id}/{self.interaction_token}/callback"),
             json={"type": type, "data": data},
         )
-        self.responded = True

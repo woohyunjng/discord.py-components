@@ -100,6 +100,7 @@ class DiscordComponents:
         tts=False,
         embed=None,
         file=None,
+        mention_author=None,
         allowed_mentions=None,
         reference=None,
         components=None,
@@ -121,6 +122,8 @@ class DiscordComponents:
             The rich embed for the content.
         file: :class:`discord.File`
             The file to upload.
+        mention_author: Optional[:class:`bool`]
+            If set, overrides the :attr:`~discord.AllowedMentions.replied_user` attribute of ``allowed_mentions``.
         allowed_mentions: :class:`discord.AllowedMentions`
             Controls the mentions being processed in this message. If this is
             passed, then the object is merged with :attr:`discord.Client.allowed_mentions`.
@@ -134,6 +137,7 @@ class DiscordComponents:
             The components to send.
             2-dimensional array can be used to send multiple lines of components.
         """
+
         state = self.bot._get_state()
         channel = await channel._get_channel()
 
@@ -147,6 +151,10 @@ class DiscordComponents:
                 allowed_mentions = allowed_mentions.to_dict()
         else:
             allowed_mentions = state.allowed_mentions and state.allowed_mentions.to_dict()
+
+        if mention_author is not None:
+            allowed_mentions = allowed_mentions or AllowedMentions().to_dict()
+            allowed_mentions["replied_user"] = bool(mention_author)
 
         if reference is not None:
             try:
@@ -227,6 +235,7 @@ class DiscordComponents:
             The components to send.
             2-dimensional array can be used to send multiple lines of components.
         """
+
         state = self.bot._get_state()
 
         if embed:
