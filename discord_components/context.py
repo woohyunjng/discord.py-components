@@ -104,11 +104,11 @@ class Context:
         type=InteractionType.ChannelMessageWithSource,
         content=None,
         embed=None,
-        embeds=[],
+        embeds=None,
         allowed_mentions=None,
         tts=False,
         flags=FlagsType.Ephemeral,
-        components=[],
+        components=None,
         **options,
     ) -> None:
         """Sends response to Discord.
@@ -139,6 +139,10 @@ class Context:
             The components to send.
             If this is 2-dimensional array, an array is a line
         """
+        if components is None:
+            components = []
+        if embeds is None:
+            embeds = []
         if self.responded:
             return
 

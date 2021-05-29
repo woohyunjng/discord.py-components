@@ -18,6 +18,8 @@ class ComponentMessage(Message):
         The message's components.
     """
 
-    def __init__(self, *, components=[], **kwargs):
+    def __init__(self, *, components=None, **kwargs):
         super().__init__(**kwargs)
+        if components is None:
+            components = []
         self.components = components
