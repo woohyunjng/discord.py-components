@@ -28,8 +28,6 @@ async def button(ctx):
 
 @bot.event
 async def on_button_click(m):
-    DiscordComponents(bot)
-    #^ Inits discordcomponents when the event is fired.
     """Possible interaction types:
         Pong
         ChannelMessageWithSource
