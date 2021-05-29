@@ -198,7 +198,7 @@ class DiscordComponents:
     async def edit_component_msg(
         self,
         message,
-        content="",
+        content=None,
         *,
         tts=False,
         embed=None,
@@ -237,26 +237,23 @@ class DiscordComponents:
         """
 
         state = self.bot._get_state()
+        data = {**self._get_components_json(components), **options}
 
         if embed:
             embed = embed.to_dict()
+            data["embed"] = embed
 
         if allowed_mentions:
             if state.allowed_mentions:
                 allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
                 allowed_mentions = allowed_mentions.to_dict()
-        else:
-            allowed_mentions = state.allowed_mentions and state.allowed_mentions.to_dict()
 
-        data = {
-            "content": content,
-            **self._get_components_json(components),
-            **options,
-            "embed": embed,
-            "allowed_mentions": allowed_mentions,
-            "tts": tts,
-        }
+            data["allowed_mentions"] = allowed_mentions
+
+        if tts is not None:
+            data["tts"] = tts
+
         if file:
             try:
                 form = FormData()
