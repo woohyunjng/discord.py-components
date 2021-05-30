@@ -239,7 +239,7 @@ class DiscordComponents:
         state = self.bot._get_state()
         data = {**self._get_components_json(components), **options}
 
-        if content:
+        if content is not None:
             data["content"] = content
 
         if embed:

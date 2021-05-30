@@ -1,10 +1,11 @@
 # discord.py-components
 [![Build Status](https://travis-ci.com/kiki7000/discord.py-components.svg?branch=master)](https://travis-ci.com/kiki7000/discord.py-components)
 [![PyPI version](https://badge.fury.io/py/discord-components.svg)](https://badge.fury.io/py/discord-components)
-[![Documentation Status](https://readthedocs.org/projects/discord-components/badge/?version=latest)](https://discord-components.readthedocs.io/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/discord-components)](https://pypi.org/project/comcigan/)
 
 An unofficial library for Discord components. (on development)
 
+- [Docs](https://devkiki7000.gitbook.io/discord-components/)
 - [GitHub](https://github.com/kiki7000/discord.py-components)
 - [Discord Server](https://discord.gg/pKM6stqPxS)
 

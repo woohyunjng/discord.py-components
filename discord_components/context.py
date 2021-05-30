@@ -143,7 +143,7 @@ class Context:
         state = self.bot._get_state()
         data = {**self.client._get_components_json(components), **options, "flags": flags}
 
-        if content:
+        if content is not None:
             data["content"] = content
 
         if embed and embeds:
