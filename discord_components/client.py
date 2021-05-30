@@ -99,6 +99,7 @@ class DiscordComponents:
         tts=False,
         embed=None,
         file=None,
+        files=None,
         mention_author=None,
         allowed_mentions=None,
         reference=None,
@@ -122,6 +123,8 @@ class DiscordComponents:
             The rich embed for the content.
         file: :class:`discord.File`
             The file to upload.
+        file: List[:class:`discord.File`]
+            The files to upload. Limited to 10.
         mention_author: Optional[:class:`bool`]
             If set, overrides the :attr:`~discord.AllowedMentions.replied_user` attribute of ``allowed_mentions``.
         allowed_mentions: :class:`discord.AllowedMentions`
@@ -189,6 +192,28 @@ class DiscordComponents:
                 )
             finally:
                 file.close()
+        elif files:
+            if len(files) > 10:
+                raise InvalidArgument('files parameter must be a list of up to 10 elements')
+            elif not all(isinstance(file, File) for file in files):
+                raise InvalidArgument('files parameter must be a list of File')
+
+            try:
+                form = FormData()
+                form.add_field(
+                    "payload_json", dumps(data, separators=(",", ":"), ensure_ascii=True)
+                )
+                for index, file in enumerate(files):
+                    form.add_field(
+                        f"file{index}", file.fp, filename=file.filename, content_type="application/octet-stream"
+                    )
+
+                data = await self.bot.http.request(
+                    Route("POST", f"/channels/{channel.id}/messages"), data=form, files=files
+                )
+            finally:
+                for f in files:
+                    f.close()
         else:
             data = await self.bot.http.request(
                 Route("POST", f"/channels/{channel.id}/messages"), json=data
@@ -204,9 +229,7 @@ class DiscordComponents:
         message,
         content=None,
         *,
-        tts=False,
         embed=None,
-        file=None,
         allowed_mentions=None,
         components=None,
         **options,
@@ -222,12 +245,8 @@ class DiscordComponents:
             The channel to send the message.
         content: str
             The message's content.
-        tts: :class:`bool`
-            Indicates if the message should be sent using text-to-speech.
         embed: :class:`discord.Embed`
             The rich embed for the content.
-        file: :class:`discord.File`
-            The file to upload.
         allowed_mentions: :class:`discord.AllowedMentions`
             Controls the mentions being processed in this message. If this is
             passed, then the object is merged with :attr:`discord.Client.allowed_mentions`.
@@ -258,30 +277,9 @@ class DiscordComponents:
 
             data["allowed_mentions"] = allowed_mentions
 
-        if tts is not None:
-            data["tts"] = tts
-
-        if file:
-            try:
-                form = FormData()
-                form.add_field(
-                    "payload_json", dumps(data, separators=(",", ":"), ensure_ascii=True)
-                )
-                form.add_field(
-                    "file", file.fp, filename=file.filename, content_type="application/octet-stream"
-                )
-
-                data = await self.bot.http.request(
-                    Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"),
-                    data=form,
-                    files=[file],
-                )
-            finally:
-                file.close()
-        else:
-            await self.bot.http.request(
-                Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
-            )
+        await self.bot.http.request(
+            Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
+        )
 
     def _get_components_json(
         self, components: List[Union[Component, List[Component]]] = None
