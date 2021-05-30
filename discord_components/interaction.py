@@ -129,7 +129,7 @@ class Interaction:
         embeds=[],
         allowed_mentions=None,
         tts=False,
-        flags=FlagsType.Ephemeral,
+        ephemeral=True,
         components=[],
         **options,
     ) -> None:
@@ -155,8 +155,8 @@ class Interaction:
             The response message's allowed mentions.
         tts: Optional[:class:`bool`]
             The response message's tts. (Defaults to ``False``)
-        flags: Optional[:class:`int`]
-            The response message's flags. (Defaults to ``64``)
+        ephemeral: Optional[:class:`bool`]
+            If the response message will be ephemeral (Defaults to ``True``)
         components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
             The components to send.
             If this is 2-dimensional array, an array is a line
@@ -165,7 +165,11 @@ class Interaction:
             return
 
         state = self.bot._get_state()
-        data = {**self.client._get_components_json(components), **options, "flags": flags}
+        data = {
+            **self.client._get_components_json(components),
+            **options,
+            "flags": FlagsType.Ephemeral if ephemeral else 0,
+        }
 
         if content is not None:
             data["content"] = content
