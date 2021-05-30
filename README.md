@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/discord-components.svg)](https://badge.fury.io/py/discord-components)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/discord-components)](https://pypi.org/project/comcigan/)
 
-An unofficial library for Discord components. (on development)
+An unofficial library for discord components (under-development)
 
 - [Docs](https://devkiki7000.gitbook.io/discord-components/)
 - [GitHub](https://github.com/kiki7000/discord.py-components)

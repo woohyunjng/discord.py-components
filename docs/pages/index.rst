@@ -1,7 +1,7 @@
 discord_components
 ==================================
 
-Unofficial library for Discord components. (on development)
+An unofficial library for discord components (under-development)
 
 - `GitHub <https://github.com/kiki7000/discord.py-components>`_
 - `Discord Server <https://discord.gg/pKM6stqPxS>`_
