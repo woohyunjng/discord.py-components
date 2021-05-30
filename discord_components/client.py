@@ -21,9 +21,8 @@ from json import dumps
 from .button import Button
 from .select import Select
 from .component import Component
-from .context import Context
 from .message import ComponentMessage
-from .interaction import InteractionEventType
+from .interaction import Interaction, InteractionEventType
 
 
 __all__ = ("DiscordComponents",)
@@ -77,7 +76,7 @@ class DiscordComponents:
             if res["t"] != "INTERACTION_CREATE":
                 return
 
-            ctx = self._get_context(res)
+            ctx = self._get_interaction(res)
             for key, value in InteractionEventType.items():
                 if value == res["d"]["data"]["component_type"]:
                     self.bot.dispatch(key, ctx)
@@ -351,7 +350,7 @@ class DiscordComponents:
         data["component"] = raw_data["data"]
         return data
 
-    def _get_context(self, json):
+    def _get_interaction(self, json):
         data = self._structured_raw_data(json)
         rescomponent = []
 
@@ -371,7 +370,7 @@ class DiscordComponents:
         else:
             rescomponent = data["component"]
 
-        ctx = Context(
+        ctx = Interaction(
             bot=self.bot,
             client=self,
             user=data["user"],

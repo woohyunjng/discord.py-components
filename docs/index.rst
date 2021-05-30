@@ -7,6 +7,5 @@
    pages/client.rst
    pages/button.rst
    pages/select.rst
-   pages/context.rst
    pages/message.rst
    pages/interaction.rst

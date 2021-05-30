@@ -1,7 +1,6 @@
 from .client import *
 from .button import *
 from .select import *
-from .context import *
 from .interaction import *
 from .component import *
 
