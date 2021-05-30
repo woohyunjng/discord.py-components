@@ -3,7 +3,7 @@ from discord.ext.commands import Bot
 from discord.http import Route
 
 from aiohttp import FormData
-from typing import Union, List
+from typing import List
 from json import dumps
 
 from .button import Button
@@ -44,7 +44,7 @@ class Interaction:
 
     Parameters
     ----------
-    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+    bot:  :class:`discord.Client` | :class:`discord.ext.commands.Bot`
         Discord client to use.
     client: :class:`~discord_components.DiscordComponents`
         The client for discord_components.
@@ -63,7 +63,7 @@ class Interaction:
 
     Attributes
     ----------
-    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+    bot: :class:`discord.Client` | :class:`discord.ext.commands.Bot`
         Discord client to use.
     client: :class:`~discord_components.DiscordComponent`
         The client for discord_components.
@@ -126,11 +126,11 @@ class Interaction:
         type=InteractionType.ChannelMessageWithSource,
         content=None,
         embed=None,
-        embeds=[],
+        embeds=None,
         allowed_mentions=None,
         tts=False,
         ephemeral=True,
-        components=[],
+        components=None,
         **options,
     ) -> None:
         """Sends response to Discord.
@@ -157,7 +157,7 @@ class Interaction:
             The response message's tts. (Defaults to ``False``)
         ephemeral: Optional[:class:`bool`]
             If the response message will be ephemeral (Defaults to ``True``)
-        components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+        components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
             The components to send.
             If this is 2-dimensional array, an array is a line
         """
@@ -184,7 +184,7 @@ class Interaction:
         if embeds:
             embeds = list(map(lambda x: x.to_dict(), embeds))
 
-        if embeds:
+        if embeds is not None:
             data["embeds"] = embeds
 
         if allowed_mentions:

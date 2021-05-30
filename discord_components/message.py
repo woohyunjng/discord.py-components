@@ -1,5 +1,5 @@
 from discord import Message
-from typing import List, Union
+from typing import List
 
 from .component import Component
 
@@ -9,15 +9,17 @@ class ComponentMessage(Message):
 
     Parameters
     ----------
-    components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+    components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
         The message's components.
 
     Attributes
     ----------
-    components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+    components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
         The message's components.
     """
 
-    def __init__(self, *, components=[], **kwargs):
+    def __init__(self, *, components=None, **kwargs):
         super().__init__(**kwargs)
+        if components is None:
+            components = []
         self.components = components

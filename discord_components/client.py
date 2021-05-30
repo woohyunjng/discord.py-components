@@ -15,7 +15,7 @@ from discord.abc import Messageable
 from functools import wraps
 from aiohttp import FormData
 from asyncio import TimeoutError
-from typing import Union, List, Callable, Awaitable
+from typing import List, Callable, Awaitable, Union
 from json import dumps
 
 from .button import Button
@@ -33,7 +33,7 @@ class DiscordComponents:
 
     Parameters
     ----------
-    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+    bot: :class:`discord.Client` | :class:`discord.ext.commands.Bot`
         Discord client to use.
     change_discord_methods: Optional[:class:`bool`]
 
@@ -47,7 +47,7 @@ class DiscordComponents:
 
     Attributes
     ----------
-    bot: Union[:class:`discord.Client`, :class:`discord.ext.commands.Bot`]
+    bot: :class:`discord.Client` | :class:`discord.ext.commands.Bot`
         Discord client to use.
     """
 
@@ -130,9 +130,9 @@ class DiscordComponents:
             to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
-        reference: Union[:class:`discord.Message`, :class:`discord.MessageReference`]
+        reference: :class:`discord.Message` | :class:`discord.MessageReference`
             A reference to the Message you are replying.
-        components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+        components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
             The components to send.
             2-dimensional array can be used to send multiple lines of components.
         """
@@ -230,7 +230,7 @@ class DiscordComponents:
             to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
             If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
             are used instead.
-        components: List[Union[:class:`~discord_components.Component`, List[:class:`~discord_components.Component`]]]
+        components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
             The components to send.
             2-dimensional array can be used to send multiple lines of components.
         """
