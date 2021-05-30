@@ -179,12 +179,10 @@ class Interaction:
         elif embed:
             embeds = [embed]
 
-        if len(embeds) > 10:
-            raise InvalidArgument("Embed limit exceeded. (Max: 10)")
         if embeds:
             embeds = list(map(lambda x: x.to_dict(), embeds))
-
-        if embeds is not None:
+            if len(embeds) > 10:
+                raise InvalidArgument("Embed limit exceeded. (Max: 10)")
             data["embeds"] = embeds
 
         if allowed_mentions:

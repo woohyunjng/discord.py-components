@@ -103,6 +103,7 @@ class DiscordComponents:
         allowed_mentions=None,
         reference=None,
         components=None,
+        delete_after=None,
         **options,
     ) -> Message:
         """Sends a message with components.
@@ -192,7 +193,11 @@ class DiscordComponents:
             data = await self.bot.http.request(
                 Route("POST", f"/channels/{channel.id}/messages"), json=data
             )
-        return ComponentMessage(components=components, state=state, channel=channel, data=data)
+
+        msg = ComponentMessage(components=components, state=state, channel=channel, data=data)
+        if delete_after:
+            self.bot.loop.create_task(msg.delete(delay=delete_after))
+        return msg
 
     async def edit_component_msg(
         self,
