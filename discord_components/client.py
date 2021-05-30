@@ -51,13 +51,13 @@ class DiscordComponents:
         Discord client to use.
     """
 
-    def __init__(self, bot, change_discord_methods=True):
+    def __init__(self, bot, change_discord_methods=True, add_listener=True):
         self.bot = bot
 
         if change_discord_methods:
-            self.change_discord_methods()
+            self.change_discord_methods(add_listener=add_listener)
 
-    def change_discord_methods(self):
+    def change_discord_methods(self, add_listener=True):
         """Overrides the methods of the discord.py module."""
 
         async def send_component_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
@@ -82,7 +82,7 @@ class DiscordComponents:
                     self.bot.dispatch(key, ctx)
                     break
 
-        if isinstance(self.bot, Bot):
+        if isinstance(self.bot, Bot) and add_listener:
             self.bot.add_listener(on_socket_response, name="on_socket_response")
         else:
             self.bot.on_socket_response = on_socket_response
