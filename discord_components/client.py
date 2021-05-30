@@ -40,7 +40,7 @@ class DiscordComponents:
         Whether to override the methods of the discord.py module.
 
         If this is enabled, you can just use
-        :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordButton>.send_button_msg`,
+        :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordComponents>.send_component_msg`,
         :class:`await <Message>.edit`, as :class:`await <DiscordComponents>.edit_component_msg`
         Alternatively, `on_interact` can be used.
         Defaults to ``True``.
