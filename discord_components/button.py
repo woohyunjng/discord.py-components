@@ -1,6 +1,6 @@
 from discord import InvalidArgument, PartialEmoji, Emoji
 
-from typing import Union, Optional
+from typing import Optional
 from uuid import uuid1
 from random import randint
 
@@ -62,7 +62,7 @@ class Button(Component):
     disabled: :class:`bool`
         bool: Indicates if the button is disabled.
         Defaults to ``True``.
-    emoji: Union[:class:`discord.PartialEmoji`, :class:`str`, :class:`discord.Embed`]
+    emoji: :class:`discord.PartialEmoji` | :class:`str`, :class:`discord.Embed`
         The button's emoji.
     """
 
