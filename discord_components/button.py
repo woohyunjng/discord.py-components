@@ -62,7 +62,7 @@ class Button(Component):
     disabled: :class:`bool`
         bool: Indicates if the button is disabled.
         Defaults to ``True``.
-    emoji: :class:`discord.PartialEmoji` | :class:`str`, :class:`discord.Embed`
+    emoji: :class:`discord.PartialEmoji` | :class:`str`, :class:`discord.Emoji`
         The button's emoji.
     """
 
