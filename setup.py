@@ -24,7 +24,7 @@ setup(
     author=author,
     author_email="devkiki7000@gmail.com",
     description="An unofficial library for discord components (under-development)",
-    long_description=open("README.md").read(),
+    long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/kiki7000/discord.py-components",
     packages=find_packages(),
