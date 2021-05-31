@@ -1,5 +1,5 @@
 from discord.ext.commands import command, Cog
-from discord_components import Button, ButtonStyle, InteractionType
+from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 
 
 class ExampleCog(Cog):
@@ -39,4 +39,5 @@ class ExampleCog(Cog):
 
 
 def setup(bot):
+    DiscordComponents(bot) # If you have this in an on_ready() event you can remove this line.
     bot.add_cog(ExampleCog(bot))
