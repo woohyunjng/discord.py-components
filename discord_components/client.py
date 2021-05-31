@@ -73,9 +73,7 @@ class DiscordComponents:
             return await self.send_component_msg(msg.channel, *args, **kwargs, reference=msg)
 
         async def on_socket_response(res):
-            if res["t"] != "INTERACTION_CREATE":
-                return
-            if res["d"]["type"] != 3:
+            if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
                 return
 
             ctx = self._get_interaction(res)
