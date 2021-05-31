@@ -233,9 +233,7 @@ class DiscordComponents:
     ):
 
         """Edits a message with components.
-
         :returns: :class:`discord_components.ComponentMessage`
-
         Parameters
         ----------
         channel: :class:`discord.Messageable`
@@ -261,6 +259,8 @@ class DiscordComponents:
 
         if content is not None:
             data["content"] = content
+        else:
+            data["content"] = None
 
         if embed:
             embed = embed.to_dict()
@@ -273,7 +273,6 @@ class DiscordComponents:
                 allowed_mentions = allowed_mentions.to_dict()
 
             data["allowed_mentions"] = allowed_mentions
-
         await self.bot.http.request(
             Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
         )
