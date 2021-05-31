@@ -36,7 +36,7 @@ pip install --upgrade discord-components
 ## Example
 ```py
 from discord.ext.commands import Bot
-from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
+from discord_components import DiscordComponents, Button
 
 bot = Bot(command_prefix = "your prefix")
 

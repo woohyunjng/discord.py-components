@@ -11,7 +11,6 @@ async def on_ready():
     print(f"Logged in as {bot.user}!")
 
 
-
 @bot.command()
 async def waitforclick(ctx):
     m = await ctx.send(
