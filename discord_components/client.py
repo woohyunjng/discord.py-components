@@ -217,7 +217,7 @@ class DiscordComponents:
             )
 
         msg = ComponentMessage(components=components, state=state, channel=channel, data=data)
-        if delete_after:
+        if delete_after is not None:
             self.bot.loop.create_task(msg.delete(delay=delete_after))
         return msg
 
