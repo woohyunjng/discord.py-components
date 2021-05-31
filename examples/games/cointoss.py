@@ -13,7 +13,7 @@ from random import choice
 class Cointoss(Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.session_message = None
+        self.session_message = {}
 
     @command()
     async def cointoss(self, ctx):
@@ -44,10 +44,12 @@ class Cointoss(Cog):
             Button(style=ButtonStyle.blue, label="Play Again?", disabled=False),
         ]
 
-        if self.session_message:
-            await self.session_message.edit(embed=embed, components=menu_components)
-        if not self.session_message:
-            self.session_message = await ctx.send(embed=embed, components=menu_components)
+        if ctx.author.id in self.session_message:
+            msg = self.session_message[ctx.author.id]
+            await msg.edit(embed=embed, components=menu_components)
+        else:
+            msg = await ctx.send(embed=embed, components=menu_components)
+            self.session_message[ctx.author.id] = msg
 
         def check(res):
             return res.user.id == ctx.author.id and res.channel.id == ctx.channel.id
@@ -55,7 +57,7 @@ class Cointoss(Cog):
         try:
             res = await self.bot.wait_for("button_click", check=check, timeout=20)
         except TimeoutError:
-            await self.session_message.edit(
+            await msg.edit(
                 embed=Embed(color=0xED564E, title="Timeout!", description="No-one reacted. ☹️"),
                 components=[
                     Button(style=ButtonStyle.red, label="Oh-no! Timeout reached!", disabled=True)
@@ -89,7 +91,7 @@ class Cointoss(Cog):
                 description=f"You chose **{res.component.label.lower()}**!\n\n> You lost.",
             )
 
-        await self.session_message.edit(
+        await msg.edit(
             embed=embed,
             components=tails_components if game_choice == "Tails" else heads_components,
         )
@@ -97,11 +99,13 @@ class Cointoss(Cog):
         try:
             res = await self.bot.wait_for("button_click", check=check, timeout=20)
         except TimeoutError:
-            await self.session_message.delete()
+            await msg.delete()
+            del self.session_message[ctx.author.id]
             return
 
         await res.respond(type=6)
         if res.component.label == "Play Again?":
+            self.session_message[ctx.author.id] = msg
             await self.cointoss(ctx)
 
 
