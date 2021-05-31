@@ -51,11 +51,11 @@ async def buttons(ctx):
                                     Button(style=ButtonStyle.blue, label="Forward",  emoji="⏭️")]])
     def check(m):
         return m.user == ctx.author and m.message.channel == ctx.channel
-    stop = False
-    while not stop:
+    while True:
         try:
             res = await bot.wait_for("button_click", check=check, timeout=60)
         except asyncio.TimeoutError:
+            break
             await msg.delete()
             return await ctx.send(embed=discord.Embed(color=discord.Color.red(),
                                                       title="TImeout"))
