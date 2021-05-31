@@ -21,7 +21,7 @@ class ButtonStyle:
     URL = 5
 
     @classmethod
-    def randomColor(cls) -> int:
+    def random_color(cls) -> int:
         """Returns a random number between 1, 4.
 
         :returns: :class:`int`
