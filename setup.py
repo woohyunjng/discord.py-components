@@ -3,13 +3,19 @@ from setuptools import setup, find_packages
 
 from discord_components import (
     __author__ as author,
+    __version__ as tempversion,
     __license__ as _license,
     __name__ as name,
 )
 
-version = (
-    environ["TRAVIS_TAG"].lstrip("v") if environ["TRAVIS"] == "true" else environ["VERSION_NUMBER"]
-)
+try:
+    version = (
+        environ["TRAVIS_TAG"].lstrip("v")
+        if environ["TRAVIS"] == "true"
+        else environ["VERSION_NUMBER"]
+    )
+except KeyError:
+    version = tempversion
 
 setup(
     name=name,
