@@ -167,6 +167,18 @@ class DiscordComponents:
                     "Reference parameter must be either Message or MessageReference."
                 ) from None
 
+        if files:
+            if file:
+                files.append(file)
+
+            if len(files) > 10:
+                raise InvalidArgument("files parameter must be a list of up to 10 elements")
+            elif not all(isinstance(file, File) for file in files):
+                raise InvalidArgument("files parameter must be a list of File")
+
+        elif file:
+            files = [file]
+
         data = {
             "content": content,
             **self._get_components_json(components),
@@ -177,27 +189,7 @@ class DiscordComponents:
             "message_reference": reference,
         }
 
-        if file:
-            try:
-                form = FormData()
-                form.add_field(
-                    "payload_json", dumps(data, separators=(",", ":"), ensure_ascii=True)
-                )
-                form.add_field(
-                    "file", file.fp, filename=file.filename, content_type="application/octet-stream"
-                )
-
-                data = await self.bot.http.request(
-                    Route("POST", f"/channels/{channel.id}/messages"), data=form, files=[file]
-                )
-            finally:
-                file.close()
-        elif files:
-            if len(files) > 10:
-                raise InvalidArgument('files parameter must be a list of up to 10 elements')
-            elif not all(isinstance(file, File) for file in files):
-                raise InvalidArgument('files parameter must be a list of File')
-
+        if files:
             try:
                 form = FormData()
                 form.add_field(
@@ -205,15 +197,20 @@ class DiscordComponents:
                 )
                 for index, file in enumerate(files):
                     form.add_field(
-                        f"file{index}", file.fp, filename=file.filename, content_type="application/octet-stream"
+                        f"file{index}",
+                        file.fp,
+                        filename=file.filename,
+                        content_type="application/octet-stream",
                     )
 
                 data = await self.bot.http.request(
                     Route("POST", f"/channels/{channel.id}/messages"), data=form, files=files
                 )
+
             finally:
                 for f in files:
                     f.close()
+
         else:
             data = await self.bot.http.request(
                 Route("POST", f"/channels/{channel.id}/messages"), json=data

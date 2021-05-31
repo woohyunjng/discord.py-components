@@ -26,7 +26,7 @@ Examples
 .. code:: python
 
     from discord import Client
-    from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
+    from discord_components import DiscordComponents, Button
 
     bot = Client()
 
