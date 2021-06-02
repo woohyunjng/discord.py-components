@@ -1,6 +1,6 @@
 from discord import InvalidArgument, PartialEmoji, Emoji
 
-from typing import List
+from typing import List, Union
 from uuid import uuid1
 
 from .component import Component
@@ -10,32 +10,16 @@ __all__ = ("Select", "Option")
 
 
 class Option(Component):
-    """The select option.
-
-    Parameters
-    ----------
-    label: :class:`str`
-        The option's label.
-    value: :class:`str`
-        The option's value.
-    emoji: :class:`discord.PartialEmoji`
-        The option's emoji.
-    description: :class:`str`
-        The option's description.
-    default: :class:`bool`
-        Indicates if the option is default.
-    """
-
     __slots__ = ("_label", "_value", "_emoji", "_description", "_default")
 
     def __init__(
         self,
         *,
-        label,
-        value,
-        emoji=None,
-        description=None,
-        default=False,
+        label: str,
+        value: str,
+        emoji: Union[Emoji, PartialEmoji, str] = None,
+        description: str = None,
+        default: bool = False,
     ):
         self._label = label
         self._value = value
@@ -70,27 +54,22 @@ class Option(Component):
 
     @property
     def label(self) -> str:
-        """:class:`str`: The option's label."""
         return self._label
 
     @property
     def value(self) -> str:
-        """:class:`str`: The option's value."""
         return self._value
 
     @property
     def emoji(self) -> PartialEmoji:
-        """:class:`discord.PartialEmoji`: The option's emoji."""
         return self._emoji
 
     @property
     def description(self) -> str:
-        """:class:`str`: The option's description."""
         return self._description
 
     @property
     def default(self) -> bool:
-        """:class:`bool`: Indicates if the option is default."""
         return self._default
 
     @label.setter
@@ -105,8 +84,10 @@ class Option(Component):
         self._value = value
 
     @emoji.setter
-    def emoji(self, emoji: PartialEmoji):
-        if isinstance(emoji, PartialEmoji):
+    def emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
+        if isinstance(emoji, Emoji):
+            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+        elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
             self._emoji = PartialEmoji(name=emoji)
@@ -120,7 +101,7 @@ class Option(Component):
         self._default = value
 
     @staticmethod
-    def from_json(data):
+    def from_json(data: dict):
         """Creates option instance from json.
 
         :returns: :class:`~discord_components.Option`
@@ -167,11 +148,11 @@ class Select(Component):
     def __init__(
         self,
         *,
-        options,
-        id=None,
-        placeholder=None,
-        min_values=None,
-        max_values=None,
+        options: List[Option],
+        id: str = None,
+        placeholder: str = None,
+        min_values: int = None,
+        max_values: int = None,
     ):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("Options length should be between 1 and 25.")
@@ -247,7 +228,7 @@ class Select(Component):
         self._max_values = value
 
     @staticmethod
-    def from_json(data):
+    def from_json(data: dict):
         """Creates a select instance from json.
 
         :returns: :class:`~discord_components.Select`
