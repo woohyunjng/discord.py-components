@@ -2,8 +2,8 @@ __all__ = ("Component",)
 
 
 class Component:
-    """The component class.
-    All components should inherit this class.
-    """
+    def to_dict(self) -> dict:
+        raise NotImplementedError()
 
-    pass
+    def from_dict(self, data: dict):
+        raise NotImplementedError()
