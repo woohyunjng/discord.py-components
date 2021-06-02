@@ -1,6 +1,6 @@
 from discord import InvalidArgument, PartialEmoji, Emoji
 
-from typing import Optional
+from typing import Optional, Union
 from uuid import uuid1
 from random import randint
 
@@ -11,31 +11,19 @@ __all__ = ("ButtonStyle", "Button")
 
 
 class ButtonStyle:
-    """Contains button styles."""
-
-    blue = 1
-    gray = 2
-    grey = 2
-    green = 3
-    red = 4
-    URL = 5
+    blue: int = 1
+    gray: int = 2
+    grey: int = 2
+    green: int = 3
+    red: int = 4
+    URL: int = 5
 
     @classmethod
     def random_color(cls) -> int:
-        """Returns a random number between 1, 4.
-
-        :returns: :class:`int`
-        """
-
         return randint(1, cls.red)
 
     @classmethod
     def to_dict(cls) -> dict:
-        """Returns a dict containing style information.
-
-        :returns: :class:`dict`
-        """
-
         return {
             "blue": cls.blue,
             "gray": cls.gray,
@@ -46,37 +34,17 @@ class ButtonStyle:
 
 
 class Button(Component):
-    """The button class.
-
-    Parameters
-    ----------
-    label: :class:`str`
-        The button's label.
-    style: :class:`int`
-        The button's style. (1 ~ 5)
-    id: :class:`str`
-        The button's id.
-        Defaults to :class:`ButtonStyle.gray`
-    url: :class:`str`
-        The button's url.
-    disabled: :class:`bool`
-        bool: Indicates if the button is disabled.
-        Defaults to ``True``.
-    emoji: :class:`discord.PartialEmoji` | :class:`str`, :class:`discord.Emoji`
-        The button's emoji.
-    """
-
     __slots__ = ("_style", "_label", "_id", "_url", "_disabled", "_emoji")
 
     def __init__(
         self,
         *,
-        label=None,
-        style=ButtonStyle.gray,
-        id=None,
-        url=None,
-        disabled=False,
-        emoji=None,
+        label: str = None,
+        style: int = ButtonStyle.gray,
+        id: str = None,
+        url: str = None,
+        disabled: bool = False,
+        emoji: Union[Emoji, PartialEmoji, str] = None,
     ):
         if style == ButtonStyle.URL and not url:
             raise InvalidArgument("You must provide a URL when the style is set to URL.")
@@ -108,12 +76,6 @@ class Button(Component):
             self._id = None
 
     def to_dict(self) -> dict:
-        """
-        Gets the button information required for API request in dict form.
-
-        :returns: :class:`dict`
-        """
-
         data = {
             "type": 2,
             "style": self.style,
@@ -128,36 +90,26 @@ class Button(Component):
 
     @property
     def style(self) -> int:
-        """:class:`int`: The button's style. (1 ~ 5)"""
         return self._style
 
     @property
     def label(self) -> str:
-        """:class:`str`: The button's label."""
         return self._label
 
     @property
     def id(self) -> str:
-        """:class:`str`: The button's ID."""
         return self._id
 
     @property
     def url(self) -> Optional[str]:
-        """Optional[:class:`str`]: The button's URL.
-
-        .. note::
-            If the button's style is not `5`(URL), this value is `None`
-        """
         return self._url
 
     @property
     def disabled(self) -> bool:
-        """:class:`bool`: Indicates if the button is disabled."""
         return self._disabled
 
     @property
     def emoji(self) -> PartialEmoji:
-        """:class:`discord.PartialEmoji`: The button's emoji."""
         return self._emoji
 
     @style.setter
@@ -195,24 +147,16 @@ class Button(Component):
         self._disabled = value
 
     @emoji.setter
-    def emoji(self, emoji: PartialEmoji):
-        if isinstance(emoji, PartialEmoji):
+    def emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
+        if isinstance(emoji, Emoji):
+            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+        elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
             self._emoji = PartialEmoji(name=emoji)
 
     @staticmethod
-    def from_json(data):
-        """Creates button instance from json.
-
-        :returns: :class:`~discord_components.Button`
-
-        Parameters
-        ----------
-        data: :class:`dict`
-            The json to construct button from.
-        """
-
+    def from_json(data: dict):
         emoji = data.get("emoji")
         return Button(
             style=data["style"],
