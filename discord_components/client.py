@@ -147,7 +147,7 @@ class DiscordComponents:
         if embed:
             embed = embed.to_dict()
 
-        if allowed_mentions:
+        if allowed_mentions is not None:
             if state.allowed_mentions:
                 allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
@@ -266,7 +266,7 @@ class DiscordComponents:
             embed = embed.to_dict()
             data["embed"] = embed
 
-        if allowed_mentions:
+        if allowed_mentions is not None:
             if state.allowed_mentions:
                 allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
