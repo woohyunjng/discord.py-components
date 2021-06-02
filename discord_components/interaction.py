@@ -144,7 +144,7 @@ class Interaction:
         ----------
         type: :class:`int`
             The interaction's type. (4 ~ 6)
-            Defaults to ``6``. (InteractionType.ChannelMessageWithSource)
+            Defaults to ``4``. (InteractionType.ChannelMessageWithSource)
         content: Optional[:class:`str`]
             The response message's content.
         embed: Optional[:class:`discord.Embed`]
