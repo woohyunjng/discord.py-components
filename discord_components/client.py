@@ -29,37 +29,18 @@ __all__ = ("DiscordComponents",)
 
 
 class DiscordComponents:
-    """Represents discord_components client.
-
-    Parameters
-    ----------
-    bot: :class:`discord.Client` | :class:`discord.ext.commands.Bot`
-        Discord client to use.
-    change_discord_methods: Optional[:class:`bool`]
-
-        Whether to override the methods of the discord.py module.
-
-        If this is enabled, you can just use
-        :class:`await <Messageable>.send`, :class:`await <Context>.send` as :class:`await <DiscordComponents>.send_component_msg`,
-        :class:`await <Message>.edit`, as :class:`await <DiscordComponents>.edit_component_msg`
-        Alternatively, `on_interact` can be used.
-        Defaults to ``True``.
-
-    Attributes
-    ----------
-    bot: :class:`discord.Client` | :class:`discord.ext.commands.Bot`
-        Discord client to use.
-    """
-
-    def __init__(self, bot, change_discord_methods=True, add_listener=True):
+    def __init__(
+        self,
+        bot: Union[Bot, Client],
+        change_discord_methods: bool = True,
+        add_listener: bool = True,
+    ):
         self.bot = bot
 
         if change_discord_methods:
             self.change_discord_methods(add_listener=add_listener)
 
-    def change_discord_methods(self, add_listener=True):
-        """Overrides the methods of the discord.py module."""
-
+    def change_discord_methods(self, add_listener: bool = True):
         async def send_component_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
             if isinstance(ctxorchannel, DContext):
                 return await self.send_component_msg(ctxorchannel.channel, *args, **kwargs)
@@ -93,54 +74,20 @@ class DiscordComponents:
 
     async def send_component_msg(
         self,
-        channel,
-        content="",
+        channel: Messageable,
+        content: str = "",
         *,
-        tts=False,
-        embed=None,
-        file=None,
-        files=None,
-        mention_author=None,
-        allowed_mentions=None,
-        reference=None,
-        components=None,
-        delete_after=None,
+        tts: bool = False,
+        embed: Embed = None,
+        file: File = None,
+        files: List[File] = None,
+        mention_author: bool = None,
+        allowed_mentions: AllowedMentions = None,
+        reference: Message = None,
+        components: Union[List[Component], List[List[Component]]] = None,
+        delete_after: float = None,
         **options,
     ) -> Message:
-        """Sends a message with components.
-
-        :returns: :class:`discord.Message`
-
-        Parameters
-        ----------
-        channel: :class:`discord.Messageable`
-            The channel to send the message.
-        content: str
-            The message's content.
-        tts: :class:`bool`
-            Indicates if the message should be sent using text-to-speech.
-        embed: :class:`discord.Embed`
-            The rich embed for the content.
-        file: :class:`discord.File`
-            The file to upload.
-        file: List[:class:`discord.File`]
-            The files to upload. Limited to 10.
-        mention_author: Optional[:class:`bool`]
-            If set, overrides the :attr:`~discord.AllowedMentions.replied_user` attribute of ``allowed_mentions``.
-        allowed_mentions: :class:`discord.AllowedMentions`
-            Controls the mentions being processed in this message. If this is
-            passed, then the object is merged with :attr:`discord.Client.allowed_mentions`.
-            The merging behaviour only overrides attributes that have been explicitly passed
-            to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
-            If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
-            are used instead.
-        reference: :class:`discord.Message` | :class:`discord.MessageReference`
-            A reference to the Message you are replying.
-        components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
-            The components to send.
-            2-dimensional array can be used to send multiple lines of components.
-        """
-
         state = self.bot._get_state()
         channel = await channel._get_channel()
 
@@ -223,39 +170,14 @@ class DiscordComponents:
 
     async def edit_component_msg(
         self,
-        message,
-        content=None,
+        message: Message,
+        content: str = None,
         *,
-        embed=None,
-        allowed_mentions=None,
-        components=None,
+        embed: Embed = None,
+        allowed_mentions: AllowedMentions = None,
+        components: Union[List[Component], List[List[Component]]] = None,
         **options,
     ):
-
-        """Edits a message with components.
-
-        :returns: :class:`discord_components.ComponentMessage`
-
-        Parameters
-        ----------
-        channel: :class:`discord.Messageable`
-            The channel to send the message.
-        content: str
-            The message's content.
-        embed: :class:`discord.Embed`
-            The rich embed for the content.
-        allowed_mentions: :class:`discord.AllowedMentions`
-            Controls the mentions being processed in this message. If this is
-            passed, then the object is merged with :attr:`discord.Client.allowed_mentions`.
-            The merging behaviour only overrides attributes that have been explicitly passed
-            to the object, otherwise it uses the attributes set in :attr:`discord.Client.allowed_mentions`.
-            If no object is passed at all then the defaults given by :attr:`discord.Client.allowed_mentions`
-            are used instead.
-        components: List[:class:`~discord_components.Component` | List[:class:`~discord_components.Component`]]
-            The components to send.
-            2-dimensional array can be used to send multiple lines of components.
-        """
-
         state = self.bot._get_state()
         data = {**self._get_components_json(components), **options}
 
@@ -350,7 +272,7 @@ class DiscordComponents:
         data["component"] = raw_data["data"]
         return data
 
-    def _get_interaction(self, json):
+    def _get_interaction(self, json: dict):
         data = self._structured_raw_data(json)
         rescomponent = []
 
@@ -381,17 +303,7 @@ class DiscordComponents:
         )
         return ctx
 
-    async def fetch_component_message(self, message) -> ComponentMessage:
-        """Converts a message class to a ComponentMessage class
-
-        :returns: :class:`~discord_components.ComponentMessage`
-
-        Parameters
-        ----------
-        message: :class:`discord.Message`
-            The message to convert.
-        """
-
+    async def fetch_component_message(self, message: Message) -> ComponentMessage:
         res = await self.bot.http.request(
             Route("GET", f"/channels/{message.channel.id}/messages/{message.id}")
         )

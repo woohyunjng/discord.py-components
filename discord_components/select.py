@@ -36,12 +36,6 @@ class Option(Component):
             self._emoji = None
 
     def to_dict(self) -> dict:
-        """
-        Converts the select option information required for API request to dict and returns.
-
-        :returns: :class:`dict`
-        """
-
         data = {
             "label": self.label,
             "value": self.value,
@@ -102,16 +96,6 @@ class Option(Component):
 
     @staticmethod
     def from_json(data: dict):
-        """Creates option instance from json.
-
-        :returns: :class:`~discord_components.Option`
-
-        Parameters
-        ----------
-        data: :class:`dict`
-            The json to construct option from.
-        """
-
         emoji = data.get("emoji")
         return Option(
             label=data["label"],
@@ -127,22 +111,6 @@ class Option(Component):
 
 
 class Select(Component):
-    """The select.
-
-    Parameters
-    ----------
-    options: List[:class:`~discord_components.Option`]
-        The select's options.
-    id: :class:`str`
-        The select's id.
-    placeholder: :class:`str`
-        The select's placeholder.
-    min_values: :class:`int`
-        The select's min values.
-    max_values: :class:`int`
-        The select's max values.
-    """
-
     __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values")
 
     def __init__(
@@ -164,12 +132,6 @@ class Select(Component):
         self._max_values = max_values
 
     def to_dict(self) -> dict:
-        """
-        Converts the select information required for API request to dict and returns.
-
-        :returns: :class:`dict`
-        """
-
         return {
             "type": 3,
             "options": list(map(lambda option: option.to_dict(), self.options)),
@@ -181,27 +143,22 @@ class Select(Component):
 
     @property
     def id(self) -> str:
-        """:class:`str`: The select's id."""
         return self._id
 
     @property
     def options(self) -> List[Option]:
-        """List[:class:`~discord_components.Option`]: The select's options."""
         return self._options
 
     @property
     def placeholder(self) -> str:
-        """:class:`str`: The select's placeholder."""
         return self._placeholder
 
     @property
     def min_values(self) -> int:
-        """:class:`int`: The select's min values."""
         return self._min_values
 
     @property
     def max_values(self) -> int:
-        """:class:`int`: The select's max values."""
         return self._max_values
 
     @id.setter
@@ -229,16 +186,6 @@ class Select(Component):
 
     @staticmethod
     def from_json(data: dict):
-        """Creates a select instance from json.
-
-        :returns: :class:`~discord_components.Select`
-
-        Parameters
-        ----------
-        data: :class:`dict`
-            The json to construct select from.
-        """
-
         return Select(
             id=data["custom_id"],
             options=list(map(lambda x: Option.from_json(x), data["options"])),
