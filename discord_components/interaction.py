@@ -75,7 +75,7 @@ class Interaction:
         allowed_mentions: AllowedMentions = None,
         tts: bool = False,
         ephemeral: bool = True,
-        components: Union[List[Component], List[List[Component]]] = None,
+        components: List[Union[Component, List[Component]]] = None,
         **options,
     ) -> None:
         if self.responded:
