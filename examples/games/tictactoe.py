@@ -15,6 +15,8 @@ class tictactoe(Cog):
 
     @command(aliases=['tictactoe'])
     async def ttt(self, ctx, member: discord.Member):
+        if ctx.author == member:
+            return await ctx.send("You can't play against yourself!")
         embed = discord.Embed(color=0xF5F5F5, title=f"Hey, {ctx.author.name} wants to play tic-tac-toe with you!")
         acceptdenycomps = [
             [
