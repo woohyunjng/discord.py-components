@@ -29,5 +29,5 @@ setup(
     url="https://github.com/kiki7000/discord.py-components",
     packages=find_packages(),
     install_requires=open("requirements.txt").readlines(),
-    python_requires=">=3.8",
+    python_requires=">=3.7",
 )
