@@ -47,7 +47,9 @@ class Button(Component):
         emoji: Union[Emoji, PartialEmoji, str] = None,
     ):
         if style == ButtonStyle.URL and not url:
-            raise InvalidArgument("You must provide a URL when the style is set to URL.")
+            raise InvalidArgument(
+                "You must provide a URL when the style is set to URL."
+            )
         if style == ButtonStyle.URL and id:
             raise InvalidArgument("Both ID and URL are set.")
         if not (1 <= style <= ButtonStyle.URL):
@@ -62,7 +64,9 @@ class Button(Component):
         self._disabled = disabled
 
         if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+            self._emoji = PartialEmoji(
+                name=emoji.name, animated=emoji.animated, id=emoji.id
+            )
         elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
@@ -138,7 +142,9 @@ class Button(Component):
     @id.setter
     def id(self, value: str):
         if self.style == ButtonStyle.URL:
-            raise InvalidArgument("Button style is set to URL. You shouldn't provide ID.")
+            raise InvalidArgument(
+                "Button style is set to URL. You shouldn't provide ID."
+            )
 
         self._id = value
 
@@ -149,7 +155,9 @@ class Button(Component):
     @emoji.setter
     def emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
         if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+            self._emoji = PartialEmoji(
+                name=emoji.name, animated=emoji.animated, id=emoji.id
+            )
         elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
@@ -165,7 +173,9 @@ class Button(Component):
             url=data.get("url"),
             disabled=data.get("disabled", False),
             emoji=PartialEmoji(
-                name=emoji["name"], animated=emoji.get("animated", False), id=emoji.get("id")
+                name=emoji["name"],
+                animated=emoji.get("animated", False),
+                id=emoji.get("id"),
             )
             if emoji
             else None,

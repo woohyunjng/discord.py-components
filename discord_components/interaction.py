@@ -104,7 +104,9 @@ class Interaction:
 
         if allowed_mentions:
             if state.allowed_mentions:
-                allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
+                allowed_mentions = state.allowed_mentions.merge(
+                    allowed_mentions
+                ).to_dict()
             else:
                 allowed_mentions = allowed_mentions.to_dict()
 
@@ -115,6 +117,9 @@ class Interaction:
 
         self.responded = True
         await self.bot.http.request(
-            Route("POST", f"/interactions/{self.interaction_id}/{self.interaction_token}/callback"),
+            Route(
+                "POST",
+                f"/interactions/{self.interaction_id}/{self.interaction_token}/callback",
+            ),
             json={"type": type, "data": data},
         )

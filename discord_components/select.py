@@ -27,7 +27,9 @@ class Option(Component):
         self._default = default
 
         if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+            self._emoji = PartialEmoji(
+                name=emoji.name, animated=emoji.animated, id=emoji.id
+            )
         elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
@@ -80,7 +82,9 @@ class Option(Component):
     @emoji.setter
     def emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
         if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
+            self._emoji = PartialEmoji(
+                name=emoji.name, animated=emoji.animated, id=emoji.id
+            )
         elif isinstance(emoji, PartialEmoji):
             self._emoji = emoji
         elif isinstance(emoji, str):
@@ -101,7 +105,9 @@ class Option(Component):
             label=data["label"],
             value=data["value"],
             emoji=PartialEmoji(
-                name=emoji["name"], animated=emoji.get("animated", False), id=emoji.get("id")
+                name=emoji["name"],
+                animated=emoji.get("animated", False),
+                id=emoji.get("id"),
             )
             if emoji
             else None,

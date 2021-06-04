@@ -43,7 +43,9 @@ class DiscordComponents:
     def change_discord_methods(self, add_listener: bool = True):
         async def send_component_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
             if isinstance(ctxorchannel, DContext):
-                return await self.send_component_msg(ctxorchannel.channel, *args, **kwargs)
+                return await self.send_component_msg(
+                    ctxorchannel.channel, *args, **kwargs
+                )
             else:
                 return await self.send_component_msg(ctxorchannel, *args, **kwargs)
 
@@ -51,7 +53,9 @@ class DiscordComponents:
             return await self.edit_component_msg(*args, **kwargs)
 
         async def reply_component_msg_prop(msg, *args, **kwargs):
-            return await self.send_component_msg(msg.channel, *args, **kwargs, reference=msg)
+            return await self.send_component_msg(
+                msg.channel, *args, **kwargs, reference=msg
+            )
 
         async def on_socket_response(res):
             if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
@@ -96,11 +100,15 @@ class DiscordComponents:
 
         if allowed_mentions is not None:
             if state.allowed_mentions:
-                allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
+                allowed_mentions = state.allowed_mentions.merge(
+                    allowed_mentions
+                ).to_dict()
             else:
                 allowed_mentions = allowed_mentions.to_dict()
         else:
-            allowed_mentions = state.allowed_mentions and state.allowed_mentions.to_dict()
+            allowed_mentions = (
+                state.allowed_mentions and state.allowed_mentions.to_dict()
+            )
 
         if mention_author is not None:
             allowed_mentions = allowed_mentions or AllowedMentions().to_dict()
@@ -119,7 +127,9 @@ class DiscordComponents:
                 files.append(file)
 
             if len(files) > 10:
-                raise InvalidArgument("files parameter must be a list of up to 10 elements")
+                raise InvalidArgument(
+                    "files parameter must be a list of up to 10 elements"
+                )
             elif not all(isinstance(file, File) for file in files):
                 raise InvalidArgument("files parameter must be a list of File")
 
@@ -140,7 +150,8 @@ class DiscordComponents:
             try:
                 form = FormData()
                 form.add_field(
-                    "payload_json", dumps(data, separators=(",", ":"), ensure_ascii=True)
+                    "payload_json",
+                    dumps(data, separators=(",", ":"), ensure_ascii=True),
                 )
                 for index, file in enumerate(files):
                     form.add_field(
@@ -151,7 +162,9 @@ class DiscordComponents:
                     )
 
                 data = await self.bot.http.request(
-                    Route("POST", f"/channels/{channel.id}/messages"), data=form, files=files
+                    Route("POST", f"/channels/{channel.id}/messages"),
+                    data=form,
+                    files=files,
                 )
 
             finally:
@@ -163,7 +176,9 @@ class DiscordComponents:
                 Route("POST", f"/channels/{channel.id}/messages"), json=data
             )
 
-        msg = ComponentMessage(components=components, state=state, channel=channel, data=data)
+        msg = ComponentMessage(
+            components=components, state=state, channel=channel, data=data
+        )
         if delete_after is not None:
             self.bot.loop.create_task(msg.delete(delay=delete_after))
         return msg
@@ -190,14 +205,17 @@ class DiscordComponents:
 
         if allowed_mentions is not None:
             if state.allowed_mentions:
-                allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
+                allowed_mentions = state.allowed_mentions.merge(
+                    allowed_mentions
+                ).to_dict()
             else:
                 allowed_mentions = allowed_mentions.to_dict()
 
             data["allowed_mentions"] = allowed_mentions
 
         await self.bot.http.request(
-            Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
+            Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"),
+            json=data,
         )
 
     def _get_components_json(
@@ -249,11 +267,15 @@ class DiscordComponents:
         else:
             for line in raw_data["message"]["components"]:
                 if line["type"] >= 2:
-                    components.append(self._get_component_type(line["type"]).from_json(line))
+                    components.append(
+                        self._get_component_type(line["type"]).from_json(line)
+                    )
                 for component in line["components"]:
                     if component["type"] >= 2:
                         components.append(
-                            self._get_component_type(component["type"]).from_json(component)
+                            self._get_component_type(component["type"]).from_json(
+                                component
+                            )
                         )
 
             data["message"] = ComponentMessage(
@@ -316,5 +338,8 @@ class DiscordComponents:
                 components[-1].append(self._get_component_type(j["type"]).from_json(j))
 
         return ComponentMessage(
-            channel=message.channel, state=self.bot._get_state(), data=res, components=components
+            channel=message.channel,
+            state=self.bot._get_state(),
+            data=res,
+            components=components,
         )
