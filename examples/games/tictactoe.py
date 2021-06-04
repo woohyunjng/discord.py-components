@@ -8,13 +8,13 @@ from discord_components import DiscordComponents, Button, ButtonStyle, Interacti
 import asyncio
 
 
-class tictactoe(Cog):
+class PascalCase(Cog):
     def __init__(self, bot):
         self.bot = bot
 
 
-    @command(aliases=['tictactoe'])
-    async def ttt(self, ctx, member: discord.Member):
+    @command()
+    async def tictactoe(self, ctx, member: discord.Member):
         if ctx.author == member:
             return await ctx.send("You can't play against yourself!")
         embed = discord.Embed(color=0xF5F5F5, title=f"Hey, {ctx.author.name} wants to play tic-tac-toe with you!")
@@ -61,6 +61,8 @@ class tictactoe(Cog):
                 "unchosen"
             ]
         ]
+        
+        m = await ctx.send(embed=embed, components=acceptdenycomps, content=member.mention)
         def haswon(team):
             if selections[0][0] == team and selections[0][1] == team and selections[0][2] == team:
                 return True
@@ -92,8 +94,6 @@ class tictactoe(Cog):
 
                 return False
 
-
-        m = await ctx.send(embed=embed, components=acceptdenycomps, content=member.mention)
 
         def confirmcheck(res):
             return res.user.id == member.id and res.channel.id == ctx.channel.id and str(res.message.id) == str(m.id)
@@ -218,5 +218,5 @@ class tictactoe(Cog):
 
 def setup(bot):
     print('Tictactoe - by python#0001 has loaded!')
-    DiscordComponents(bot)
-    bot.add_cog(tictactoe(bot))
+    DiscordComponents(bot)  #if you have this in an on_ready event you can remove this line.
+    bot.add_cog(PascalCase(bot))
