@@ -8,7 +8,7 @@ from discord_components import DiscordComponents, Button, ButtonStyle, Interacti
 import asyncio
 
 
-class PascalCase(Cog):
+class TicTacToe(Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -219,4 +219,4 @@ class PascalCase(Cog):
 def setup(bot):
     print('Tictactoe - by python#0001 has loaded!')
     DiscordComponents(bot)  #if you have this in an on_ready event you can remove this line.
-    bot.add_cog(PascalCase(bot))
+    bot.add_cog(TicTacToe(bot))
