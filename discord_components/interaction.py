@@ -78,9 +78,6 @@ class Interaction:
         components: List[Union[Component, List[Component]]] = None,
         **options,
     ) -> None:
-        if self.responded:
-            return
-
         state = self.bot._get_state()
         data = {
             **self.client._get_components_json(components),
