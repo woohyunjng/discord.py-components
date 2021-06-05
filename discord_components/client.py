@@ -84,7 +84,7 @@ class DiscordComponents:
         mention_author: bool = None,
         allowed_mentions: AllowedMentions = None,
         reference: Message = None,
-        components: Union[List[Component], List[List[Component]]] = None,
+        components: List[Union[Component, List[Component]]] = None,
         delete_after: float = None,
         **options,
     ) -> Message:
@@ -175,7 +175,7 @@ class DiscordComponents:
         *,
         embed: Embed = None,
         allowed_mentions: AllowedMentions = None,
-        components: Union[List[Component], List[List[Component]]] = None,
+        components: List[Union[Component, List[Component]]] = None,
         **options,
     ):
         state = self.bot._get_state()
