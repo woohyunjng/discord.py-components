@@ -88,7 +88,7 @@ class DiscordComponents:
         state = self.bot._get_state()
         channel = await channel._get_channel()
 
-        if embed:
+        if embed is not None:
             embed = embed.to_dict()
 
         if allowed_mentions is not None:
@@ -181,7 +181,7 @@ class DiscordComponents:
         if content is not None:
             data["content"] = content
 
-        if embed:
+        if embed is not None:
             embed = embed.to_dict()
             data["embed"] = embed
 
