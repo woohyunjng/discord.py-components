@@ -155,10 +155,10 @@ class Button(Component):
         elif isinstance(emoji, str):
             self._emoji = PartialEmoji(name=emoji)
 
-    @staticmethod
-    def from_json(data: dict):
+    @classmethod
+    def from_json(cls, data: dict):
         emoji = data.get("emoji")
-        return Button(
+        return cls(
             style=data["style"],
             label=data.get("label"),
             id=data.get("custom_id"),
