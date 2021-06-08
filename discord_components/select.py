@@ -94,10 +94,10 @@ class Option(Component):
     def default(self, value: bool):
         self._default = value
 
-    @staticmethod
-    def from_json(data: dict):
+    @classmethod
+    def from_json(cls, data: dict):
         emoji = data.get("emoji")
-        return Option(
+        return cls(
             label=data["label"],
             value=data["value"],
             emoji=PartialEmoji(
@@ -184,9 +184,9 @@ class Select(Component):
     def max_values(self, value: int):
         self._max_values = value
 
-    @staticmethod
-    def from_json(data: dict):
-        return Select(
+    @classmethod
+    def from_json(cls, data: dict):
+        return cls(
             id=data["custom_id"],
             options=list(map(lambda x: Option.from_json(x), data["options"])),
             placeholder=data.get("placeholder"),

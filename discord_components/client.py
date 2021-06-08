@@ -41,17 +41,14 @@ class DiscordComponents:
             self.change_discord_methods(add_listener=add_listener)
 
     def change_discord_methods(self, add_listener: bool = True):
-        async def send_component_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
+        def send_component_msg_prop(ctxorchannel, *args, **kwargs) -> Message:
             if isinstance(ctxorchannel, DContext):
-                return await self.send_component_msg(ctxorchannel.channel, *args, **kwargs)
+                return self.send_component_msg(ctxorchannel.channel, *args, **kwargs)
             else:
-                return await self.send_component_msg(ctxorchannel, *args, **kwargs)
+                return self.send_component_msg(ctxorchannel, *args, **kwargs)
 
-        async def edit_component_msg_prop(*args, **kwargs):
-            return await self.edit_component_msg(*args, **kwargs)
-
-        async def reply_component_msg_prop(msg, *args, **kwargs):
-            return await self.send_component_msg(msg.channel, *args, **kwargs, reference=msg)
+        def reply_component_msg_prop(msg, *args, **kwargs):
+            return self.send_component_msg(msg.channel, *args, **kwargs, reference=msg)
 
         async def on_socket_response(res):
             if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
@@ -69,7 +66,7 @@ class DiscordComponents:
             self.bot.on_socket_response = on_socket_response
 
         Messageable.send = send_component_msg_prop
-        Message.edit = edit_component_msg_prop
+        Message.edit = self.edit_component_msg
         Message.reply = reply_component_msg_prop
 
     async def send_component_msg(
