@@ -286,8 +286,6 @@ class DiscordComponents:
                 else:
                     if component.id == data["component"]["custom_id"]:
                         rescomponent = component
-        else:
-            rescomponent = data["component"]
         if not rescomponent:
             rescomponent = data["component"]
 
