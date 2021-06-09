@@ -288,6 +288,8 @@ class DiscordComponents:
                         rescomponent = component
         else:
             rescomponent = data["component"]
+        if not rescomponent:
+            rescomponent = data["component"]
 
         ctx = Interaction(
             bot=self.bot,
