@@ -3,3 +3,6 @@ contact_links:
   - name: Ask a question
     url: https://github.com/devkiki7000/discord.py-components/discussions/categories/q-a
     about: Please ask questions at the discussions
+  - name: Discord server
+    url: https://discord.gg/pKM6stqPxS
+    about: Discord-components' official discord server (you can get help here!)

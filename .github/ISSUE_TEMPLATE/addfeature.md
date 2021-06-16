@@ -10,9 +10,3 @@ labels: "add a feature"
 
 ## Advantages
 > What are the advantages of this feature?
-
-## Check
-- [ ] Is this feature related to this module?
-- [ ] Can this feature be implemented?
-- [ ] Does this new feature requires the user to change their code?
-

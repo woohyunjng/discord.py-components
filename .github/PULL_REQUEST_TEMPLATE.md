@@ -5,10 +5,10 @@
 - [ ] Typo
 - [ ] Other
 
-## Checks
+## Required
 - [ ] Did you use the black formatter?
-- [ ] Does this requires the users to change their code?
 - [ ] Did you test?
-- [ ] Have you updated the docs?
-- [ ] Can you listen to our requests?
 - [ ] Did you use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+
+## Checks
+- [ ] Does this requires the users to change their code?

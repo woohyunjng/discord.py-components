@@ -8,7 +8,7 @@ labels: bug
 ## Bug Line
 > Where is the bug? (line URL)
 
-## Excpected Action
+## Expected Action
 > What did you expect the module to do?
 
 ## Actual Action
