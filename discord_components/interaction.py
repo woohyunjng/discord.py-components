@@ -11,7 +11,7 @@ from .message import ComponentMessage
 from .component import Component
 
 
-__all__ = ("Interaction", "InteractionType", "InteractionEventType", "FlagsType")
+__all__ = ("Interaction", "InteractionType", "InteractionEventType")
 
 
 InteractionEventType = {"button_click": 2, "select_option": 3}
@@ -23,16 +23,6 @@ class InteractionType:
     DeferredChannelMessageWithSource: int = 5
     DeferredUpdateMessage: int = 6
     UpdateMessage: int = 7
-
-
-class FlagsType:
-    Crossposted: int = 1 << 0
-    Is_crosspost: int = 1 << 1
-    Suppress_embeds: int = 1 << 2
-    Source_message_deleted: int = 1 << 3
-    Urgent: int = 1 << 4
-    Ephemeral: int = 1 << 6
-    Loading: int = 1 << 7
 
 
 class Interaction:
@@ -82,7 +72,7 @@ class Interaction:
         data = {
             **self.client._get_components_json(components),
             **options,
-            "flags": FlagsType.Ephemeral if ephemeral else 0,
+            "flags": 64 if ephemeral else 0,
         }
 
         if content is not None:

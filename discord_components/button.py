@@ -4,7 +4,7 @@ from typing import Optional, Union
 from uuid import uuid1
 from random import randint
 
-from .component import Component
+from .component import Component, get_partial_emoji
 
 
 __all__ = ("ButtonStyle", "Button")
@@ -61,12 +61,8 @@ class Button(Component):
         self._url = url
         self._disabled = disabled
 
-        if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
-        elif isinstance(emoji, PartialEmoji):
-            self._emoji = emoji
-        elif isinstance(emoji, str):
-            self._emoji = PartialEmoji(name=emoji)
+        if emoji is not None:
+            self._emoji = get_partial_emoji(emoji)
         else:
             self._emoji = None
 
@@ -148,17 +144,12 @@ class Button(Component):
 
     @emoji.setter
     def emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
-        if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
-        elif isinstance(emoji, PartialEmoji):
-            self._emoji = emoji
-        elif isinstance(emoji, str):
-            self._emoji = PartialEmoji(name=emoji)
+        self._emoji = get_partial_emoji(emoji)
 
-    @staticmethod
-    def from_json(data: dict):
+    @classmethod
+    def from_json(cls, data: dict):
         emoji = data.get("emoji")
-        return Button(
+        return cls(
             style=data["style"],
             label=data.get("label"),
             id=data.get("custom_id"),

@@ -1,15 +1,15 @@
 from discord import InvalidArgument, PartialEmoji, Emoji
 
-from typing import List, Union
+from typing import List, Union, Optional
 from uuid import uuid1
 
-from .component import Component
+from .component import Component, get_partial_emoji
 
 
-__all__ = ("Select", "Option")
+__all__ = ("Select", "SelectOption")
 
 
-class Option(Component):
+class SelectOption(Component):
     __slots__ = ("_label", "_value", "_emoji", "_description", "_default")
 
     def __init__(
@@ -26,12 +26,8 @@ class Option(Component):
         self._description = description
         self._default = default
 
-        if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
-        elif isinstance(emoji, PartialEmoji):
-            self._emoji = emoji
-        elif isinstance(emoji, str):
-            self._emoji = PartialEmoji(name=emoji)
+        if emoji is not None:
+            self.emoji = get_partial_emoji(emoji)
         else:
             self._emoji = None
 
@@ -42,7 +38,7 @@ class Option(Component):
             "description": self.description,
             "default": self.default,
         }
-        if self.emoji:
+        if self.emoji is not None:
             data["emoji"] = self.emoji.to_dict()
         return data
 
@@ -55,7 +51,7 @@ class Option(Component):
         return self._value
 
     @property
-    def emoji(self) -> PartialEmoji:
+    def emoji(self) -> Optional[PartialEmoji]:
         return self._emoji
 
     @property
@@ -79,12 +75,7 @@ class Option(Component):
 
     @emoji.setter
     def emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
-        if isinstance(emoji, Emoji):
-            self._emoji = PartialEmoji(name=emoji.name, animated=emoji.animated, id=emoji.id)
-        elif isinstance(emoji, PartialEmoji):
-            self._emoji = emoji
-        elif isinstance(emoji, str):
-            self._emoji = PartialEmoji(name=emoji)
+        self._emoji = get_partial_emoji(emoji)
 
     @description.setter
     def description(self, value: str):
@@ -94,10 +85,10 @@ class Option(Component):
     def default(self, value: bool):
         self._default = value
 
-    @staticmethod
-    def from_json(data: dict):
+    @classmethod
+    def from_json(cls, data: dict):
         emoji = data.get("emoji")
-        return Option(
+        return cls(
             label=data["label"],
             value=data["value"],
             emoji=PartialEmoji(
@@ -116,7 +107,7 @@ class Select(Component):
     def __init__(
         self,
         *,
-        options: List[Option],
+        options: List[SelectOption],
         id: str = None,
         placeholder: str = None,
         min_values: int = None,
@@ -146,7 +137,7 @@ class Select(Component):
         return self._id
 
     @property
-    def options(self) -> List[Option]:
+    def options(self) -> List[SelectOption]:
         return self._options
 
     @property
@@ -166,7 +157,7 @@ class Select(Component):
         self._id = value
 
     @options.setter
-    def options(self, value: List[Option]):
+    def options(self, value: List[SelectOption]):
         if (not len(value)) or (len(value) > 25):
             raise InvalidArgument("Options length should be between 1 and 25.")
 
@@ -184,11 +175,11 @@ class Select(Component):
     def max_values(self, value: int):
         self._max_values = value
 
-    @staticmethod
-    def from_json(data: dict):
-        return Select(
+    @classmethod
+    def from_json(cls, data: dict):
+        return cls(
             id=data["custom_id"],
-            options=list(map(lambda x: Option.from_json(x), data["options"])),
+            options=list(map(lambda x: SelectOption.from_json(x), data["options"])),
             placeholder=data.get("placeholder"),
             min_values=data.get("min_values"),
             max_values=data.get("max_values"),
