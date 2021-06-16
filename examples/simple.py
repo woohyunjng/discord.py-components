@@ -7,7 +7,7 @@ bot = Bot("!")
 
 @bot.event
 async def on_ready():
-    DiscordComponents(bot)
+    DiscordComponents(bot)  # Overrides discord.py's methods.
     print(f"Logged in as {bot.user}!")
 
 

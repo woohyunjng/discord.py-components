@@ -39,5 +39,5 @@ class ExampleCog(Cog):
 
 
 def setup(bot):
-    DiscordComponents(bot) # If you have this in an on_ready() event you can remove this line.
+    DiscordComponents(bot)  # If you have this in an on_ready() event you can remove this line.
     bot.add_cog(ExampleCog(bot))
