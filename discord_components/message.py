@@ -1,6 +1,6 @@
 from discord import Message
 
-from .component import _get_component_type
+from .component import _get_component_type, ActionRow
 
 
 class ComponentMessage(Message):
@@ -10,7 +10,7 @@ class ComponentMessage(Message):
         components = []
         for i in data["components"]:
             if i["type"] == 1:
-                components.append([])
+                components.append(ActionRow())
                 for j in i["components"]:
                     components[-1].append(_get_component_type(j["type"]).from_json(j))
             else:

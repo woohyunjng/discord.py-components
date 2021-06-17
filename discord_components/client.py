@@ -15,10 +15,9 @@ from aiohttp import FormData
 from typing import List, Union
 from json import dumps
 
-from .component import Component, Select, Button
+from .component import Component, Select, Button, ActionRow, _get_component_type
 from .message import ComponentMessage
 from .interaction import Interaction, InteractionEventType
-
 
 __all__ = ("DiscordComponents",)
 
@@ -52,10 +51,11 @@ class DiscordComponents:
             if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
                 return
 
-            ctx = self._get_interaction(res)
             for key, value in InteractionEventType.items():
                 if value == res["d"]["data"]["component_type"]:
-                    self.bot.dispatch(key, ctx)
+                    self.bot.dispatch(f"raw_{key}", res["d"])
+                    interaction = await self._get_interaction(res)
+                    self.bot.dispatch(key, interaction)
                     break
 
         if isinstance(self.bot, Bot) and add_listener:
@@ -79,8 +79,9 @@ class DiscordComponents:
         mention_author: bool = None,
         allowed_mentions: AllowedMentions = None,
         reference: Message = None,
-        components: List[Union[Component, List[Component]]] = None,
+        components: List[Union[ActionRow, Component, List[Component]]] = None,
         delete_after: float = None,
+        nonce: int = None,
         **options,
     ) -> Message:
         state = self.bot._get_state()
@@ -129,6 +130,7 @@ class DiscordComponents:
             "allowed_mentions": allowed_mentions,
             "tts": tts,
             "message_reference": reference,
+            "nonce": nonce,
         }
 
         if files:
@@ -170,7 +172,7 @@ class DiscordComponents:
         *,
         embed: Embed = None,
         allowed_mentions: AllowedMentions = None,
-        components: List[Union[Component, List[Component]]] = None,
+        components: List[Union[ActionRow, Component, List[Component]]] = None,
         **options,
     ):
         state = self.bot._get_state()
@@ -196,31 +198,23 @@ class DiscordComponents:
         )
 
     def _get_components_json(
-        self, components: List[Union[Component, List[Component]]] = None
+        self, components: List[Union[ActionRow, Component, List[Component]]] = None
     ) -> dict:
         if not isinstance(components, list) and not components:
             return {}
 
         for i in range(len(components)):
-            if not isinstance(components[i], list):
-                components[i] = [components[i]]
+            if isinstance(components[i], list):
+                components[i] = ActionRow(*components[i])
+            elif not isinstance(components[i], ActionRow):
+                components[i] = ActionRow(components[i])
 
         lines = components
         return {
-            "components": (
-                [
-                    {
-                        "type": 1,
-                        "components": [component.to_dict() for component in components],
-                    }
-                    for components in lines
-                ]
-                if lines
-                else []
-            ),
+            "components": ([row.to_dict() for row in lines] if lines else []),
         }
 
-    def _structured_raw_data(self, raw_data: dict) -> dict:
+    async def _structured_raw_data(self, raw_data: dict) -> dict:
         data = {
             "interaction": raw_data["d"]["id"],
             "interaction_token": raw_data["d"]["token"],
@@ -230,31 +224,34 @@ class DiscordComponents:
         state = self.bot._get_state()
 
         if "components" not in raw_data["message"]:
-            data["message"] = None
-            data["user"] = None
+            data["message"] = raw_data["message"]
+            data["channel"] = await self.bot.fetch_channel(raw_data["channel_id"])
+            data["guild"] = await self.bot.fetch_guild(raw_data["guild_id"])
         else:
             data["message"] = ComponentMessage(
                 state=state,
                 channel=self.bot.get_channel(int(raw_data["channel_id"])),
                 data=raw_data["message"],
             )
+            data["channel"] = data["message"].channel
+            data["guild"] = data["message"].guild
 
-            if "member" in raw_data:
-                userData = raw_data["member"]["user"]
-            else:
-                userData = raw_data["user"]
-            data["user"] = User(state=state, data=userData)
+        if "member" in raw_data:
+            userData = raw_data["member"]["user"]
+        else:
+            userData = raw_data["user"]
+        data["user"] = User(state=state, data=userData)
 
         data["component"] = raw_data["data"]
         return data
 
-    def _get_interaction(self, json: dict):
-        data = self._structured_raw_data(json)
+    async def _get_interaction(self, json: dict):
+        data = await self._structured_raw_data(json)
         rescomponent = None
 
-        if data["message"]:
+        if not isinstance(data["message"], dict):
             for component in data["message"].components:
-                if isinstance(component, list):
+                if isinstance(component, ActionRow):
                     for component_child in component:
                         if (
                             isinstance(component_child, Button)
@@ -271,12 +268,16 @@ class DiscordComponents:
                                 rescomponent = option
                                 break
         else:
-            rescomponent = data["component"]
+            rescomponent = _get_component_type(data["component"]["component_type"]).from_json(
+                data["component"]
+            )
 
         ctx = Interaction(
             bot=self.bot,
             client=self,
             user=data["user"],
+            channel=data["channel"],
+            guild=data["guild"],
             component=rescomponent,
             raw_data=data["raw"],
             message=data["message"],

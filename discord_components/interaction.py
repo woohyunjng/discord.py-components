@@ -1,10 +1,11 @@
-from discord import User, Client, Embed, AllowedMentions, InvalidArgument, Message
+from discord import User, Client, Embed, AllowedMentions, InvalidArgument, Message, Guild, NotFound
+from discord.abc import Messageable
 from discord.ext.commands import Bot
 from discord.http import Route
 
 from typing import List, Union
 
-from .component import Component
+from .component import Component, ActionRow
 
 
 __all__ = ("Interaction", "InteractionType", "InteractionEventType")
@@ -27,10 +28,12 @@ class Interaction:
         *,
         bot: Union[Client, Bot],
         client: "DiscordComponents",
-        user: User = None,
+        user: User,
+        channel: Messageable,
+        guild: Guild,
         component: Component,
         raw_data: dict,
-        message: Message = None,
+        message: Message,
         is_ephemeral: bool = False,
     ):
         self.bot = bot
@@ -45,8 +48,8 @@ class Interaction:
         self.responded = False
 
         self.message = message
-        self.channel = message.channel if message else None
-        self.guild = message.guild if message else None
+        self.channel = channel
+        self.guild = guild
 
         self.interaction_id = raw_data["d"]["id"]
         self.interaction_token = raw_data["d"]["token"]
@@ -61,7 +64,7 @@ class Interaction:
         allowed_mentions: AllowedMentions = None,
         tts: bool = False,
         ephemeral: bool = True,
-        components: List[Union[Component, List[Component]]] = None,
+        components: List[Union[ActionRow, Component, List[Component]]] = None,
         **options,
     ) -> None:
         state = self.bot._get_state()
@@ -97,7 +100,15 @@ class Interaction:
             data["tts"] = tts
 
         self.responded = True
-        await self.bot.http.request(
-            Route("POST", f"/interactions/{self.interaction_id}/{self.interaction_token}/callback"),
-            json={"type": type, "data": data},
-        )
+        try:
+            await self.bot.http.request(
+                Route(
+                    "POST", f"/interactions/{self.interaction_id}/{self.interaction_token}/callback"
+                ),
+                json={"type": type, "data": data},
+            )
+        except NotFound as e:
+            raise NotFound(
+                e.response,
+                "Interaction is unknown (you have already responded to the interaction or responding took too long)",
+            ) from None

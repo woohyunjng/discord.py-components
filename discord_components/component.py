@@ -1,10 +1,10 @@
 from discord import PartialEmoji, Emoji, InvalidArgument
 
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Iterable
 from uuid import uuid1
 from random import randint
 
-__all__ = ("Component", "ButtonStyle", "Button", "Select", "SelectOption")
+__all__ = ("Component", "ButtonStyle", "Button", "Select", "SelectOption", "ActionRow")
 
 
 def _get_partial_emoji(emoji: Union[Emoji, PartialEmoji, str]) -> PartialEmoji:
@@ -105,8 +105,8 @@ class SelectOption(Component):
     def from_json(cls, data: dict):
         emoji = data.get("emoji")
         return cls(
-            label=data["label"],
-            value=data["value"],
+            label=data.get("label"),
+            value=data.get("value"),
             emoji=PartialEmoji(
                 name=emoji["name"], animated=emoji.get("animated", False), id=emoji.get("id")
             )
@@ -126,8 +126,8 @@ class Select(Component):
         options: List[SelectOption],
         id: str = None,
         placeholder: str = None,
-        min_values: int = None,
-        max_values: int = None,
+        min_values: int = 1,
+        max_values: int = 1,
     ):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("Options length should be between 1 and 25.")
@@ -194,8 +194,8 @@ class Select(Component):
     @classmethod
     def from_json(cls, data: dict):
         return cls(
-            id=data["custom_id"],
-            options=list(map(lambda x: SelectOption.from_json(x), data["options"])),
+            id=data.get("custom_id"),
+            options=list(map(lambda x: SelectOption.from_json(x), data.get("options"))),
             placeholder=data.get("placeholder"),
             min_values=data.get("min_values"),
             max_values=data.get("max_values"),
@@ -238,15 +238,6 @@ class Button(Component):
         disabled: bool = False,
         emoji: Union[Emoji, PartialEmoji, str] = None,
     ):
-        if style == ButtonStyle.URL and not url:
-            raise InvalidArgument("You must provide a URL when the style is set to URL.")
-        if style == ButtonStyle.URL and id:
-            raise InvalidArgument("Both ID and URL are set.")
-        if not (1 <= style <= ButtonStyle.URL):
-            raise InvalidArgument(f"Style must be between 1, {ButtonStyle.URL}.")
-
-        if not label and not emoji:
-            raise InvalidArgument(f"Label or emoji must be given.")
 
         self._style = style
         self._label = label
@@ -342,7 +333,7 @@ class Button(Component):
     def from_json(cls, data: dict):
         emoji = data.get("emoji")
         return cls(
-            style=data["style"],
+            style=data.get("style"),
             label=data.get("label"),
             id=data.get("custom_id"),
             url=data.get("url"),
@@ -355,5 +346,43 @@ class Button(Component):
         )
 
 
+class ActionRow(Component):
+    __slots__ = ("_components",)
+
+    def __init__(self, *args: List[Component]):
+        self._components = list(args) if args is not None else []
+
+    def __list__(self) -> List[Component]:
+        return self.components
+
+    def __len__(self) -> int:
+        return len(self.components)
+
+    def __iter__(self) -> Iterable[Component]:
+        return iter(self.components)
+
+    def __getitem__(self, index) -> Component:
+        return self.components[index]
+
+    def to_dict(self) -> dict:
+        data = {"type": 1, "components": [component.to_dict() for component in self.components]}
+        return data
+
+    def append(self, component: Component):
+        self.components.append(component)
+
+    @property
+    def components(self) -> List[Component]:
+        return self._components
+
+    @components.setter
+    def components(self, value: List[Component]):
+        self._components = value
+
+    @classmethod
+    def from_json(cls, data: dict):
+        return cls(*[Button.from_json(component) for component in data.get("components")])
+
+
 def _get_component_type(type: int):
-    return {2: Button, 3: Select}[type]
+    return {1: ActionRow, 2: Button, 3: Select}[type]
