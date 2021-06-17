@@ -361,8 +361,11 @@ class ActionRow(Component):
     def __iter__(self) -> Iterable[Component]:
         return iter(self.components)
 
-    def __getitem__(self, index) -> Component:
+    def __getitem__(self, index: int) -> Component:
         return self.components[index]
+
+    def __setitem__(self, index: int, value: Component):
+        self._components[index] = value
 
     def to_dict(self) -> dict:
         data = {"type": 1, "components": [component.to_dict() for component in self.components]}
