@@ -1,6 +1,5 @@
 from discord import (
     Client,
-    TextChannel,
     Message,
     Embed,
     AllowedMentions,
@@ -12,15 +11,11 @@ from discord.ext.commands import Bot, Context as DContext
 from discord.http import Route
 from discord.abc import Messageable
 
-from functools import wraps
 from aiohttp import FormData
-from asyncio import TimeoutError
-from typing import List, Callable, Awaitable, Union
+from typing import List, Union
 from json import dumps
 
-from .button import Button
-from .select import Select
-from .component import Component
+from .component import Component, Select, Button
 from .message import ComponentMessage
 from .interaction import Interaction, InteractionEventType
 
@@ -163,7 +158,7 @@ class DiscordComponents:
                 Route("POST", f"/channels/{channel.id}/messages"), json=data
             )
 
-        msg = ComponentMessage(components=components, state=state, channel=channel, data=data)
+        msg = ComponentMessage(state=state, channel=channel, data=data)
         if delete_after is not None:
             self.bot.loop.create_task(msg.delete(delay=delete_after))
         return msg
@@ -225,12 +220,6 @@ class DiscordComponents:
             ),
         }
 
-    def _get_component_type(self, type: int):
-        if type == 2:
-            return Button
-        elif type == 3:
-            return Select
-
     def _structured_raw_data(self, raw_data: dict) -> dict:
         data = {
             "interaction": raw_data["d"]["id"],
@@ -240,27 +229,14 @@ class DiscordComponents:
         raw_data = raw_data["d"]
         state = self.bot._get_state()
 
-        components = []
         if "components" not in raw_data["message"]:
-            components = []
-
             data["message"] = None
             data["user"] = None
         else:
-            for line in raw_data["message"]["components"]:
-                if line["type"] >= 2:
-                    components.append(self._get_component_type(line["type"]).from_json(line))
-                for component in line["components"]:
-                    if component["type"] >= 2:
-                        components.append(
-                            self._get_component_type(component["type"]).from_json(component)
-                        )
-
             data["message"] = ComponentMessage(
                 state=state,
                 channel=self.bot.get_channel(int(raw_data["channel_id"])),
                 data=raw_data["message"],
-                components=components,
             )
 
             if "member" in raw_data:
@@ -274,21 +250,26 @@ class DiscordComponents:
 
     def _get_interaction(self, json: dict):
         data = self._structured_raw_data(json)
-        rescomponent = []
+        rescomponent = None
 
         if data["message"]:
             for component in data["message"].components:
-                if isinstance(component, Select):
+                if isinstance(component, list):
+                    for component_child in component:
+                        if (
+                            isinstance(component_child, Button)
+                            and component_child.id == data["component"]["custom_id"]
+                        ):
+                            rescomponent = component_child
+                elif isinstance(component, Select):
+                    rescomponent = []
                     for option in component.options:
                         if option.value in data["values"]:
                             if len(data["values"]) > 1:
                                 rescomponent.append(option)
                             else:
-                                rescomponent = [option]
+                                rescomponent = option
                                 break
-                else:
-                    if component.id == data["component"]["custom_id"]:
-                        rescomponent = component
         else:
             rescomponent = data["component"]
 
@@ -307,14 +288,5 @@ class DiscordComponents:
         res = await self.bot.http.request(
             Route("GET", f"/channels/{message.channel.id}/messages/{message.id}")
         )
-        components = []
 
-        for i in res["components"]:
-            components.append([])
-
-            for j in i["components"]:
-                components[-1].append(self._get_component_type(j["type"]).from_json(j))
-
-        return ComponentMessage(
-            channel=message.channel, state=self.bot._get_state(), data=res, components=components
-        )
+        return ComponentMessage(channel=message.channel, state=self.bot._get_state(), data=res)

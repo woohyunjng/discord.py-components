@@ -2,12 +2,8 @@ from discord import User, Client, Embed, AllowedMentions, InvalidArgument, Messa
 from discord.ext.commands import Bot
 from discord.http import Route
 
-from aiohttp import FormData
 from typing import List, Union
-from json import dumps
 
-from .button import Button
-from .message import ComponentMessage
 from .component import Component
 
 

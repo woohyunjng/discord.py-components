@@ -23,7 +23,6 @@ Also, there is an [official discord server](https://discord.gg/pKM6stqPxS), so i
 ## Features
 + You can use discord components and handle interactions easily!
 + Methods based on discord.py.
-+ Supports discord.ext.commands, and going to support [discord-py-slash-command](https://discord-py-slash-command.readthedocs.io/en/latest/).
 
 ## Docs
 [The docs](https://devkiki7000.gitbook.io/discord-components/) could contain many grammatic errors, spelling mistakes, and typos because I am not a native English speaker. So if there is a problem on the docs, contact me or create an issue.
