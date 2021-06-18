@@ -7,6 +7,7 @@ from discord import (
     User,
     File,
     Guild,
+    Attachment,
 )
 from discord.ext.commands import Bot, Context as DContext
 from discord.http import Route
@@ -85,7 +86,7 @@ class DiscordComponents:
         reference: Message = None,
         components: List[Union[ActionRow, Component, List[Component]]] = None,
         delete_after: float = None,
-        nonce: int = None,
+        nonce: Union[str, int] = None,
         **options,
     ) -> Message:
         state = self.bot._get_state()
@@ -175,8 +176,10 @@ class DiscordComponents:
         content: str = None,
         *,
         embed: Embed = None,
+        attachments: List[Attachment] = None,
         allowed_mentions: AllowedMentions = None,
         components: List[Union[ActionRow, Component, List[Component]]] = None,
+        delete_after: float = None,
         **options,
     ):
         state = self.bot._get_state()
@@ -189,6 +192,9 @@ class DiscordComponents:
             embed = embed.to_dict()
             data["embed"] = embed
 
+        if attachments is not None:
+            data["attachments"] = [a.to_dict() for a in attachments]
+
         if allowed_mentions is not None:
             if state.allowed_mentions:
                 allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
@@ -200,6 +206,8 @@ class DiscordComponents:
         await self.bot.http.request(
             Route("PATCH", f"/channels/{message.channel.id}/messages/{message.id}"), json=data
         )
+        if delete_after is not None:
+            await message.delete(delay=delete_after)
 
     def _get_components_json(
         self, components: List[Union[ActionRow, Component, List[Component]]] = None
