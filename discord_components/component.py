@@ -234,6 +234,7 @@ class Button(Component):
         label: str = None,
         style: int = ButtonStyle.gray,
         id: str = None,
+        custom_id: str = None,
         url: str = None,
         disabled: bool = False,
         emoji: Union[Emoji, PartialEmoji, str] = None,
@@ -250,7 +251,7 @@ class Button(Component):
             self._emoji = None
 
         if not self.style == ButtonStyle.URL:
-            self._id = id or str(uuid1())
+            self._id = id or custom_id or str(uuid1())
         else:
             self._id = None
 
@@ -277,6 +278,10 @@ class Button(Component):
 
     @property
     def id(self) -> str:
+        return self._id
+
+    @property
+    def custom_id(self) -> str:
         return self._id
 
     @property
@@ -316,6 +321,13 @@ class Button(Component):
 
     @id.setter
     def id(self, value: str):
+        if self.style == ButtonStyle.URL:
+            raise InvalidArgument("Button style is set to URL. You shouldn't provide ID.")
+
+        self._id = value
+
+    @custom_id.setter
+    def custom_id(self, value: str):
         if self.style == ButtonStyle.URL:
             raise InvalidArgument("Button style is set to URL. You shouldn't provide ID.")
 
