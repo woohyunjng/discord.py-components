@@ -2,6 +2,8 @@ from discord import Message
 
 from .component import _get_component_type, ActionRow
 
+__all__ = ("ComponentMessage",)
+
 
 class ComponentMessage(Message):
     def __init__(self, *, data: dict, **kwargs):

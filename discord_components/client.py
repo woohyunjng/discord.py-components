@@ -6,6 +6,7 @@ from discord import (
     InvalidArgument,
     User,
     File,
+    Guild,
 )
 from discord.ext.commands import Bot, Context as DContext
 from discord.http import Route
@@ -19,6 +20,8 @@ from .component import Component, Select, Button, ActionRow, _get_component_type
 from .message import ComponentMessage
 from .interaction import Interaction, InteractionEventType
 
+from .ext.filters import *
+
 __all__ = ("DiscordComponents",)
 
 
@@ -30,6 +33,7 @@ class DiscordComponents:
         add_listener: bool = True,
     ):
         self.bot = bot
+        self.bot.components_manager = self
 
         if change_discord_methods:
             self.change_discord_methods(add_listener=add_listener)
@@ -291,3 +295,35 @@ class DiscordComponents:
         )
 
         return ComponentMessage(channel=message.channel, state=self.bot._get_state(), data=res)
+
+    async def wait_for(
+        self,
+        event: str,
+        *,
+        message: Message = None,
+        component: Component = None,
+        ephemeral: bool = False,
+        guild: Guild = None,
+        channel: Messageable = None,
+        user: User = None,
+        timeout: float = None,
+    ):
+        check_list = []
+        if message is not None:
+            check_list.append(message_filter(message, ephemeral))
+        if component is not None:
+            check_list.append(component_filter(component))
+        if guild is not None:
+            check_list.append(guild_filter(guild))
+        if channel is not None:
+            check_list.append(channel_filter(channel))
+        if user is not None:
+            check_list.append(user_filter(user))
+
+        def check(interaction: Interaction):
+            for i in check_list:
+                if not i(interaction):
+                    return False
+            return True
+
+        return await self.bot.wait_for(event, check=check, timeout=timeout)

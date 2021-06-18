@@ -125,6 +125,7 @@ class Select(Component):
         *,
         options: List[SelectOption],
         id: str = None,
+        custom_id: str = None,
         placeholder: str = None,
         min_values: int = 1,
         max_values: int = 1,
@@ -132,7 +133,7 @@ class Select(Component):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("Options length should be between 1 and 25.")
 
-        self._id = id or str(uuid1())
+        self._id = id or custom_id or str(uuid1())
         self._options = options
         self._placeholder = placeholder
         self._min_values = min_values
@@ -153,6 +154,10 @@ class Select(Component):
         return self._id
 
     @property
+    def custom_id(self) -> str:
+        return self._id
+
+    @property
     def options(self) -> List[SelectOption]:
         return self._options
 
@@ -170,6 +175,10 @@ class Select(Component):
 
     @id.setter
     def id(self, value: str):
+        self._id = value
+
+    @custom_id.setter
+    def custom_id(self, value: str):
         self._id = value
 
     @options.setter
