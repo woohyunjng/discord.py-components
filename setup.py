@@ -26,7 +26,7 @@ setup(
     description="An unofficial library for discord components.",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/decavelab/discord.py-components",
+    url="https://gitlab.com/discord.py-components/discord.py-components",
     packages=["discord_components", "discord_components.ext"],
     include_package_data=True,
     install_requires=open("requirements.txt").readlines(),
