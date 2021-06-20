@@ -54,6 +54,8 @@ class Interaction:
         self.interaction_id = raw_data["d"]["id"]
         self.interaction_token = raw_data["d"]["token"]
 
+        self.custom_id = raw_data["d"]["data"]["custom_id"]
+
     async def respond(
         self,
         *,
