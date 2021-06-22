@@ -4,7 +4,7 @@ from .component import *
 from .message import *
 
 __name__ = "discord_components"
-__version__ = "0.5.4"
+__version__ = "1.0.0"
 
 __author__ = "kiki7000"
 __license__ = "MIT"
