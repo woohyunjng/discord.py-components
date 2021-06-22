@@ -30,6 +30,7 @@ class DiscordComponents:
     def __init__(
         self,
         bot: Union[Bot, Client],
+        *,
         change_discord_methods: bool = True,
         add_listener: bool = True,
     ):
@@ -63,6 +64,12 @@ class DiscordComponents:
                     self.bot.dispatch(key, interaction)
                     break
 
+        def new_message(cls, *args, **kwargs):
+            if cls is Message:
+                return object.__new__(ComponentMessage)
+            else:
+                return object.__new__(cls)
+
         if isinstance(self.bot, Bot) and add_listener:
             self.bot.add_listener(on_socket_response, name="on_socket_response")
         else:
@@ -71,6 +78,7 @@ class DiscordComponents:
         Messageable.send = send_component_msg_prop
         Message.edit = edit_component_msg_prop
         Message.reply = reply_component_msg_prop
+        Message.__new__ = new_message
 
     async def send_component_msg(
         self,
