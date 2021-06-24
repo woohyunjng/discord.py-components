@@ -49,6 +49,9 @@ class DiscordComponents:
 
         def reply_component_msg_prop(msg, *args, **kwargs):
             return self.send_component_msg(msg.channel, *args, **kwargs, reference=msg)
+        
+        def edit_component_msg_prop(msg, *args, **kwargs):
+            return self.edit_component_msg(msg, *args, **kwargs)
 
         async def on_socket_response(res):
             if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
@@ -66,7 +69,7 @@ class DiscordComponents:
             self.bot.on_socket_response = on_socket_response
 
         Messageable.send = send_component_msg_prop
-        Message.edit = self.edit_component_msg
+        Message.edit = sedit_component_msg_prop
         Message.reply = reply_component_msg_prop
 
     async def send_component_msg(
