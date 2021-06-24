@@ -69,7 +69,7 @@ class DiscordComponents:
             self.bot.on_socket_response = on_socket_response
 
         Messageable.send = send_component_msg_prop
-        Message.edit = sedit_component_msg_prop
+        Message.edit = edit_component_msg_prop
         Message.reply = reply_component_msg_prop
 
     async def send_component_msg(
