@@ -17,7 +17,7 @@ from aiohttp import FormData
 from typing import List, Union
 from json import dumps
 
-from .component import Component, Select, Button, ActionRow, _get_component_type
+from .component import Component, Select, SelectOption, Button, ActionRow, _get_component_type
 from .message import ComponentMessage
 from .interaction import Interaction, InteractionEventType
 
@@ -271,26 +271,32 @@ class DiscordComponents:
 
         if not isinstance(data["message"], dict):
             for component in data["message"].components:
-                if isinstance(component, ActionRow):
-                    for component_child in component:
-                        if (
-                            isinstance(component_child, Button)
-                            and component_child.id == data["component"]["custom_id"]
-                        ):
-                            rescomponent = component_child
-                elif isinstance(component, Select):
-                    rescomponent = []
-                    for option in component.options:
-                        if option.value in data["values"]:
-                            if len(data["values"]) > 1:
-                                rescomponent.append(option)
-                            else:
-                                rescomponent = option
-                                break
+                for component_child in component:
+                    if (
+                        isinstance(component_child, Button)
+                        and component_child.id == data["component"]["custom_id"]
+                    ):
+                        rescomponent = component_child
+
+                    elif isinstance(component_child, Select):
+                        rescomponent = []
+                        for option in component_child.options:
+                            if option.value in data["component"]["values"]:
+                                if len(data["component"]["values"]) > 1:
+                                    rescomponent.append(option)
+                                else:
+                                    rescomponent = option
+                                    break
         else:
-            rescomponent = _get_component_type(data["component"]["component_type"]).from_json(
-                data["component"]
-            )
+            if data["component"]["component_type"] == 2:
+                rescomponent = Button.from_json(data["component"])
+            elif data["component"]["component_type"] == 3:
+                rescomponent = []
+                if len(data["component"]["values"]) > 1:
+                    for value in data["component"]["values"]:
+                        rescomponent.append(SelectOption.from_json({"value": value}))
+                else:
+                    rescomponent = SelectOption.from_json({"value": data["component"]["values"][0]})
 
         ctx = Interaction(
             bot=self.bot,
