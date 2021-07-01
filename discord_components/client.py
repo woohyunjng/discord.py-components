@@ -284,22 +284,19 @@ class DiscordComponents:
                         parentcomponent = component
                         rescomponent = []
                         for option in component.options:
-                            if option.value in data["component"]["values"]:
-                                if len(data["component"]["values"]) > 1:
-                                    rescomponent.append(option)
-                                else:
-                                    rescomponent = option
-                                    break
+                            if data["component"].get("values", None) is not None:
+                                if option.value in data["component"]["values"]:
+                                    if len(data["component"]["values"]) > 0:
+                                        rescomponent.append(option)
         else:
             if data["component"]["component_type"] == 2:
                 rescomponent = Button.from_json(data["component"])
             elif data["component"]["component_type"] == 3:
                 rescomponent = []
-                if len(data["component"]["values"]) > 1:
-                    for value in data["component"]["values"]:
-                        rescomponent.append(SelectOption.from_json({"value": value}))
-                else:
-                    rescomponent = SelectOption.from_json({"value": data["component"]["values"][0]})
+                if data["component"].get("values", None) is not None:
+                    if len(data["component"]["values"]) > 0:
+                        for value in data["component"]["values"]:
+                            rescomponent.append(SelectOption.from_json({"value": value}))
 
         ctx = Interaction(
             bot=self.bot,
