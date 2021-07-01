@@ -268,19 +268,22 @@ class DiscordComponents:
     async def _get_interaction(self, json: dict):
         data = await self._structured_raw_data(json)
         rescomponent = None
+        parentcomponent = None
 
         if not isinstance(data["message"], dict):
-            for component in data["message"].components:
-                for component_child in component:
+            for actionrow in data["message"].components:
+                for component in actionrow:
                     if (
-                        isinstance(component_child, Button)
-                        and component_child.id == data["component"]["custom_id"]
+                        isinstance(component, Button)
+                        and component.id == data["component"]["custom_id"]
                     ):
-                        rescomponent = component_child
+                        rescomponent = component
+                        parentcomponent = component
 
-                    elif isinstance(component_child, Select):
+                    elif isinstance(component, Select):
+                        parentcomponent = component
                         rescomponent = []
-                        for option in component_child.options:
+                        for option in component.options:
                             if option.value in data["component"]["values"]:
                                 if len(data["component"]["values"]) > 1:
                                     rescomponent.append(option)
@@ -304,7 +307,8 @@ class DiscordComponents:
             user=data["user"],
             channel=data["channel"],
             guild=data["guild"],
-            component=rescomponent,
+            interacted_component=rescomponent,
+            parent_component=parentcomponent,
             raw_data=data["raw"],
             message=data["message"],
             is_ephemeral=not bool(data["message"]),

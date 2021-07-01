@@ -31,7 +31,8 @@ class Interaction:
         user: User,
         channel: Messageable,
         guild: Guild,
-        component: Component,
+        parent_component: Component,
+        interacted_component: Component,
         raw_data: dict,
         message: Message,
         is_ephemeral: bool = False,
@@ -42,7 +43,10 @@ class Interaction:
         self.user = user
         self.author = self.user
 
-        self.component = component
+        self.component = interacted_component
+        self.interacted_component = self.component
+        self.parent_component = parent_component
+
         self.raw_data = raw_data
         self.is_ephemeral = is_ephemeral
         self.responded = False
