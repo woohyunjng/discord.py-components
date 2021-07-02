@@ -2,7 +2,7 @@ from discord.ext.commands import Bot
 from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 from asyncio import TimeoutError
 
-bot = Bot("!")
+bot = Bot("your prefix")
 
 
 @bot.event
@@ -12,7 +12,7 @@ async def on_ready():
 
 
 @bot.command()
-async def waitforclick(ctx):
+async def wait_for_click(ctx):
     m = await ctx.send(
         "Buttons waiting for a click",
         components=[
@@ -38,4 +38,4 @@ async def waitforclick(ctx):
         )
 
 
-bot.run("TOKEN")
+bot.run("your token")

@@ -1,12 +1,14 @@
+import re
+from codecs import open
 from os import environ
-from setuptools import setup, find_packages
 
-from discord_components import (
-    __author__ as author,
-    __version__ as tempversion,
-    __license__ as _license,
-    __name__ as name,
-)
+from setuptools import find_packages, setup
+from discord_components import __version__ as tempversion
+
+PACKAGE_NAME = "discord_components"
+
+with open("README.md", "r", encoding="utf-8") as f:
+    README = f.read()
 
 try:
     version = (
@@ -18,7 +20,7 @@ except KeyError:
     version = tempversion
 
 setup(
-    name="discord_components",
+    name=PACKAGE_NAME,
     version=version,
     author="kiki7000",
     author_email="devkiki7000@gmail.com",
@@ -26,7 +28,7 @@ setup(
     include_package_data=True,
     install_requires=["discord.py", "aiohttp"],
     license="MIT License",
-    long_description=open("README.md", encoding="utf-8").read(),
+    long_description=README,
     long_description_content_type="text/markdown",
     url="https://gitlab.com/discord.py-components/discord.py-components",
     packages=find_packages(),

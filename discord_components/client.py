@@ -281,22 +281,30 @@ class DiscordComponents:
                         parentcomponent = component
 
                     elif isinstance(component, Select):
+                        if (
+                            component.custom_id != data["component"]["custom_id"]
+                            or data["component"].get("values") is None
+                            or len(data["component"]["values"]) == 0
+                        ):
+                            continue
+
                         parentcomponent = component
                         rescomponent = []
+
                         for option in component.options:
-                            if data["component"].get("values", None) is not None:
-                                if option.value in data["component"]["values"]:
-                                    if len(data["component"]["values"]) > 0:
-                                        rescomponent.append(option)
+                            if option.value in data["component"]["values"]:
+                                rescomponent.append(option)
         else:
             if data["component"]["component_type"] == 2:
                 rescomponent = Button.from_json(data["component"])
+                parentcomponent = rescomponent
             elif data["component"]["component_type"] == 3:
                 rescomponent = []
-                if data["component"].get("values", None) is not None:
+                if data["component"].get("values") is not None:
                     if len(data["component"]["values"]) > 0:
                         for value in data["component"]["values"]:
                             rescomponent.append(SelectOption.from_json({"value": value}))
+                parentcomponent = Select.from_json(data["component"])
 
         ctx = Interaction(
             bot=self.bot,

@@ -1,47 +1,40 @@
 from discord.ext.commands import Bot
-from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
-import asyncio
+from discord_components import DiscordComponents, Button, Select, SelectOption
 
-bot = Bot("!")
+bot = Bot(command_prefix="your prefix")
 
 
 @bot.event
 async def on_ready():
-    DiscordComponents(bot)  # Overrides discord.py's methods.
+    DiscordComponents(bot)
     print(f"Logged in as {bot.user}!")
 
 
 @bot.command()
 async def button(ctx):
+    await ctx.send("Hello, World!", components=[Button(label="WOW button!")])
+
+    interaction = await bot.wait_for(
+        "button_click", check=lambda i: i.component.label.startswith("WOW")
+    )
+    await interaction.respond(content="Button clicked!")
+
+
+@bot.command()
+async def select(ctx):
     await ctx.send(
-        "Here is an example of a button",
+        "Hello, World!",
         components=[
-            [
-                Button(style=ButtonStyle.red, label="EMOJI", emoji="😂"),
-                Button(style=ButtonStyle.green, label="GREEN"),
-                Button(style=ButtonStyle.red, label="RED", disabled=True),
-                Button(style=ButtonStyle.grey, label="GREY"),
-            ],
-            Button(style=ButtonStyle.blue, label="BLUE"),
-            Button(style=ButtonStyle.URL, label="URL", url="https://www.example.com"),
+            Select(
+                placeholder="select something!",
+                options=[SelectOption(label="a", value="A"), SelectOption(label="b", value="B")],
+                disabled=True,
+            )
         ],
     )
 
-
-@bot.event
-async def on_button_click(res):
-    """
-    Possible interaction types:
-    - Pong
-    - ChannelMessageWithSource
-    - DeferredChannelMessageWithSource
-    - DeferredUpdateMessage
-    - UpdateMessage
-    """
-
-    await res.respond(
-        type=InteractionType.ChannelMessageWithSource, content=f"{res.component.label} pressed"
-    )
+    interaction = await bot.wait_for("select_option")
+    await interaction.respond(content=f"{interaction.component[0].label} selected!")
 
 
-bot.run("TOKEN")
+bot.run("your token")
