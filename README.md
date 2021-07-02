@@ -14,18 +14,19 @@
 </div>
 
 ## Welcome!
-Discord components are cool, but discord.py will support it on version 2.0. It is hard to wait, so we made a third-party library for using components such as buttons or selects!  We're currently developing this library, so it has a lot of bugs. But it has enough features to make the components easy to use :)
+Discord components are cool, but discord.py will support it on version 2.0. It is hard to wait, so we made a third-party library for using components such as buttons or selects!
 
 This project is open source ⭐.
 
-Also, there is an [official discord server](https://discord.gg/pKM6stqPxS), so if you have a question, feel free to ask it on this server.
+Also, there is an [official discord server](https://discord.gg/pKM6stqPxS), so if you have any questions, feel free to ask it on this server.
 
 ## Features
-+ You can use discord components and handle interactions easily!
-+ Methods based on discord.py.
++ You can use message components and handle component interactions easily!
++ third-party of discord.py.
 
 ## Docs
-[The docs](https://devkiki7000.gitbook.io/discord-components/) could contain many grammatic errors, spelling mistakes, and typos because I am not a native English speaker. So if there is a problem on the docs, contact me or create an issue.
+We are currently making a new docs! So you can wait for it or use the old documents ([Gitbook version](https://devkiki7000.gitbook.io/discord-components), [Sphinx Version](https://discord-components.readthedocs.io/en/0.5.2.4
+)) (Both outdated)
 
 ## Install
 ```
@@ -35,7 +36,7 @@ pip install --upgrade discord-components
 ## Example
 ```py
 from discord.ext.commands import Bot
-from discord_components import DiscordComponents, Button
+from discord_components import DiscordComponents, Button, Select, SelectOption
 
 bot = Bot(command_prefix = "your prefix")
 
@@ -59,17 +60,22 @@ async def button(ctx):
     await interaction.respond(content = "Button clicked!")
 
 
+@bot.command()
+async def select(ctx):
+    await ctx.send(
+        "Hello, World!",
+        components = [
+            Select(placeholder="select something!", options=[SelectOption(label="a", value="A"), SelectOption(label="b", value="B")])
+        ]
+    )
+
+    interaction = await bot.wait_for("select_option", check = lambda i: i.component[0].value == "A")
+    await interaction.respond(content = f"{interaction.component[0].label} selected!")
+
+
 bot.run("your token")
 ```
 You can see more examples [here](https://gitlab.com/discord.py-components/discord.py-components/-/tree/master/examples).
 
 ## License
 This project is under the MIT License.
-
-## Contribute
-Anyone can contribute to this by forking the repository, making a change, and create a pull request!
-
-But you have to follow these to PR.
-+ Use the black formatter.
-+ Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
-+ Test.
