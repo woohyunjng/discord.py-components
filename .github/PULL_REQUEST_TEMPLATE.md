@@ -6,9 +6,7 @@
 - [ ] Other
 
 ## Required
-- [ ] Did you use the black formatter?
-- [ ] Did you test?
-- [ ] Did you use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+Just check if you followed the contents in the contributing file.
 
 ## Checks
-- [ ] Does this requires the users to change their code?
+- [ ] Is this a breaking change?

@@ -7,10 +7,7 @@ labels: typo
 
 ## Typo type
 - [ ] Document
-- [ ] Markdowns or Templates
+- [ ] Markdown files or Templates
 
 ## Typo
 > Where is the typo? (line, file github URL) (Multiple possible)
-
-## Check
-- [ ] Are you sure this is a typo?
