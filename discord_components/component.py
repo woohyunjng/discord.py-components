@@ -118,7 +118,7 @@ class SelectOption(Component):
 
 
 class Select(Component):
-    __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values")
+    __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values", "_disabled")
 
     def __init__(
         self,
@@ -129,6 +129,7 @@ class Select(Component):
         placeholder: str = None,
         min_values: int = 1,
         max_values: int = 1,
+        disabled: bool = False
     ):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("Options length should be between 1 and 25.")
@@ -138,6 +139,7 @@ class Select(Component):
         self._placeholder = placeholder
         self._min_values = min_values
         self._max_values = max_values
+        self._disabled = disabled
 
     def to_dict(self) -> dict:
         return {
@@ -147,6 +149,7 @@ class Select(Component):
             "placeholder": self.placeholder,
             "min_values": self.min_values,
             "max_values": self.max_values,
+            "disabled": self.disabled
         }
 
     @property
@@ -172,6 +175,10 @@ class Select(Component):
     @property
     def max_values(self) -> int:
         return self._max_values
+
+    @property
+    def disabled(self) -> bool:
+        return self._disabled
 
     @id.setter
     def id(self, value: str):
@@ -200,6 +207,10 @@ class Select(Component):
     def max_values(self, value: int):
         self._max_values = value
 
+    @disabled.setter
+    def disabled(self, value: bool):
+        self._disabled = value
+
     @classmethod
     def from_json(cls, data: dict):
         return cls(
@@ -208,6 +219,7 @@ class Select(Component):
             placeholder=data.get("placeholder"),
             min_values=data.get("min_values"),
             max_values=data.get("max_values"),
+            disabled=data.get("disabled")
         )
 
 
