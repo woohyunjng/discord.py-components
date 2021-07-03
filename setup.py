@@ -6,7 +6,9 @@ from setuptools import find_packages, setup
 from discord_components import __version__ as tempversion
 
 PACKAGE_NAME = "discord_components"
-README = open("README.md", encoding="utf-8").read()
+
+with open("README.md", "r", encoding="utf-8") as f:
+    README = f.read()
 
 try:
     version = (
