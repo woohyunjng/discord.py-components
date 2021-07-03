@@ -31,7 +31,7 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://gitlab.com/discord.py-components/discord.py-components",
-    packages=find_packages(),
+    packages=["discord_components", "discord_components.ext"],
     python_requires=">=3.6",
     classifiers=[
         "Intended Audience :: Developers",
