@@ -143,7 +143,9 @@ class Interaction:
                 allowed_mentions = allowed_mentions.to_dict()
 
             data["allowed_mentions"] = allowed_mentions
-
+        
+        print(data)
+        
         await self.bot.http.request(
             Route("PATCH", f"/webhooks/{self.bot.user.id}/{self.interaction_token}/messages/@original"), 
             json=data
