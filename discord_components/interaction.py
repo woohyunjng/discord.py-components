@@ -1,4 +1,4 @@
-from discord import User, Client, Embed, AllowedMentions, InvalidArgument, Message
+from discord import User, Client, Embed, AllowedMentions, InvalidArgument, Message, HTTPException
 from discord.ext.commands import Bot
 from discord.http import Route
 
