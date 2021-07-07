@@ -290,7 +290,7 @@ class DiscordComponents:
                     if component.id == data["component"]["custom_id"]:
                         rescomponent = component
         if not rescomponent:
-            rescomponent = data["component"]
+            rescomponent = self._get_component_type(data["component"]["type"]).from_json(data["component"])
 
         ctx = Interaction(
             bot=self.bot,
