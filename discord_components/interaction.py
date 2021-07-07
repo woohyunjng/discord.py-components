@@ -127,7 +127,7 @@ class Interaction:
         **options,
     ):
         state = self.bot._get_state()
-        data = {**self._get_components_json(components), **options}
+        data = {**self.client._get_components_json(components), **options}
 
         if content is not None:
             data["content"] = content
