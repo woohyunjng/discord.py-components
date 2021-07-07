@@ -122,6 +122,7 @@ class Interaction:
         content: str = None,
         *,
         embed: Embed = None,
+        embeds: List[Embed] = None,
         allowed_mentions: AllowedMentions = None,
         components: List[Union[Component, List[Component]]] = None,
         **options,
@@ -132,9 +133,15 @@ class Interaction:
         if content is not None:
             data["content"] = content
 
+        if embed is not None and embeds is not None:
+            raise ValueError('Cannot have both embed and embeds.')
+            
         if embed is not None:
             embed = embed.to_dict()
-            data["embed"] = embed
+            data["embeds"] = [embed]
+            
+        if embeds is not None:
+            data["embeds"] = [e.to_dict() for e in embeds]
 
         if allowed_mentions is not None:
             if state.allowed_mentions:
@@ -144,7 +151,6 @@ class Interaction:
 
             data["allowed_mentions"] = allowed_mentions
         
-        print(data)
         
         await self.bot.http.request(
             Route("PATCH", f"/webhooks/{self.bot.user.id}/{self.interaction_token}/messages/@original"), 
