@@ -2,6 +2,7 @@ from discord import User, Client, Embed, AllowedMentions, InvalidArgument, Messa
 from discord.ext.commands import Bot
 from discord.http import Route
 
+import asyncio
 from aiohttp import FormData
 from typing import List, Union
 from json import dumps
