@@ -115,3 +115,54 @@ class Interaction:
             Route("POST", f"/interactions/{self.interaction_id}/{self.interaction_token}/callback"),
             json={"type": type, "data": data},
         )
+        
+        
+    async def edit(
+        self,
+        content: str = None,
+        *,
+        embed: Embed = None,
+        allowed_mentions: AllowedMentions = None,
+        components: List[Union[Component, List[Component]]] = None,
+        **options,
+    ):
+        state = self.bot._get_state()
+        data = {**self._get_components_json(components), **options}
+
+        if content is not None:
+            data["content"] = content
+
+        if embed is not None:
+            embed = embed.to_dict()
+            data["embed"] = embed
+
+        if allowed_mentions is not None:
+            if state.allowed_mentions:
+                allowed_mentions = state.allowed_mentions.merge(allowed_mentions).to_dict()
+            else:
+                allowed_mentions = allowed_mentions.to_dict()
+
+            data["allowed_mentions"] = allowed_mentions
+
+        await self.bot.http.request(
+            Route("PATCH", f"/webhooks/{self.bot.user.id}/{self.interaction_token}/messages/@original"), 
+            json=data
+        )
+        
+    async def delete(self, *, delay: float = None):
+        if delay is not None:
+
+            async def delete(delay: float):
+                await asyncio.sleep(delay)
+                try:
+                    await self.bot.http.request(
+                        Route('DELETE', f"/webhooks/{self.bot.user.id}/{self.interaction_token}/messages/@original"),
+                    )
+                except HTTPException:
+                    pass
+
+            asyncio.create_task(delete(delay))
+        else:
+            await self.bot.http.request(
+                Route('DELETE', f"/webhooks/{self.bot.user.id}/{self.interaction_token}/messages/@original"),
+            )
