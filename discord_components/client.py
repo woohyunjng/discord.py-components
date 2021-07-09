@@ -57,7 +57,9 @@ class DiscordComponents:
             if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
                 return
 
-            if "message_reference" in res["d"]["message"] and not "channel_id" in res["d"]["message"]["message_reference"]: res["d"]["message"]["message_reference"]["channel_id"] = res["d"]["channel_id"]
+            if ("message_reference" in res["d"]["message"]) and (not "channel_id" in res["d"]["message"]["message_reference"]):
+                res["d"]["message"]["message_reference"]["channel_id"] = res["d"]["channel_id"]
+                
             for key, value in InteractionEventType.items():
                 if value == res["d"]["data"]["component_type"]:
                     self.bot.dispatch(f"raw_{key}", res["d"])
