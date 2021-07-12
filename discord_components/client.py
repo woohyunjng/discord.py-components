@@ -57,9 +57,11 @@ class DiscordComponents:
             if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
                 return
 
-            if ("message_reference" in res["d"]["message"]) and (not "channel_id" in res["d"]["message"]["message_reference"]):
+            if ("message_reference" in res["d"]["message"]) and (
+                not "channel_id" in res["d"]["message"]["message_reference"]
+            ):
                 res["d"]["message"]["message_reference"]["channel_id"] = res["d"]["channel_id"]
-                
+
             for key, value in InteractionEventType.items():
                 if value == res["d"]["data"]["component_type"]:
                     self.bot.dispatch(f"raw_{key}", res["d"])
@@ -307,6 +309,10 @@ class DiscordComponents:
                     if len(data["component"]["values"]) > 0:
                         for value in data["component"]["values"]:
                             rescomponent.append(SelectOption.from_json({"value": value}))
+
+                data["component"]["options"] = list(
+                    map(lambda x: {"value": x}, data["component"]["values"])
+                )
                 parentcomponent = Select.from_json(data["component"])
 
         ctx = Interaction(
