@@ -25,8 +25,7 @@ Also, there is an [official discord server](https://discord.gg/pKM6stqPxS), so i
 + third-party of discord.py.
 
 ## Docs
-We are currently making a new docs! So you can wait for it or use the old documents ([Gitbook version](https://devkiki7000.gitbook.io/discord-components), [Sphinx Version](https://discord-components.readthedocs.io/en/0.5.2.4
-)) (Both outdated)
+We are currently making a new docs! But you can use ([Gitbook version](https://devkiki7000.gitbook.io/discord-components) (up to date)
 
 ## Install
 ```
