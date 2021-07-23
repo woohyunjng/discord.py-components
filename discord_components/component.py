@@ -400,6 +400,9 @@ class ActionRow(Component):
     def __setitem__(self, index: int, value: Component):
         self._components[index] = value
 
+    def __delitem__(self, key: int):
+        del self._components[key]
+
     def to_dict(self) -> dict:
         data = {"type": 1, "components": [component.to_dict() for component in self.components]}
         return data
