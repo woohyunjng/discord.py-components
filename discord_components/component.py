@@ -2,9 +2,9 @@ from discord import PartialEmoji, Emoji, InvalidArgument
 
 from typing import Optional, Union, List, Iterable
 from uuid import uuid1
-from random import randint
+from enum import IntEnum
 
-__all__ = ("Component", "ButtonStyle", "Button", "Select", "SelectOption", "ActionRow")
+__all__ = ("Component", "ButtonStyle", "Button", "Select", "SelectOption", "ActionRow", "_get_component_type")
 
 
 def _get_partial_emoji(emoji: Union[Emoji, PartialEmoji, str]) -> PartialEmoji:
@@ -18,11 +18,11 @@ def _get_partial_emoji(emoji: Union[Emoji, PartialEmoji, str]) -> PartialEmoji:
 
 class Component:
     def to_dict(self) -> dict:
-        return {}
+        raise NotImplementedError
 
     @classmethod
     def from_json(cls, data: dict):
-        return cls(**data)
+        raise NotImplementedError
 
 
 class SelectOption(Component):
@@ -101,6 +101,21 @@ class SelectOption(Component):
     def default(self, value: bool):
         self._default = value
 
+    def set_label(self, value: str):
+        self.label = value
+
+    def set_value(self, value: str):
+        self.value = value
+
+    def set_emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
+        self.emoji = emoji
+
+    def set_description(self, value: str):
+        self.description = value
+
+    def set_default(self, value: bool):
+        self.default = value
+
     @classmethod
     def from_json(cls, data: dict):
         emoji = data.get("emoji")
@@ -118,7 +133,7 @@ class SelectOption(Component):
 
 
 class Select(Component):
-    __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values")
+    __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values", "_disabled")
 
     def __init__(
         self,
@@ -129,6 +144,7 @@ class Select(Component):
         placeholder: str = None,
         min_values: int = 1,
         max_values: int = 1,
+        disabled: bool = False
     ):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("Options length should be between 1 and 25.")
@@ -138,6 +154,7 @@ class Select(Component):
         self._placeholder = placeholder
         self._min_values = min_values
         self._max_values = max_values
+        self._disabled = disabled
 
     def to_dict(self) -> dict:
         return {
@@ -147,6 +164,7 @@ class Select(Component):
             "placeholder": self.placeholder,
             "min_values": self.min_values,
             "max_values": self.max_values,
+            "disabled": self.disabled
         }
 
     @property
@@ -172,6 +190,10 @@ class Select(Component):
     @property
     def max_values(self) -> int:
         return self._max_values
+
+    @property
+    def disabled(self) -> bool:
+        return self.disabled
 
     @id.setter
     def id(self, value: str):
@@ -200,6 +222,31 @@ class Select(Component):
     def max_values(self, value: int):
         self._max_values = value
 
+    @disabled.setter
+    def disabled(self, value: bool):
+        self._disabled = value
+
+    def set_id(self, value: str):
+        self.id = value
+
+    def set_custom_id(self, value: str):
+        self.custom_id = value
+
+    def set_options(self, value: List[SelectOption]):
+        self.options = value
+
+    def set_placeholder(self, value: str):
+        self.placeholder = value
+
+    def set_min_values(self, value: int):
+        self.min_values = value
+
+    def set_max_values(self, value: int):
+        self.max_values = value
+
+    def set_disabled(self, value: bool):
+        self.disabled = value
+
     @classmethod
     def from_json(cls, data: dict):
         return cls(
@@ -208,30 +255,17 @@ class Select(Component):
             placeholder=data.get("placeholder"),
             min_values=data.get("min_values"),
             max_values=data.get("max_values"),
+            disabled=data.get("disabled", False)
         )
 
 
-class ButtonStyle:
-    blue: int = 1
-    gray: int = 2
-    grey: int = 2
-    green: int = 3
-    red: int = 4
-    URL: int = 5
-
-    @classmethod
-    def random_color(cls) -> int:
-        return randint(1, cls.red)
-
-    @classmethod
-    def to_dict(cls) -> dict:
-        return {
-            "blue": cls.blue,
-            "gray": cls.gray,
-            "green": cls.green,
-            "red": cls.red,
-            "URL": cls.URL,
-        }
+class ButtonStyle(IntEnum):
+    blue = 1
+    gray = 2
+    grey = 2
+    green = 3
+    red = 4
+    URL = 5
 
 
 class Button(Component):
@@ -350,6 +384,27 @@ class Button(Component):
     def emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
         self._emoji = _get_partial_emoji(emoji)
 
+    def set_style(self, value: int):
+        self.style = value
+
+    def set_label(self, value: int):
+        self.label = value
+
+    def set_url(self, value: int):
+        self.url = value
+
+    def set_id(self, value: str):
+        self.id = value
+
+    def set_custom_id(self, value: str):
+        self.custom_id = value
+
+    def set_disabled(self, value: bool):
+        self.disabled = value
+
+    def set_emoji(self, emoji: Union[Emoji, PartialEmoji, str]):
+        self.emoji = emoji
+
     @classmethod
     def from_json(cls, data: dict):
         emoji = data.get("emoji")
@@ -402,6 +457,12 @@ class ActionRow(Component):
     @components.setter
     def components(self, value: List[Component]):
         self._components = value
+
+    def set_components(self, value: List[Component]):
+        self.components = value
+
+    def add_component(self, value: Component):
+        self.components.append(value)
 
     @classmethod
     def from_json(cls, data: dict):
