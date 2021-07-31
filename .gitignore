@@ -130,7 +130,7 @@ dmypy.json
 
 # test
 test.py
-test/
+test/*
 
 # idea
 .IDEA

@@ -10,6 +10,9 @@ HERE = path.abspath(path.dirname(__file__))
 with open("README.md", "r", encoding="utf-8") as f:
     README = f.read()
 
+with open("requirements.txt", "r", encoding="utf-8") as f:
+    requirements = f.read()
+
 try:
     VERSION = (
         environ["TRAVIS_TAG"].lstrip("v")
@@ -29,14 +32,14 @@ extras["dev"] = extras["lint"] + extras["readthedocs"]
 
 
 setup(
-    name="discord_components",
+    name=PACKAGE_NAME,
     version=VERSION,
     author="kiki7000",
     author_email="devkiki7000@gmail.com",
     description="An unofficial library for discord components.",
     extras_require=extras,
     include_package_data=True,
-    install_requires=["discord.py", "aiohttp"],
+    install_requires=requirements,
     license="MIT License",
     long_description=README,
     long_description_content_type="text/markdown",
