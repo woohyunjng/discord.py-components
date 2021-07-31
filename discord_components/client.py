@@ -305,13 +305,6 @@ class DiscordComponents:
         )
         return ctx
 
-    async def fetch_component_message(self, message: Message) -> ComponentMessage:
-        res = await self.bot.http.request(
-            Route("GET", f"/channels/{message.channel.id}/messages/{message.id}")
-        )
-
-        return ComponentMessage(channel=message.channel, state=self.bot._get_state(), data=res)
-
     async def wait_for(
         self,
         event: str,
