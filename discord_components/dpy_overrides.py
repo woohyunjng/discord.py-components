@@ -1,12 +1,20 @@
 from typing import Optional, List, Union
 
-from discord import Message, Embed, Attachment, AllowedMentions, InvalidArgument, File
+from discord import (
+    Message,
+    Embed,
+    Attachment,
+    AllowedMentions,
+    InvalidArgument,
+    File,
+    MessageFlags,
+)
 from discord.http import Route, HTTPClient
 from discord.abc import Messageable, Snowflake
 from discord.utils import to_json
 from discord.ext.commands import Context
 
-from .utils import _get_components_json
+from .utils import _get_components_json, form_files
 from .component import _get_component_type, ActionRow, Component
 
 __all__ = ("ComponentMessage",)
@@ -48,6 +56,11 @@ class ComponentMessage(Message):
 
         if fields.get("embeds") is not None:
             data["embeds"] = [e.to_dict() for e in fields["embeds"]]
+
+        if fields.get("suppress") is not None:
+            flags = MessageFlags._from_value(0)
+            flags.suppress_embeds = True
+            data["flags"] = flags.value
 
         if fields.get("allowed_mentions") is None:
             if (
@@ -134,48 +147,25 @@ def send_files(
     message_reference=None,
     components=None,
 ):
-    form = []
-
-    payload = {"tts": tts}
+    data = {"tts": tts}
     if content:
-        payload["content"] = content
+        data["content"] = content
     if embed:
-        payload["embeds"] = [embed]
+        data["embeds"] = [embed]
     if embeds:
-        payload["embeds"] = embeds
+        data["embeds"] = embeds
     if nonce:
-        payload["nonce"] = nonce
+        data["nonce"] = nonce
     if allowed_mentions:
-        payload["allowed_mentions"] = allowed_mentions
+        data["allowed_mentions"] = allowed_mentions
     if message_reference:
-        payload["message_reference"] = message_reference
+        data["message_reference"] = message_reference
     if stickers:
-        payload["sticker_ids"] = stickers
+        data["sticker_ids"] = stickers
     if components:
-        payload["components"] = components
+        data["components"] = components
 
-    form.append({"name": "payload_json", "value": to_json(payload)})
-    if len(files) == 1:
-        file = files[0]
-        form.append(
-            {
-                "name": "file",
-                "value": file.fp,
-                "filename": file.filename,
-                "content_type": "application/octet-stream",
-            }
-        )
-    else:
-        for index, file in enumerate(files):
-            form.append(
-                {
-                    "name": f"file{index}",
-                    "value": file.fp,
-                    "filename": file.filename,
-                    "content_type": "application/octet-stream",
-                }
-            )
-
+    form = form_files(data, files)
     return self.request(
         Route("POST", f"/channels/{channel_id}/messages"), form=form, files=files
     )

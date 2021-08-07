@@ -10,10 +10,10 @@ from discord import (
     Member,
     Object,
     MessageFlags,
+    File,
 )
 from discord.state import ConnectionState
 from discord.abc import Messageable
-from discord.http import Route
 
 from enum import IntEnum
 
@@ -111,6 +111,8 @@ class Interaction:
         embed: Embed = None,
         embeds: List[Embed] = None,
         suppress: bool = None,
+        file: File = None,
+        files: List[File] = None,
         allowed_mentions: AllowedMentions = None,
         tts: bool = False,
         ephemeral: bool = True,
@@ -160,22 +162,30 @@ class Interaction:
         if components is not None:
             data["components"] = _get_components_json(components)
 
+        if not self.deferred:
+            data = {"type": type, "data": data}
+
+        if file is not None and files is not None:
+            raise InvalidArgument("cannot pass both file and files parameter to send()")
+        elif files is not None:
+            if len(files) > 10:
+                raise InvalidArgument(
+                    "files parameter must be a list of up to 10 elements"
+                )
+        if file is not None:
+            files = [file]
+
         try:
             if self.deferred:
-                res = await self.state.http.request(
-                    Route(
-                        "PATCH",
-                        f"/webhooks/{self.state.self_id}/{self.interaction_token}/messages/@original",
-                    ),
-                    json=data,
+                res = await self.client.http.edit_response(
+                    interaction_token=self.interaction_token, data=data, files=files
                 )
             else:
-                res = await self.state.http.request(
-                    Route(
-                        "POST",
-                        f"/interactions/{self.interaction_id}/{self.interaction_token}/callback",
-                    ),
-                    json={"type": type, "data": data},
+                res = await self.client.http.initial_response(
+                    interaction_id=self.interaction_id,
+                    interaction_token=self.interaction_token,
+                    data=data,
+                    files=files,
                 )
 
             if type in (4, 7):
@@ -188,7 +198,7 @@ class Interaction:
                 "Interaction is unknown (you have already responded to the interaction or responding took too long)",
             ) from None
 
-        if not ephemeral and type in (4, 7):
+        if not ephemeral and type in (4, 7) and isinstance(res, dict):
             return ComponentMessage(
                 state=state,
                 data=res,
@@ -202,6 +212,8 @@ class Interaction:
         content: str = None,
         embed: Embed = None,
         embeds: List[Embed] = None,
+        file: File = None,
+        files: List[File] = None,
         allowed_mentions: AllowedMentions = None,
         tts: bool = False,
         ephemeral: bool = True,
@@ -213,6 +225,8 @@ class Interaction:
             content=content,
             embed=embed,
             embeds=embeds,
+            file=file,
+            files=files,
             allowed_mentions=allowed_mentions,
             tts=tts,
             ephemeral=ephemeral,
@@ -229,6 +243,8 @@ class Interaction:
         embed: Embed = None,
         embeds: List[Embed] = None,
         suppress: bool = None,
+        file: File = None,
+        files: List[File] = None,
         allowed_mentions: AllowedMentions = None,
         components: List[Union[ActionRow, Component, List[Component]]] = None,
         delete_after: float = None,
@@ -239,6 +255,8 @@ class Interaction:
             embed=embed,
             embeds=embeds,
             suppress=suppress,
+            file=file,
+            files=files,
             allowed_mentions=allowed_mentions,
             components=components,
         )

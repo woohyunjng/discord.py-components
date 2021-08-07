@@ -1,10 +1,19 @@
+from typing import Optional, Union, List, Iterable
+
 from discord import PartialEmoji, Emoji, InvalidArgument
 
-from typing import Optional, Union, List, Iterable
 from uuid import uuid1
 from enum import IntEnum
 
-__all__ = ("Component", "ButtonStyle", "Button", "Select", "SelectOption", "ActionRow", "_get_component_type")
+__all__ = (
+    "Component",
+    "ButtonStyle",
+    "Button",
+    "Select",
+    "SelectOption",
+    "ActionRow",
+    "_get_component_type",
+)
 
 
 def _get_partial_emoji(emoji: Union[Emoji, PartialEmoji, str]) -> PartialEmoji:
@@ -123,7 +132,9 @@ class SelectOption(Component):
             label=data.get("label"),
             value=data.get("value"),
             emoji=PartialEmoji(
-                name=emoji["name"], animated=emoji.get("animated", False), id=emoji.get("id")
+                name=emoji["name"],
+                animated=emoji.get("animated", False),
+                id=emoji.get("id"),
             )
             if emoji
             else None,
@@ -133,7 +144,14 @@ class SelectOption(Component):
 
 
 class Select(Component):
-    __slots__ = ("_id", "_options", "_placeholder", "_min_values", "_max_values", "_disabled")
+    __slots__ = (
+        "_id",
+        "_options",
+        "_placeholder",
+        "_min_values",
+        "_max_values",
+        "_disabled",
+    )
 
     def __init__(
         self,
@@ -144,7 +162,7 @@ class Select(Component):
         placeholder: str = None,
         min_values: int = 1,
         max_values: int = 1,
-        disabled: bool = False
+        disabled: bool = False,
     ):
         if (not len(options)) or (len(options) > 25):
             raise InvalidArgument("Options length should be between 1 and 25.")
@@ -164,7 +182,7 @@ class Select(Component):
             "placeholder": self.placeholder,
             "min_values": self.min_values,
             "max_values": self.max_values,
-            "disabled": self.disabled
+            "disabled": self.disabled,
         }
 
     @property
@@ -255,7 +273,7 @@ class Select(Component):
             placeholder=data.get("placeholder"),
             min_values=data.get("min_values"),
             max_values=data.get("max_values"),
-            disabled=data.get("disabled", False)
+            disabled=data.get("disabled", False),
         )
 
 
@@ -365,14 +383,18 @@ class Button(Component):
     @id.setter
     def id(self, value: str):
         if self.style == ButtonStyle.URL:
-            raise InvalidArgument("Button style is set to URL. You shouldn't provide ID.")
+            raise InvalidArgument(
+                "Button style is set to URL. You shouldn't provide ID."
+            )
 
         self._id = value
 
     @custom_id.setter
     def custom_id(self, value: str):
         if self.style == ButtonStyle.URL:
-            raise InvalidArgument("Button style is set to URL. You shouldn't provide ID.")
+            raise InvalidArgument(
+                "Button style is set to URL. You shouldn't provide ID."
+            )
 
         self._id = value
 
@@ -415,7 +437,9 @@ class Button(Component):
             url=data.get("url"),
             disabled=data.get("disabled", False),
             emoji=PartialEmoji(
-                name=emoji["name"], animated=emoji.get("animated", False), id=emoji.get("id")
+                name=emoji["name"],
+                animated=emoji.get("animated", False),
+                id=emoji.get("id"),
             )
             if emoji
             else None,
@@ -444,7 +468,10 @@ class ActionRow(Component):
         self._components[index] = value
 
     def to_dict(self) -> dict:
-        data = {"type": 1, "components": [component.to_dict() for component in self.components]}
+        data = {
+            "type": 1,
+            "components": [component.to_dict() for component in self.components],
+        }
         return data
 
     def append(self, component: Component):
@@ -466,7 +493,9 @@ class ActionRow(Component):
 
     @classmethod
     def from_json(cls, data: dict):
-        return cls(*[Button.from_json(component) for component in data.get("components")])
+        return cls(
+            *[Button.from_json(component) for component in data.get("components")]
+        )
 
 
 def _get_component_type(type: int):

@@ -1,3 +1,5 @@
+from typing import Union
+
 from discord import (
     Client,
     Message,
@@ -7,9 +9,8 @@ from discord import (
 from discord.ext.commands import Bot
 from discord.abc import Messageable
 
-from typing import List, Union
-
-from .component import Component, ActionRow
+from .component import Component
+from .http import HTTPClient
 from .interaction import Interaction, InteractionEventType
 
 from .ext.filters import *
@@ -23,6 +24,7 @@ class DiscordComponents:
         bot: Union[Bot, Client],
     ):
         self.bot = bot
+        self.http = HTTPClient(bot=bot)
 
         if isinstance(self.bot, Bot):
             self.bot.add_listener(self.on_socket_response, name="on_socket_response")
