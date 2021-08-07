@@ -40,10 +40,16 @@ class ExampleCog(Cog):
                             SelectOption(label="b", value="b"),
                         ],
                     ),
-                    callback
+                    callback,
                 )
             ],
         )
+
+        while True:
+            interaction = await self.bot.wait_for("select_option")
+            await interaction.respond(
+                content=f"{','.join(map(lambda x: x.label, interaction.component))} selected!"
+            )
 
 
 def setup(bot):

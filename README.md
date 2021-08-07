@@ -14,27 +14,38 @@
 </div>
 
 ## Welcome!
-Discord components are cool, but discord.py will support it on version 2.0. It is hard to wait, so we made a third-party library for using components such as buttons or selects!
+
+Discord components are cool, but discord.py will support it on version 2.0. It
+is hard to wait, so we made a third-party library for using components such as
+buttons or selects!
 
 This project is open source ⭐.
 
-Also, there is an [official discord server](https://discord.gg/pKM6stqPxS), so if you have any questions, feel free to ask it on this server.
+Also, there is an [official discord server](https://discord.gg/pKM6stqPxS), so
+if you have any questions, feel free to ask it on this server.
 
 ## Features
-+ You can use message components and handle component interactions easily!
-+ Third-party of discord.py.
+
+- You can use message components and handle component interactions easily!
+- Third-party of discord.py.
 
 ## Docs
-+ [Gitbook version](https://devkiki7000.gitbook.io/discord-components) (Up to date)
-+ [Sphinx Version](https://discord-components.readthedocs.io/en/0.5.2.4) (Currently outdated)
+- [Gitbook version](https://devkiki7000.gitbook.io/discord-components) (Up to
+  date)
+- [Sphinx Version](https://discord-components.readthedocs.io/en/0.5.2.4)
+  (Currently outdated)
 
 ## Install
+
 ```
 pip install --upgrade discord-components
 ```
 
 ## Example
-You can see many examples [here](https://gitlab.com/discord.py-components/discord.py-components/-/tree/master/examples).
+
+You can see many examples
+[here](https://gitlab.com/discord.py-components/discord.py-components/-/tree/master/examples).
 
 ## License
+
 This project is under the MIT License.

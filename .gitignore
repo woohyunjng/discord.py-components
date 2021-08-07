@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # test
-test.py
+test.*
 test/*
 
 # idea

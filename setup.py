@@ -2,7 +2,7 @@ import re
 from codecs import open
 from os import path, environ
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 PACKAGE_NAME = "discord_components"
 HERE = path.abspath(path.dirname(__file__))

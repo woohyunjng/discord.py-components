@@ -61,9 +61,7 @@ class DiscordComponents:
                     if not callback_info["filter"](interaction):
                         return
 
-                    await self._components_callback[interaction.custom_id]["callback"](
-                        interaction
-                    )
+                    await self._components_callback[interaction.custom_id]["callback"](interaction)
                 break
 
     def _get_interaction(self, json: dict):
@@ -106,9 +104,7 @@ class DiscordComponents:
 
         return await self.bot.wait_for(event, check=check, timeout=timeout)
 
-    def add_callback(
-        self, component: Component, callback, *, uses: int = None, filter=None
-    ):
+    def add_callback(self, component: Component, callback, *, uses: int = None, filter=None):
         self._components_callback[component.custom_id] = {
             "callback": callback,
             "uses": uses,
