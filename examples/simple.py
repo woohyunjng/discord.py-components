@@ -1,47 +1,49 @@
-from discord.ext.commands import Bot
-from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
-import asyncio
+from discord_components import Button, Select, SelectOption, ComponentsBot
 
-bot = Bot("!")
+
+bot = ComponentsBot("!")
+"""
+or you can just override the methods yourself
+
+bot = discord.ext.commands.Bot("!")
+DiscordComponents(bot)
+"""
 
 
 @bot.event
 async def on_ready():
-    DiscordComponents(bot)  # Overrides discord.py's methods.
     print(f"Logged in as {bot.user}!")
 
 
 @bot.command()
 async def button(ctx):
+    await ctx.send("Buttons!", components=[Button(label="Button", custom_id="button1")])
+    interaction = await bot.wait_for(
+        "button_click", check=lambda inter: inter.custom_id == "button1"
+    )
+    await interaction.send(content="Button Clicked")
+
+
+@bot.command()
+async def select(ctx):
     await ctx.send(
-        "Here is an example of a button",
+        "Selects!",
         components=[
-            [
-                Button(style=ButtonStyle.red, label="EMOJI", emoji="😂"),
-                Button(style=ButtonStyle.green, label="GREEN"),
-                Button(style=ButtonStyle.red, label="RED", disabled=True),
-                Button(style=ButtonStyle.grey, label="GREY"),
-            ],
-            Button(style=ButtonStyle.blue, label="BLUE"),
-            Button(style=ButtonStyle.URL, label="URL", url="https://www.example.com"),
+            Select(
+                placeholder="Select something!",
+                options=[
+                    SelectOption(label="a", value="a"),
+                    SelectOption(label="b", value="b"),
+                ],
+                custom_id="select1",
+            )
         ],
     )
 
-
-@bot.event
-async def on_button_click(res):
-    """
-    Possible interaction types:
-    - Pong
-    - ChannelMessageWithSource
-    - DeferredChannelMessageWithSource
-    - DeferredUpdateMessage
-    - UpdateMessage
-    """
-
-    await res.respond(
-        type=InteractionType.ChannelMessageWithSource, content=f"{res.component.label} pressed"
+    interaction = await bot.wait_for(
+        "select_option", check=lambda inter: inter.custom_id == "select1"
     )
+    await interaction.send(content=f"{interaction.values[0]} selected!")
 
 
-bot.run("TOKEN")
+bot.run("your token")

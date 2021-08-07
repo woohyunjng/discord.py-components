@@ -41,7 +41,7 @@ class ComponentMessage(Message):
 
     async def _components_edit(self, **fields):
         state = self._state
-        data = {**_get_components_json(fields.get("components"))}
+        data = {}
 
         if fields.get("content") is not None:
             data["content"] = fields["content"]
@@ -78,6 +78,9 @@ class ComponentMessage(Message):
 
         if fields.get("attachments") is not None:
             data["attachments"] = [a.to_dict() for a in fields["attachments"]]
+
+        if fields.get("components") is not None:
+            data["components"] = _get_components_json(fields["components"])
 
         if data:
             await state.http.request(

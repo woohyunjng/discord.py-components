@@ -211,7 +211,7 @@ class Select(Component):
 
     @property
     def disabled(self) -> bool:
-        return self.disabled
+        return self._disabled
 
     @id.setter
     def id(self, value: str):
@@ -466,6 +466,9 @@ class ActionRow(Component):
 
     def __setitem__(self, index: int, value: Component):
         self._components[index] = value
+
+    def __delitem__(self, index: int):
+        del self._components[index]
 
     def to_dict(self) -> dict:
         data = {

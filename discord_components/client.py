@@ -24,6 +24,8 @@ class DiscordComponents:
         bot: Union[Bot, Client],
     ):
         self.bot = bot
+        bot.components_manager = self
+
         self.http = HTTPClient(bot=bot)
         self._components_callback = {}
 
@@ -35,6 +37,11 @@ class DiscordComponents:
     async def on_socket_response(self, res):
         if (res["t"] != "INTERACTION_CREATE") or (res["d"]["type"] != 3):
             return
+
+        if res["d"]["message"].get("message_reference") and not res["d"]["message"][
+            "message_reference"
+        ].get("channel_id"):
+            res["d"]["message"]["message_reference"] = res["d"]["channel_id"]
 
         for _type in InteractionEventType:
             if _type.value == res["d"]["data"]["component_type"]:

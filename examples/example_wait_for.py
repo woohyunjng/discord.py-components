@@ -1,18 +1,17 @@
 from discord.ext.commands import Bot
-from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
+from discord_components import ComponentsBot, Button, ButtonStyle
 from asyncio import TimeoutError
 
-bot = Bot("!")
+bot = ComponentsBot("!")
 
 
 @bot.event
 async def on_ready():
-    DiscordComponents(bot)
     print(f"Logged in as {bot.user}!")
 
 
 @bot.command()
-async def waitforclick(ctx):
+async def wait_for_click(ctx):
     m = await ctx.send(
         "Buttons waiting for a click",
         components=[
@@ -25,9 +24,7 @@ async def waitforclick(ctx):
 
     try:
         res = await bot.wait_for("button_click", check=check, timeout=15)
-        await res.respond(
-            type=InteractionType.ChannelMessageWithSource, content=f"{res.component.label} pressed"
-        )
+        await res.edit_origin(content=f"{res.component.label} pressed", components=[])
 
     except TimeoutError:
         await m.edit(
@@ -38,4 +35,4 @@ async def waitforclick(ctx):
         )
 
 
-bot.run("TOKEN")
+bot.run("your token")

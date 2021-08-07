@@ -1,5 +1,10 @@
 from discord.ext.commands import command, Cog
-from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
+from discord_components import (
+    Button,
+    ButtonStyle,
+    Select,
+    SelectOption,
+)
 
 
 class ExampleCog(Cog):
@@ -7,37 +12,39 @@ class ExampleCog(Cog):
         self.bot = bot
 
     @command()
-    async def buttontest(self, ctx):
+    async def button(self, ctx):
+        async def callback(interaction):
+            await interaction.send(content="Yay")
+
         await ctx.send(
-            "Here is an example of a button",
+            "Button callbacks!",
             components=[
-                [
-                    Button(style=ButtonStyle.grey, label="EMOJI", emoji="😂"),
-                    Button(style=ButtonStyle.green, label="GREEN"),
-                    Button(style=ButtonStyle.red, label="RED"),
-                    Button(style=ButtonStyle.grey, label="GREY", disabled=True),
-                ],
-                Button(style=ButtonStyle.blue, label="BLUE"),
-                Button(style=ButtonStyle.URL, label="URL", url="https://www.example.com"),
+                self.bot.components_manager.add_callback(
+                    Button(style=ButtonStyle.blue, label="Click this"), callback
+                ),
             ],
         )
 
-    @Cog.listener()
-    async def on_button_click(self, res):
-        """
-        Possible interaction types:
-        - Pong
-        - ChannelMessageWithSource
-        - DeferredChannelMessageWithSource
-        - DeferredUpdateMessage
-        - UpdateMessage
-        """
+    @command()
+    async def select(self, ctx):
+        async def callback(interaction):
+            await interaction.send(content="Yay")
 
-        await res.respond(
-            type=InteractionType.ChannelMessageWithSource, content=f"{res.component.label} pressed"
+        await ctx.send(
+            "Select callbacks!",
+            components=[
+                self.bot.components_manager.add_callback(
+                    Select(
+                        options=[
+                            SelectOption(label="a", value="a"),
+                            SelectOption(label="b", value="b"),
+                        ],
+                    ),
+                    callback
+                )
+            ],
         )
 
 
 def setup(bot):
-    DiscordComponents(bot)  # If you have this in an on_ready() event you can remove this line.
     bot.add_cog(ExampleCog(bot))
