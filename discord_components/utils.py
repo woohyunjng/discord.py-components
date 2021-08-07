@@ -27,7 +27,7 @@ def _get_components_json(
     return [row.to_dict() for row in lines] if lines else []
 
 
-def form_files(data: dict, files: List[File] = None) -> FormData:
+def _form_files(data: dict, files: List[File] = None) -> FormData:
     form = FormData()
     form.add_field("payload_json", dumps(data))
     for i in range(len(files)):

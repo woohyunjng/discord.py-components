@@ -11,10 +11,9 @@ from discord import (
 )
 from discord.http import Route, HTTPClient
 from discord.abc import Messageable, Snowflake
-from discord.utils import to_json
 from discord.ext.commands import Context
 
-from .utils import _get_components_json, form_files
+from .utils import _get_components_json, _form_files
 from .component import _get_component_type, ActionRow, Component
 
 __all__ = ("ComponentMessage",)
@@ -168,7 +167,7 @@ def send_files(
     if components:
         data["components"] = components
 
-    form = form_files(data, files)
+    form = _form_files(data, files)
     return self.request(
         Route("POST", f"/channels/{channel_id}/messages"), form=form, files=files
     )

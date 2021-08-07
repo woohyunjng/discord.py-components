@@ -3,7 +3,7 @@ from typing import List
 from discord import Client, File
 from discord.http import Route
 
-from .utils import form_files
+from .utils import _form_files
 
 
 __all__ = ("HTTPClient",)
@@ -22,7 +22,7 @@ class HTTPClient:
         )
         if files is not None:
             return self.bot.http.request(
-                route, data=form_files(data, files), files=files
+                route, data=_form_files(data, files), files=files
             )
         else:
             return self.bot.http.request(
@@ -43,7 +43,7 @@ class HTTPClient:
         )
         if files is not None:
             return self.bot.http.request(
-                route, data=form_files(data, files), files=files
+                route, data=_form_files(data, files), files=files
             )
         else:
             return self.bot.http.request(
