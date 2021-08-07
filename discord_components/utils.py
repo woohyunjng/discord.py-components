@@ -1,4 +1,10 @@
 from typing import List, Union, Optional
+
+from discord import File
+
+from aiohttp import FormData
+from json import dumps
+
 from .component import ActionRow, Component
 
 
@@ -19,3 +25,16 @@ def _get_components_json(
 
     lines = components
     return [row.to_dict() for row in lines] if lines else []
+
+
+def form_files(data: dict, files: List[File] = None) -> FormData:
+    form = FormData()
+    form.add_field("payload_json", dumps(data))
+    for i in range(len(files)):
+        form.add_field(
+            f"file{i if len(files) > 1 else ''}",
+            files[i].fp,
+            filename=files[i].filename,
+            content_type="application/octet-stream",
+        )
+    return form

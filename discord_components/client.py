@@ -25,6 +25,7 @@ class DiscordComponents:
     ):
         self.bot = bot
         self.http = HTTPClient(bot=bot)
+        self._components_callback = {}
 
         if isinstance(self.bot, Bot):
             self.bot.add_listener(self.on_socket_response, name="on_socket_response")
@@ -38,7 +39,22 @@ class DiscordComponents:
         for _type in InteractionEventType:
             if _type.value == res["d"]["data"]["component_type"]:
                 self.bot.dispatch(f"raw_{_type.name}", res["d"])
-                self.bot.dispatch(_type.name, self._get_interaction(res))
+
+                interaction = self._get_interaction(res)
+                self.bot.dispatch(_type.name, interaction)
+
+                if self._components_callback.get(interaction.custom_id):
+                    callback_info = self._components_callback[interaction.custom_id]
+                    if callback_info["uses"] == 0:
+                        del self._components_callback[interaction.custom_id]
+                        return
+
+                    if callback_info["uses"] is not None:
+                        self._components_callback[interaction.custom_id]["uses"] -= 1
+                    if not callback_info["filter"](interaction):
+                        return
+
+                    await self._components_callback[interaction.custom_id]["callback"](interaction)
                 break
 
     def _get_interaction(self, json: dict):
@@ -80,3 +96,11 @@ class DiscordComponents:
             return True
 
         return await self.bot.wait_for(event, check=check, timeout=timeout)
+
+    def add_callback(self, component: Component, callback, *, uses: int = None, filter = None):
+        self._components_callback[component.custom_id] = {
+            "callback": callback,
+            "uses": uses,
+            "filter": filter or (lambda x: True)
+        }
+        return component
