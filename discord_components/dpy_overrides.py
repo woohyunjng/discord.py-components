@@ -250,7 +250,7 @@ async def send(
     if embed is not None:
         embeds = [embed.to_dict()]
 
-    if embeds is not None:
+    elif embeds is not None:
         if len(embeds) > 10:
             raise InvalidArgument(
                 "embeds parameter must be a list of up to 10 elements"
