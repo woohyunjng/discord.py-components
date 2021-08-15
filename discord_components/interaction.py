@@ -49,13 +49,15 @@ class Interaction:
         self.component_type: int = raw_data["data"]["component_type"]
 
         self.channel_id: int = int(raw_data["channel_id"])
-        self.guild_id: int = int(raw_data["guild_id"])
+        self.guild_id: int = raw_data.get("guild_id")
+        if self.guild_id is not None:
+            self.guild_id = int(self.guild_id)
 
         if self.guild:
             self.user: Union[User, Member] = Member(
                 state=state, guild=self.guild, data=raw_data["member"]
             )
-        elif self.raw_data.get("member"):
+        elif raw_data.get("member"):
             self.user: Union[User, Member] = User(state=state, data=raw_data["member"]["user"])
         else:
             self.user: Union[User, Member] = User(state=state, data=raw_data["user"])
