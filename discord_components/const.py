@@ -1,3 +1,3 @@
 """Discord Components Constants"""
 
-__version__ = "2.0.0b"
+__version__ = "2.0.0c"
