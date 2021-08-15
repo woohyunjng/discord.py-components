@@ -56,27 +56,18 @@ class Interaction:
                 state=state, guild=self.guild, data=raw_data["member"]
             )
         elif self.raw_data.get("member"):
-            self.user: Union[User, Member] = User(
-                state=state, data=raw_data["member"]["user"]
-            )
+            self.user: Union[User, Member] = User(state=state, data=raw_data["member"]["user"])
         else:
             self.user: Union[User, Member] = User(state=state, data=raw_data["user"])
         self.author: Union[User, Member] = self.user
 
-        if raw_data["message"].get("components"):
-            self.message: Union[ComponentMessage, dict] = ComponentMessage(
-                state=state, channel=self.channel, data=raw_data["message"]
-            )
-            self.component: Component = self.message.get_component(
-                custom_id=self.custom_id
-            )
-        else:
-            self.message: Union[ComponentMessage, dict] = raw_data["message"]
-
-            if self.component_type == 2:
-                self.component: Component = Button.from_json(raw_data["data"])
-            elif self.component_type == 3:
-                self.component: Component = Select.from_json(raw_data["data"])
+        self.message: Union[ComponentMessage, dict] = ComponentMessage(
+            state=state,
+            channel=self.channel,
+            data=raw_data["message"],
+            ephemeral=raw_data["message"].get("flags") == 64,
+        )
+        self.component: Component = self.message.get_component(custom_id=self.custom_id)
 
         self.raw_data: dict = raw_data
         self.responded: bool = False
@@ -135,9 +126,7 @@ class Interaction:
 
         if embeds is not None:
             if len(embeds) > 10:
-                raise InvalidArgument(
-                    "embeds parameter must be a list of up to 10 elements"
-                )
+                raise InvalidArgument("embeds parameter must be a list of up to 10 elements")
             data["embeds"] = [embed.to_dict() for embed in embeds]
 
         if suppress is not None:
@@ -149,15 +138,11 @@ class Interaction:
 
         if allowed_mentions is not None:
             if state.allowed_mentions is not None:
-                data["allowed_mentions"] = state.allowed_mentions.merge(
-                    allowed_mentions
-                ).to_dict()
+                data["allowed_mentions"] = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
                 data["allowed_mentions"] = allowed_mentions.to_dict()
         else:
-            data["allowed_mentions"] = (
-                state.allowed_mentions and state.allowed_mentions.to_dict()
-            )
+            data["allowed_mentions"] = state.allowed_mentions and state.allowed_mentions.to_dict()
 
         if components is not None:
             data["components"] = _get_components_json(components)
@@ -169,9 +154,7 @@ class Interaction:
             raise InvalidArgument("cannot pass both file and files parameter to send()")
         elif files is not None:
             if len(files) > 10:
-                raise InvalidArgument(
-                    "files parameter must be a list of up to 10 elements"
-                )
+                raise InvalidArgument("files parameter must be a list of up to 10 elements")
         if file is not None:
             files = [file]
 

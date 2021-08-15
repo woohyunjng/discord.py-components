@@ -20,10 +20,11 @@ __all__ = ("ComponentMessage",)
 
 
 class ComponentMessage(Message):
-    __slots__ = tuple(list(Message.__slots__) + ["components"])
+    __slots__ = tuple(list(Message.__slots__) + ["components", "ephemeral"])
 
-    def __init__(self, *, state, channel, data):
+    def __init__(self, *, state, channel, data, ephemeral=False):
         super().__init__(state=state, channel=channel, data=data)
+        self.ephemeral = ephemeral
 
         components = []
         for i in data["components"]:
@@ -101,6 +102,9 @@ class ComponentMessage(Message):
         components: List[Union[ActionRow, Component, List[Component]]] = None,
         **fields,
     ):
+        if self.ephemeral:
+            return
+
         if components is not None:
             await self._components_edit(
                 content=content,
@@ -122,6 +126,12 @@ class ComponentMessage(Message):
                 components=components,
                 **fields,
             )
+
+    async def delete(self, *args, **kwargs):
+        if self.ephemeral:
+            return
+
+        return await super().delete(*args, **kwargs)
 
 
 def new_override(cls, *args, **kwargs):
