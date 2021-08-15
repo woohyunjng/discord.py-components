@@ -46,9 +46,7 @@ class ComponentMessage(Message):
             data["content"] = fields["content"]
 
         if fields.get("embed") is not None and fields.get("embeds") is not None:
-            raise InvalidArgument(
-                "cannot pass both embed and embeds parameter to edit()"
-            )
+            raise InvalidArgument("cannot pass both embed and embeds parameter to edit()")
 
         if fields.get("embed") is not None:
             data["embeds"] = [fields["embed"].to_dict()]
@@ -62,10 +60,7 @@ class ComponentMessage(Message):
             data["flags"] = flags.value
 
         if fields.get("allowed_mentions") is None:
-            if (
-                state.allowed_mentions is not None
-                and self.author.id == self._state.self_id
-            ):
+            if state.allowed_mentions is not None and self.author.id == self._state.self_id:
                 data["allowed_mentions"] = state.allowed_mentions.to_dict()
         else:
             if state.allowed_mentions is not None:
@@ -83,7 +78,12 @@ class ComponentMessage(Message):
 
         if data:
             await state.http.request(
-                Route("PATCH", f"/channels/{self.channel.id}/messages/{self.id}"),
+                Route(
+                    "PATCH",
+                    "/channels/{channel_id}/messages/{message_id}",
+                    channel_id=self.channel.id,
+                    message_id=self.id,
+                ),
                 json=data,
             )
 
@@ -169,7 +169,9 @@ def send_files(
 
     form = _form_files(data, files)
     return self.request(
-        Route("POST", f"/channels/{channel_id}/messages"), form=form, files=files
+        Route("POST", "/channels/{channel_id}/messages", channel_id=channel_id),
+        form=form,
+        files=files,
     )
 
 
@@ -216,7 +218,9 @@ def send_message(
     if components:
         payload["components"] = components
 
-    return self.request(Route("POST", f"/channels/{channel_id}/messages"), json=payload)
+    return self.request(
+        Route("POST", "/channels/{channel_id}/messages", channel_id=channel_id), json=payload
+    )
 
 
 HTTPClient.send_files = send_files
@@ -252,9 +256,7 @@ async def send(
 
     elif embeds is not None:
         if len(embeds) > 10:
-            raise InvalidArgument(
-                "embeds parameter must be a list of up to 10 elements"
-            )
+            raise InvalidArgument("embeds parameter must be a list of up to 10 elements")
         embeds = [embed.to_dict() for embed in embeds]
 
     if stickers is not None:
