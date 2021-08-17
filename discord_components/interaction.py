@@ -183,11 +183,12 @@ class Interaction:
                 "Interaction is unknown (you have already responded to the interaction or responding took too long)",
             ) from None
 
-        if not ephemeral and type in (4, 7) and isinstance(res, dict):
+        if type in (4, 7) and isinstance(res, dict):
             return ComponentMessage(
                 state=state,
                 data=res,
                 channel=self.channel or Object(id=self.channel_id),
+                ephemeral=res.get("flags") == 64,
             )
         else:
             return res
@@ -205,6 +206,7 @@ class Interaction:
         components: List[Union[ActionRow, Component, List[Component]]] = None,
         delete_after: float = None,
     ) -> Optional[Union[ComponentMessage, dict]]:
+        await self.defer(ephemeral=ephemeral)
         res = await self.respond(
             type=4,
             content=content,
@@ -217,9 +219,10 @@ class Interaction:
             ephemeral=ephemeral,
             components=components,
         )
-        if isinstance(res, dict):
+
+        if delete_after is None:
             return res
-        elif res is not None and delete_after is not None:
+        elif res is not None:
             await res.delete(delay=delete_after)
 
     async def edit_origin(
@@ -234,6 +237,7 @@ class Interaction:
         components: List[Union[ActionRow, Component, List[Component]]] = None,
         delete_after: float = None,
     ):
+        await self.defer(edit_origin=True)
         res = await self.respond(
             type=7,
             content=content,
@@ -245,7 +249,8 @@ class Interaction:
             allowed_mentions=allowed_mentions,
             components=components,
         )
-        if isinstance(res, dict):
+
+        if delete_after is None:
             return res
-        elif res is not None and delete_after is not None:
+        elif res is not None:
             await res.delete(delay=delete_after)
