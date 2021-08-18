@@ -1,40 +1,49 @@
-from discord.ext.commands import Bot
-from discord_components import DiscordComponents, Button, Select, SelectOption
+from discord_components import Button, Select, SelectOption, ComponentsBot
 
-bot = Bot(command_prefix="your prefix")
+
+bot = ComponentsBot("!")
+"""
+or you can just override the methods yourself
+
+bot = discord.ext.commands.Bot("!")
+DiscordComponents(bot)
+"""
 
 
 @bot.event
 async def on_ready():
-    DiscordComponents(bot)
     print(f"Logged in as {bot.user}!")
 
 
 @bot.command()
 async def button(ctx):
-    await ctx.send("Hello, World!", components=[Button(label="WOW button!")])
-
+    await ctx.send("Buttons!", components=[Button(label="Button", custom_id="button1")])
     interaction = await bot.wait_for(
-        "button_click", check=lambda i: i.component.label.startswith("WOW")
+        "button_click", check=lambda inter: inter.custom_id == "button1"
     )
-    await interaction.respond(content="Button clicked!")
+    await interaction.send(content="Button Clicked")
 
 
 @bot.command()
 async def select(ctx):
     await ctx.send(
-        "Hello, World!",
+        "Selects!",
         components=[
             Select(
-                placeholder="select something!",
-                options=[SelectOption(label="a", value="A"), SelectOption(label="b", value="B")],
-                disabled=True,
+                placeholder="Select something!",
+                options=[
+                    SelectOption(label="a", value="a"),
+                    SelectOption(label="b", value="b"),
+                ],
+                custom_id="select1",
             )
         ],
     )
 
-    interaction = await bot.wait_for("select_option")
-    await interaction.respond(content=f"{interaction.component[0].label} selected!")
+    interaction = await bot.wait_for(
+        "select_option", check=lambda inter: inter.custom_id == "select1"
+    )
+    await interaction.send(content=f"{interaction.values[0]} selected!")
 
 
 bot.run("your token")
