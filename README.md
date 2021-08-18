@@ -1,16 +1,14 @@
 <div align="center">
     <a href="https://pypi.org/project/discord-components"><img src="https://gitlab.com/uploads/-/system/project/avatar/27557052/logo.png?width=64" alt="discord-components logo" height="128" style="border-radius: 50%"></a>
-    <div>
-        <h1>discord-components</h1>
-    </div>
-    <div>
+    <h1>discord-components</h1>
+</div>
+<div align="center">
         <a href="https://travis-ci.com/kiki7000/discord.py-components"><img src="https://travis-ci.com/kiki7000/discord.py-components.svg?branch=master" alt="Build Status"></a>
         <a href="https://pypi.org/project/discord-components"><img src="https://badge.fury.io/py/discord-components.svg" alt="PyPI version"></a>
         <a href="https://pypi.org/project/discord-components"><img src="https://img.shields.io/pypi/dm/discord-components" alt="PyPI downloads"></a>
-    </div>
-    <div>
-        <h3>An unofficial third party library of discord.py for discord components.</h3>
-    </div>
+</div>
+<div align="center">
+    <h3>An unofficial third party library of discord.py for discord components.</h3>
 </div>
 
 ## Welcome!
@@ -30,6 +28,7 @@ if you have any questions, feel free to ask it on this server.
 - Third-party of discord.py.
 
 ## Docs
+
 - [Gitbook version](https://devkiki7000.gitbook.io/discord-components) (Up to
   date)
 - [Sphinx Version](https://discord-components.readthedocs.io/en/0.5.2.4)
