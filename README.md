@@ -7,9 +7,9 @@
         <a href="https://pypi.org/project/discord-components"><img src="https://badge.fury.io/py/discord-components.svg" alt="PyPI version"></a>
         <a href="https://pypi.org/project/discord-components"><img src="https://img.shields.io/pypi/dm/discord-components" alt="PyPI downloads"></a>
 </div>
-<div align="center">
+<p align="center">
     <h3>An unofficial third party library of discord.py for discord components.</h3>
-</div>
+</p>
 
 ## Welcome!
 
