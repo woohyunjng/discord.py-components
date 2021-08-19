@@ -39,43 +39,55 @@ class ComponentMessage(Message):
                 if component.custom_id == custom_id:
                     return component
 
-    async def _components_edit(self, **fields):
+    async def edit(
+        self,
+        content: Optional[str] = None,
+        embed: Optional[Embed] = None,
+        embeds: List[Embed] = None,
+        suppress: bool = None,
+        attachments: List[Attachment] = None,
+        delete_after: Optional[float] = None,
+        allowed_mentions: Optional[AllowedMentions] = None,
+        components: List[Union[ActionRow, Component, List[Component]]] = None,
+        **fields,
+    ):
+        if self.ephemeral:
+            return
+
         state = self._state
         data = {}
 
-        if fields.get("content") is not None:
-            data["content"] = fields["content"]
+        if content is not None:
+            data["content"] = content
 
-        if fields.get("embed") is not None and fields.get("embeds") is not None:
+        if embed is not None and embeds is not None:
             raise InvalidArgument("cannot pass both embed and embeds parameter to edit()")
 
-        if fields.get("embed") is not None:
-            data["embeds"] = [fields["embed"].to_dict()]
+        if embed is not None:
+            data["embeds"] = [embed.to_dict()]
 
-        if fields.get("embeds") is not None:
-            data["embeds"] = [e.to_dict() for e in fields["embeds"]]
+        if embeds is not None:
+            data["embeds"] = [e.to_dict() for e in embeds]
 
-        if fields.get("suppress") is not None:
+        if suppress is not None:
             flags = MessageFlags._from_value(0)
             flags.suppress_embeds = True
             data["flags"] = flags.value
 
-        if fields.get("allowed_mentions") is None:
+        if allowed_mentions is None:
             if state.allowed_mentions is not None and self.author.id == self._state.self_id:
                 data["allowed_mentions"] = state.allowed_mentions.to_dict()
         else:
             if state.allowed_mentions is not None:
-                data["allowed_mentions"] = state.allowed_mentions.merge(
-                    fields["allowed_mentions"]
-                ).to_dict()
+                data["allowed_mentions"] = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
-                data["allowed_mentions"] = fields["allowed_mentions"].to_dict()
+                data["allowed_mentions"] = allowed_mentions.to_dict()
 
-        if fields.get("attachments") is not None:
-            data["attachments"] = [a.to_dict() for a in fields["attachments"]]
+        if attachments is not None:
+            data["attachments"] = [a.to_dict() for a in attachments]
 
-        if fields.get("components") is not None:
-            data["components"] = _get_components_json(fields["components"])
+        if components is not None:
+            data["components"] = _get_components_json(components)
 
         if data:
             await state.http.request(
@@ -88,44 +100,8 @@ class ComponentMessage(Message):
                 json=data,
             )
 
-        if fields.get("delete_after") is not None:
-            await self.delete(delay=fields["delete_after"])
-
-    async def edit(
-        self,
-        content: Optional[str] = None,
-        embed: Optional[Embed] = None,
-        embeds: List[Embed] = None,
-        attachments: List[Attachment] = None,
-        delete_after: Optional[float] = None,
-        allowed_mentions: Optional[AllowedMentions] = None,
-        components: List[Union[ActionRow, Component, List[Component]]] = None,
-        **fields,
-    ):
-        if self.ephemeral:
-            return
-
-        if components is not None:
-            await self._components_edit(
-                content=content,
-                embed=embed,
-                embeds=embeds,
-                attachments=attachments,
-                delete_after=delete_after,
-                allowed_mentions=allowed_mentions,
-                components=components,
-            )
-        else:
-            await super().edit(
-                content=content,
-                embed=embed,
-                embeds=embeds,
-                attachments=attachments,
-                delete_after=delete_after,
-                allowed_mentions=allowed_mentions,
-                components=components,
-                **fields,
-            )
+        if delete_after is not None:
+            await self.delete(delay=delete_after)
 
     async def delete(self, *args, **kwargs):
         if self.ephemeral:
@@ -160,21 +136,21 @@ def send_files(
     components=None,
 ):
     data = {"tts": tts}
-    if content:
+    if content is not None:
         data["content"] = content
-    if embed:
+    if embed is not None:
         data["embeds"] = [embed]
-    if embeds:
+    if embeds is not None:
         data["embeds"] = embeds
-    if nonce:
+    if nonce is not None:
         data["nonce"] = nonce
-    if allowed_mentions:
+    if allowed_mentions is not None:
         data["allowed_mentions"] = allowed_mentions
-    if message_reference:
+    if message_reference is not None:
         data["message_reference"] = message_reference
-    if stickers:
+    if stickers is not None:
         data["sticker_ids"] = stickers
-    if components:
+    if components is not None:
         data["components"] = components
 
     form = _form_files(data, files, use_form=False)
@@ -201,31 +177,31 @@ def send_message(
 ):
     payload = {}
 
-    if content:
+    if content is not None:
         payload["content"] = content
 
-    if tts:
+    if tts is not None:
         payload["tts"] = True
 
-    if embed:
+    if embed is not None:
         payload["embeds"] = [embed]
 
-    if embeds:
+    if embeds is not None:
         payload["embeds"] = embeds
 
-    if nonce:
+    if nonce is not None:
         payload["nonce"] = nonce
 
-    if allowed_mentions:
+    if allowed_mentions is not None:
         payload["allowed_mentions"] = allowed_mentions
 
-    if message_reference:
+    if message_reference is not None:
         payload["message_reference"] = message_reference
 
-    if stickers:
+    if stickers is not None:
         payload["sticker_ids"] = stickers
 
-    if components:
+    if components is not None:
         payload["components"] = components
 
     return self.request(
