@@ -177,7 +177,7 @@ def send_files(
     if components:
         data["components"] = components
 
-    form = _form_files(data, files)
+    form = _form_files(data, files, use_form=False)
     return self.request(
         Route("POST", "/channels/{channel_id}/messages", channel_id=channel_id),
         form=form,
