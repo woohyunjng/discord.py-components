@@ -1,18 +1,9 @@
 from os import environ
 from setuptools import setup, find_packages
 
-try:
-    version = (
-        environ["TRAVIS_TAG"].lstrip("v")
-        if environ["TRAVIS"] == "true"
-        else environ["VERSION_NUMBER"]
-    )
-except KeyError:
-    version = tempversion
-
 setup(
     name='discord-components',
-    version='some version',
+    version='1.0.0',
     license='a licence',
     author='plun1331',
     author_email="devkiki7000@gmail.com",
