@@ -1,13 +1,6 @@
 from os import environ
 from setuptools import setup, find_packages
 
-from discord_components import (
-    __author__ as author,
-    __version__ as tempversion,
-    __license__ as _license,
-    __name__ as name,
-)
-
 try:
     version = (
         environ["TRAVIS_TAG"].lstrip("v")
@@ -18,10 +11,10 @@ except KeyError:
     version = tempversion
 
 setup(
-    name=name,
-    version=version,
-    license=_license,
-    author=author,
+    name='discord-components',
+    version='some version',
+    license='a licence',
+    author='plun1331',
     author_email="devkiki7000@gmail.com",
     description="An unofficial library for discord components (under-development)",
     long_description=open("README.md", encoding="utf-8").read(),
