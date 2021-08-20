@@ -175,13 +175,10 @@ def send_message(
     stickers=None,
     components=None,
 ):
-    payload = {}
+    payload = {"tts": tts}
 
     if content is not None:
         payload["content"] = content
-
-    if tts is not None:
-        payload["tts"] = True
 
     if embed is not None:
         payload["embeds"] = [embed]
