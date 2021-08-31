@@ -17,9 +17,7 @@ async def on_ready():
 
 @bot.command()
 async def button(ctx):
-    components = [Button(label="Button", custom_id="button1")]
-
-    await ctx.send("Buttons!", components=components)
+    await ctx.send("Buttons!", components=[Button(label="Button", custom_id="button1")])
 
 
 @bot.event
@@ -29,21 +27,24 @@ async def on_button_click(interaction):
 
 @bot.command()
 async def select(ctx):
-    components = [
-        Select(
-            placeholder="Select something!",
-            options=[
-                SelectOption(label="a", value="a"),
-                SelectOption(label="b", value="b"),
-            ],
-            custom_id="select1",
-        )
-    ]
-
-    await ctx.send("Selects!",components=components)
+    await ctx.send(
+        "Selects!",
+        components=[
+            Select(
+                placeholder="Select something!",
+                options=[
+                    SelectOption(label="a", value="a"),
+                    SelectOption(label="b", value="b"),
+                ],
+                custom_id="select1",
+            )
+        ]
+    )
 
 
 @bot.event
 async def on_select_option(interaction):
     await interaction.respond(content=f"{interaction.values[0]} selected!")
 
+
+bot.run("your token")

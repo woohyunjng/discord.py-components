@@ -344,11 +344,15 @@ async def send_override(context_or_channel, *args, **kwargs):
     return await send(channel, *args, **kwargs)
 
 
-async def fetch_component_message(self, id:int):
-    channel = self
-    data = await self._state.http.get_message(channel.id, id)
-    return ComponentMessage(state=self._state, channel=channel, data=data)
+async def fetch_message(context_or_channel, id:int):
+    if isinstance(context_or_channel, Context):
+        channel = context_or_channel.channel
+    else:
+        channel = context_or_channel
+
+    data = await context_or_channel._state.http.get_message(channel.id, id)
+    return ComponentMessage(state=context_or_channel._state, channel=channel, data=data)
 
 
 Messageable.send = send_override
-Messageable.fetch_message = fetch_component_message
+Messageable.fetch_message = fetch_message
