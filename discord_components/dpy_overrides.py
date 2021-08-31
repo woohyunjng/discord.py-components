@@ -350,8 +350,9 @@ async def fetch_message(context_or_channel, id:int):
     else:
         channel = context_or_channel
 
-    data = await context_or_channel._state.http.get_message(channel.id, id)
-    return ComponentMessage(state=context_or_channel._state, channel=channel, data=data)
+    state = channel._state
+    data = await state.http.get_message(channel.id, id)
+    return ComponentMessage(state=state, channel=channel, data=data)
 
 
 Messageable.send = send_override
