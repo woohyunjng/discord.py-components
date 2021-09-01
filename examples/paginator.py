@@ -32,7 +32,9 @@ class Paginator:
                     Select(
                         custom_id="paginator_select",
                         options=[
-                            SelectOption(label=f"Page {i}", value=str(i), default=i == self.index)
+                            SelectOption(
+                                label=f"Page {i}", value=str(i), default=i == self.index
+                            )
                             for i in range(len(self.contents))
                         ],
                     ),
@@ -43,11 +45,16 @@ class Paginator:
             return [
                 [
                     self.client.add_callback(
-                        Button(style=ButtonStyle.blue, emoji="◀️"), self.button_left_callback
+                        Button(style=ButtonStyle.blue, emoji="◀️"),
+                        self.button_left_callback,
                     ),
-                    Button(label=f"Page {self.index + 1}/{len(self.contents)}", disabled=True),
+                    Button(
+                        label=f"Page {self.index + 1}/{len(self.contents)}",
+                        disabled=True,
+                    ),
                     self.client.add_callback(
-                        Button(style=ButtonStyle.blue, emoji="▶️"), self.button_right_callback
+                        Button(style=ButtonStyle.blue, emoji="▶️"),
+                        self.button_right_callback,
                     ),
                 ]
             ]
@@ -59,7 +66,9 @@ class Paginator:
 
     async def select_callback(self, inter: Interaction):
         self.index = int(inter.values[0])
-        await inter.edit_origin(content=self.contents[self.index], components=self.get_components())
+        await inter.edit_origin(
+            content=self.contents[self.index], components=self.get_components()
+        )
 
     async def button_left_callback(self, inter: Interaction):
         if self.index == 0:
@@ -78,4 +87,6 @@ class Paginator:
         await self.button_callback(inter)
 
     async def button_callback(self, inter: Interaction):
-        await inter.edit_origin(content=self.contents[self.index], components=self.get_components())
+        await inter.edit_origin(
+            content=self.contents[self.index], components=self.get_components()
+        )

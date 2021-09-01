@@ -13,14 +13,18 @@ class HTTPClient:
     def __init__(self, bot: Client):
         self.bot = bot
 
-    def edit_response(self, interaction_token: str, data: dict, files: List[File] = None):
+    def edit_response(
+        self, interaction_token: str, data: dict, files: List[File] = None
+    ):
         route = Route(
             "PATCH",
             f"/webhooks/{self.bot.user.id}/{interaction_token}/messages/@original",
         )
 
         if files is not None:
-            return self.bot.http.request(route, data=_form_files(data, files), files=files)
+            return self.bot.http.request(
+                route, data=_form_files(data, files), files=files
+            )
         else:
             return self.bot.http.request(
                 route,
@@ -40,7 +44,9 @@ class HTTPClient:
         )
 
         if files is not None:
-            return self.bot.http.request(route, data=_form_files(data, files), files=files)
+            return self.bot.http.request(
+                route, data=_form_files(data, files), files=files
+            )
         else:
             return self.bot.http.request(
                 route,

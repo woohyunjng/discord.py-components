@@ -38,7 +38,7 @@ async def select(ctx):
                 ],
                 custom_id="select1",
             )
-        ]
+        ],
     )
 
 
