@@ -58,9 +58,7 @@ class Interaction:
                 state=state, guild=self.guild, data=raw_data["member"]
             )
         elif raw_data.get("member"):
-            self.user: Union[User, Member] = User(
-                state=state, data=raw_data["member"]["user"]
-            )
+            self.user: Union[User, Member] = User(state=state, data=raw_data["member"]["user"])
         else:
             self.user: Union[User, Member] = User(state=state, data=raw_data["user"])
         self.author: Union[User, Member] = self.user
@@ -113,6 +111,9 @@ class Interaction:
         ephemeral: bool = True,
         components: List[Union[ActionRow, Component, List[Component]]] = None,
     ) -> Optional[Union[ComponentMessage, dict]]:
+        if self.responded:
+            return
+
         state = self.state
         data = {"tts": tts}
 
@@ -130,9 +131,7 @@ class Interaction:
 
         if embeds is not None:
             if len(embeds) > 10:
-                raise InvalidArgument(
-                    "embeds parameter must be a list of up to 10 elements"
-                )
+                raise InvalidArgument("embeds parameter must be a list of up to 10 elements")
             data["embeds"] = [embed.to_dict() for embed in embeds]
 
         if suppress is not None:
@@ -144,15 +143,11 @@ class Interaction:
 
         if allowed_mentions is not None:
             if state.allowed_mentions is not None:
-                data["allowed_mentions"] = state.allowed_mentions.merge(
-                    allowed_mentions
-                ).to_dict()
+                data["allowed_mentions"] = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
                 data["allowed_mentions"] = allowed_mentions.to_dict()
         else:
-            data["allowed_mentions"] = (
-                state.allowed_mentions and state.allowed_mentions.to_dict()
-            )
+            data["allowed_mentions"] = state.allowed_mentions and state.allowed_mentions.to_dict()
 
         if components is not None:
             data["components"] = _get_components_json(components)
@@ -164,9 +159,7 @@ class Interaction:
             raise InvalidArgument("cannot pass both file and files parameter to send()")
         elif files is not None:
             if len(files) > 10:
-                raise InvalidArgument(
-                    "files parameter must be a list of up to 10 elements"
-                )
+                raise InvalidArgument("files parameter must be a list of up to 10 elements")
         if file is not None:
             files = [file]
 
@@ -188,6 +181,7 @@ class Interaction:
             else:
                 self.deferred = True
         except NotFound as e:
+            self.responded = True
             raise NotFound(
                 e.response,
                 "Interaction is unknown (you have already responded to the interaction or responding took too long)",

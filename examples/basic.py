@@ -46,31 +46,4 @@ async def select(ctx):
     await interaction.send(content=f"{interaction.values[0]} selected!")
 
 
-@bot.command()
-async def interaction(ctx):
-    await ctx.send(
-        "Buttons and Selects!",
-        components=[
-            Select(
-                placeholder="Select something!",
-                options=[
-                    SelectOption(label="a", value="a"),
-                    SelectOption(label="b", value="b"),
-                ],
-                custom_id="select1",
-            ),
-            Button(label="Button", custom_id="button1"),
-        ],
-    )
-
-    interaction = await bot.wait_for(
-        "interaction", check=lambda inter: inter.custom_id in ["select1", "button1"]
-    )
-
-    if isinstance(interaction.component, Button):
-        await interaction.respond(content="Button clicked!")
-    else:
-        await interaction.respond(content=f"{interaction.values[0]} selected!")
-
-
 bot.run("your token")

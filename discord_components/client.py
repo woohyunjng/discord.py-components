@@ -43,28 +43,27 @@ class DiscordComponents:
         ].get("channel_id"):
             res["d"]["message"]["message_reference"] = res["d"]["channel_id"]
 
+        interaction = self._get_interaction(res)
+        self.bot.dispatch(f"raw_interaction", res["d"])
+        self.bot.dispatch("interaction", interaction)
+
+        if self._components_callback.get(interaction.custom_id):
+            callback_info = self._components_callback[interaction.custom_id]
+            if callback_info["uses"] == 0:
+                del self._components_callback[interaction.custom_id]
+                return
+
+            if callback_info["uses"] is not None:
+                self._components_callback[interaction.custom_id]["uses"] -= 1
+            if not callback_info["filter"](interaction):
+                return
+
+            await self._components_callback[interaction.custom_id]["callback"](interaction)
+
         for _type in InteractionEventType:
             if _type.value == res["d"]["data"]["component_type"]:
                 self.bot.dispatch(f"raw_{_type.name}", res["d"])
-                self.bot.dispatch(f"raw_interaction", res["d"])
-
-                interaction = self._get_interaction(res)
                 self.bot.dispatch(_type.name, interaction)
-                self.bot.dispatch("interaction", interaction)
-                if self._components_callback.get(interaction.custom_id):
-                    callback_info = self._components_callback[interaction.custom_id]
-                    if callback_info["uses"] == 0:
-                        del self._components_callback[interaction.custom_id]
-                        return
-
-                    if callback_info["uses"] is not None:
-                        self._components_callback[interaction.custom_id]["uses"] -= 1
-                    if not callback_info["filter"](interaction):
-                        return
-
-                    await self._components_callback[interaction.custom_id]["callback"](
-                        interaction
-                    )
                 break
 
     def _get_interaction(self, json: dict):
@@ -107,9 +106,7 @@ class DiscordComponents:
 
         return await self.bot.wait_for(event, check=check, timeout=timeout)
 
-    def add_callback(
-        self, component: Component, callback, *, uses: int = None, filter=None
-    ):
+    def add_callback(self, component: Component, callback, *, uses: int = None, filter=None):
         self._components_callback[component.custom_id] = {
             "callback": callback,
             "uses": uses,
