@@ -46,9 +46,11 @@ class DiscordComponents:
         for _type in InteractionEventType:
             if _type.value == res["d"]["data"]["component_type"]:
                 self.bot.dispatch(f"raw_{_type.name}", res["d"])
+                self.bot.dispatch(f"raw_interaction", res["d"])
 
                 interaction = self._get_interaction(res)
                 self.bot.dispatch(_type.name, interaction)
+                self.bot.dispatch("interaction", interaction)
                 if self._components_callback.get(interaction.custom_id):
                     callback_info = self._components_callback[interaction.custom_id]
                     if callback_info["uses"] == 0:
