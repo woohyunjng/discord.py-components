@@ -43,7 +43,7 @@ setup(
     license="MIT License",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://gitlab.com/discord.py-components/discord.py-components",
+    url="https://github.com/kiki7000/discord.py-components",
     packages=["discord_components", "discord_components.ext"],
     python_requires=">=3.6",
     classifiers=[
