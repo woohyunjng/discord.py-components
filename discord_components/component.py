@@ -452,6 +452,15 @@ class ActionRow(Component):
     def __init__(self, *args: List[Component]):
         self._components = list(args) if args is not None else []
 
+    def disable_components(self) -> List[Component]:
+        def disable(component: Component):
+            component.disabled = True
+            return component
+
+        disabled_row = list(map(disable, self._components))
+        self._components = disabled_row
+        return disabled_row
+
     def __list__(self) -> List[Component]:
         return self.components
 
