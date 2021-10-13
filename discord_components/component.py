@@ -457,9 +457,8 @@ class ActionRow(Component):
             component.disabled = True
             return component
 
-        disabled_row = list(map(disable, self._components))
-        self._components = disabled_row
-        return disabled_row
+        self._components = list(map(disable, self._components))
+        return self
 
     def __list__(self) -> List[Component]:
         return self.components

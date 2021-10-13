@@ -40,9 +40,8 @@ class ComponentMessage(Message):
                     return component
 
     async def disable_components(self) -> None:
-        disabled_components = [row.disable_components() for row in self.components]
         await self.edit(
-            components=disabled_components,
+            components=[row.disable_components() for row in self.components],
         )
 
     async def edit(
@@ -67,9 +66,7 @@ class ComponentMessage(Message):
             data["content"] = content
 
         if embed is not None and embeds is not None:
-            raise InvalidArgument(
-                "cannot pass both embed and embeds parameter to edit()"
-            )
+            raise InvalidArgument("cannot pass both embed and embeds parameter to edit()")
 
         if embed is not None:
             data["embeds"] = [embed.to_dict()]
@@ -83,16 +80,11 @@ class ComponentMessage(Message):
             data["flags"] = flags.value
 
         if allowed_mentions is None:
-            if (
-                state.allowed_mentions is not None
-                and self.author.id == self._state.self_id
-            ):
+            if state.allowed_mentions is not None and self.author.id == self._state.self_id:
                 data["allowed_mentions"] = state.allowed_mentions.to_dict()
         else:
             if state.allowed_mentions is not None:
-                data["allowed_mentions"] = state.allowed_mentions.merge(
-                    allowed_mentions
-                ).to_dict()
+                data["allowed_mentions"] = state.allowed_mentions.merge(allowed_mentions).to_dict()
             else:
                 data["allowed_mentions"] = allowed_mentions.to_dict()
 
@@ -253,9 +245,7 @@ async def send(
 
     elif embeds is not None:
         if len(embeds) > 10:
-            raise InvalidArgument(
-                "embeds parameter must be a list of up to 10 elements"
-            )
+            raise InvalidArgument("embeds parameter must be a list of up to 10 elements")
         embeds = [embed.to_dict() for embed in embeds]
 
     if stickers is not None:

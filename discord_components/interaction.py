@@ -258,3 +258,8 @@ class Interaction:
             return res
         elif res is not None:
             await res.delete(delay=delete_after)
+
+    async def disable_components(self) -> None:
+        await self.edit_origin(
+            components=[row.disable_components() for row in self.message.components],
+        )
